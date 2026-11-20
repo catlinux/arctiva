@@ -13,12 +13,22 @@ Trabajo pendiente agrupado por prioridad. Fases y decisiones: [hoja de ruta](doc
 - [ ] Probar la ISO live en hardware real con un USB (RTX 4060 del PC; portátil con Windows y Manjaro). La entrada «safe graphics» ya funciona en VirtualBox.
 
 - [ ] Compilar los paquetes propios (`packages/`) con la misma fecha del Arch Linux Archive que la ISO, para que Calamares no se compile con bibliotecas más nuevas que las incluidas.
-- [ ] Comprobar a ojo que Calamares abre desde Konsole en la sesión live (la construcción y la prueba de arranque solo demuestran que está instalado y que la ISO arranca).
+
+## Media: fase 2 (instalador)
+
+- [ ] Al arrancar una instantánea falla `systemd-remount-fs` (fstab pide `subvol=/@` y la raíz es un overlay de grub-btrfs). No impide arrancar; valorar ocultarlo.
+- [ ] `/etc/os-release` dice «Arch Linux»: lo cambiará el paquete de identidad de Arctiva (`arctiva-branding`/`arctiva-settings`).
+- [ ] Que el instalador elija mirrors rápidos (`reflector`) antes de `pacman -Syu`: el sistema instalado se queda con todos los mirrors HTTPS en el orden por defecto.
+- [ ] Avisar en la página de resumen si la raíz no es Btrfs (modo manual): no habrá instantáneas (paso 2.4).
+- [ ] Textos de la página «Comprobación»: están en el propio QML (castellano, catalán e inglés); pasarlos a las traducciones del branding con el resto de la interfaz (paso 2.4).
+- [ ] Quitar Discover del sistema instalado (D-07: solo en la live): sigue instalado y da «Problema de actualización» al abrirlo. Con `prepare-target`, junto a Calamares.
+- [ ] Probar en una ISO nueva los dos últimos cambios de 0.2.4: nombres de los pasos traducidos en la barra lateral y BitLocker detectado con `blkid -p`.
+- [ ] Pasar `zram-generator.conf` de `iso/airootfs/` al paquete `arctiva-settings` cuando exista.
 
 ## Media: estudios
 
 - [ ] Prueba de concepto de la tienda (D-07) en la VM: catálogo AppStream, `pyalpm` sobre una base temporal, instalación con `pacman -Syu --needed` a través de un ayudante polkit, Flatpak con progreso y `flatpak-kcm`, y flujo del AUR con PKGBUILD, diff y `paru`. Antes de la fase 5.
-- [ ] Comprobaciones del instalador en la VM, antes de la fase 2 (D-03, D-04): qué hacen y qué necesitan `localeq`, `packagechooserq` y `notesqml` de Calamares 3.4.3; que la página «Comprobación» puede leer el resultado del lanzador; instalación cifrada con una sola contraseña y tiempo de desbloqueo en GRUB; arrancar una instantánea con la raíz cifrada; `os-prober` con Windows, BitLocker e inicio rápido; alcance de `stylesheet.qss` en la página de disco.
+- [ ] Comprobaciones del instalador en la VM, antes de la fase 2 (D-03, D-04): qué hacen y qué necesitan `localeq`, `packagechooserq` y `notesqml` de Calamares 3.4.3; `os-prober` con Windows, BitLocker e inicio rápido; alcance de `stylesheet.qss` en la página de disco.
 
 ## Más adelante
 

@@ -8,9 +8,21 @@ live_user=live
 if ! id "$live_user" &>/dev/null; then
     useradd -m -G wheel -c "Arctiva Live" -s /bin/bash "$live_user"
     passwd -d "$live_user" >/dev/null
+    # Sin bloqueo de pantalla: durante una instalación larga la sesión se bloqueaba sola.
+    install -D -m 0644 -o "$live_user" -g "$live_user" /dev/stdin \
+        "/home/${live_user}/.config/kscreenlockerrc" <<'EOF'
+[Daemon]
+Autolock=false
+LockOnResume=false
+EOF
+    chown "$live_user:$live_user" "/home/${live_user}/.config"
 fi
 install -m 0440 /dev/stdin /etc/sudoers.d/10-arctiva-live <<<"$live_user ALL=(ALL:ALL) NOPASSWD: ALL"
 
 # glibc solo trae C.UTF-8 compilado; el resto se genera al arrancar.
 sed -i -E 's/^#[[:space:]]*((en_US|es_ES|ca_ES)\.UTF-8 UTF-8)/\1/' /etc/locale.gen
 locale-gen >/dev/null
+
+# El instalador se abre con «Instalar Arctiva» (arctiva-installer), que revisa antes el equipo.
+# La entrada propia de Calamares se quita del menú; solo en la live (la imagen no cambia).
+rm -f /usr/share/applications/calamares.desktop

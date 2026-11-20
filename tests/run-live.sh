@@ -64,7 +64,8 @@ cdrom=()
 if (( ! boot_disk )); then
     iso="${1:-$(ls -t "${repo_dir}"/out/arctiva-*.iso 2>/dev/null | head -n1 || true)}"
     [[ -n "$iso" && -f "$iso" ]] || die "no hay ISO: constrúyela o pásala como argumento."
-    cdrom=(-drive "file=${iso},media=cdrom,readonly=on")
+    # bootindex: con ISO arranca siempre el CD primero, aunque la NVRAM recuerde otro orden.
+    cdrom=(-drive "file=${iso},if=none,id=cd,media=cdrom,readonly=on" -device "ide-cd,drive=cd,bootindex=0")
     echo "ISO: ${iso}"
 fi
 
@@ -74,7 +75,7 @@ trap cleanup EXIT INT TERM
 qemu-system-x86_64 -machine q35,accel=kvm -cpu host -smp "$cpus" -m "$mem" \
     -drive "if=pflash,format=raw,readonly=on,file=${ovmf_code}" \
     -drive "if=pflash,format=raw,file=${nvram}" \
-    -drive "file=${disk},if=virtio,format=qcow2" \
+    -drive "file=${disk},if=none,id=hd,format=qcow2" -device "virtio-blk-pci,drive=hd,bootindex=1" \
     "${cdrom[@]}" \
     -device virtio-vga -device qemu-xhci -device usb-tablet \
     -nic user,model=virtio-net-pci \

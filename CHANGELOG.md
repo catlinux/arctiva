@@ -8,6 +8,50 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 
 ## [Unreleased]
 
+## [0.2.4] - 2026-11-20
+
+Phase 2, step 4 (first part): installer identity. Awaiting the user's approval with screenshots; the QML pages (`*q`) and the slideshow are left for the second part. "Install alongside" was also tested in QEMU (80 GB disk, simulated 60 GB NTFS): Calamares shrinks it with `ntfsresize`, installs and boots, and the NTFS stays healthy; `os-prober` does not recognise the simulated Windows and will be checked with a real one (step 2.5).
+
+### Added
+
+- Installer sidebar and navigation in QML, following the mock-ups: night-blue gradient, Arctiva symbol and version, numbered steps (the current one in a blue pill, finished ones ticked), "Next" in blue and "Done" as the main button on the last page.
+- `stylesheet.qss` for the widget pages (partitioning, users, summary) with the logo palette; the logo and icon are taken from `branding/logo/` when packaging.
+
+### Fixed
+
+- Calamares' own "Install System" entry was still in the live menu next to "Install Arctiva": the live setup now removes it.
+
+## [0.2.3] - 2026-11-20
+
+Phase 2, step 3: launcher and "Check" page. Tested in QEMU with a disk that simulates Windows (all three levels); a test with a real Windows 11 is still pending (step 2.5).
+
+### Added
+
+- `arctiva-installer` launcher ("Install Arctiva" menu entry, which replaces Calamares' own): checks the machine with `detect-system` and opens Calamares. It detects Windows (`bootmgfw.efi` on an ESP), BitLocker partitions, hibernated NTFS (`ntfs-3g.probe`, exit code 14), running on battery and Internet access, and writes the result to `/run/arctiva/equipo.json`.
+- "Check" page (`notesqml`) before the disk page, in Spanish, Catalan and English following the chosen language: block (Windows hibernated or with Fast Startup, with a button to quit), warning (BitLocker, battery) or OK, plus notes on the Windows clock and on a missing network.
+- `tests/fake-windows-disk.sh`: simulates a disk with a clean, hibernated or BitLocker Windows in the VM.
+- `ntfsprogs` on the ISO: `ntfsresize`, which KPMcore needs to shrink Windows, is no longer part of `ntfs-3g`.
+
+### Changed
+
+- D-03: the block level is a recommendation (Calamares does not let QML disable "Next"); what prevents installing alongside a hibernated Windows is `ntfsresize`.
+
+## [0.2.2] - 2026-11-20
+
+Phase 2, step 2: base installer configuration (no custom interface yet). Tested in QEMU with UEFI: erase-disk install, unencrypted and encrypted, booting the installed system, `snapper list` and booting the initial snapshot from GRUB (also with an encrypted root; GRUB unlocks in about 5 s).
+
+### Added
+
+- `arctiva-calamares-config` package in `installer/` (goes to `/etc/calamares/` on the live ISO and is removed from the installed system): page sequence with the widget modules, Btrfs with `@`, `@home`, `@cache`, `@log` and `@snapshots`, no disk swap, optional LUKS1 encryption with a single passphrase in GRUB, GRUB in `EFI/arctiva` with `os-prober`, a `BOOTX64.EFI` fallback copy, `linux` as the default entry, an "Arctiva snapshots" submenu and without GRUB 2.16's "EFI BootNext" entries, classic mkinitcpio hooks with `grub-btrfs-overlayfs`, system services, and `linux-lts` (after a `pacman -Syu`) when online.
+- Installer scripts: `prepare-target` (copies the kernel, which mkarchiso leaves out of `/boot`; removes Calamares and `mkinitcpio-archiso`; initialises the pacman keyring; uses the live system's DNS during the install) and `finish-target` (restores the original `resolv.conf`, Snapper on `@snapshots`, an initial "Arctiva: estado inicial" snapshot and a GRUB menu that lists it).
+- zram (half of RAM, at most 8 GiB) on the live and installed systems, and `inotify-tools` for `grub-btrfsd`.
+
+### Changed
+
+- `packages/build-packages.sh` also builds `arctiva-calamares-config`, and CI runs on changes to `installer/`.
+- The live session no longer locks the screen when idle (it locked in the middle of an install).
+- `tests/run-live.sh` always boots the ISO first when given one, even if the NVRAM remembers another order.
+
 ## [0.2.1] - 2026-11-20
 
 Phase 2, step 1: installer packages.

@@ -1,0 +1,44 @@
+# SPDX-License-Identifier: GPL-3.0-or-later
+# Branding de Arctiva para Calamares (D-03, estudio E2). Barra lateral y navegación en QML
+# (calamares-sidebar.qml, calamares-navigation.qml) y stylesheet.qss para las páginas de widgets.
+# La presentación aún es la de Calamares.
+---
+componentName: arctiva
+
+welcomeStyleCalamares: false
+welcomeExpandingLogo: true
+windowExpanding: normal
+windowSize: 1100px,700px
+windowPlacement: center
+sidebar: qml
+navigation: qml
+
+strings:
+    productName: Arctiva
+    shortProductName: Arctiva
+    version: "@VERSION@"
+    shortVersion: "@VERSION@"
+    versionedName: "Arctiva @VERSION@"
+    shortVersionedName: "Arctiva @VERSION@"
+    # Nombre de la entrada de GRUB y del firmware (GRUB_DISTRIBUTOR).
+    bootloaderEntryName: Arctiva
+    productUrl: https://github.com/catlinux/arctiva
+    supportUrl: https://github.com/catlinux/arctiva/issues
+    knownIssuesUrl: https://github.com/catlinux/arctiva/issues
+    releaseNotesUrl: https://github.com/catlinux/arctiva/blob/main/CHANGELOG.md
+    donateUrl: ""
+
+images:
+    # Copiados de branding/logo/ al empaquetar.
+    productIcon: arctiva-icon.svg
+    productLogo: arctiva-mark.svg
+    productWelcome: /usr/share/calamares/branding/default/languages.png
+
+style:
+    SidebarBackground: "#0d1730"
+    SidebarText: "#ffffff"
+    SidebarTextCurrent: "#ffffff"
+    SidebarBackgroundCurrent: "#1d4ed8"
+
+slideshow: /usr/share/calamares/branding/default/show.qml
+slideshowAPI: 2

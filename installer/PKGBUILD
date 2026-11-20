@@ -1,0 +1,23 @@
+# SPDX-License-Identifier: GPL-3.0-or-later
+# Maintainer: CatLinux
+# Configuración de Calamares para Arctiva (D-03). Solo va en la ISO live: el instalador lo quita
+# del sistema instalado. Se empaqueta desde este directorio del repositorio, sin fuentes externas.
+pkgname=arctiva-calamares-config
+pkgver=$(tr -d '[:space:]' <"${startdir}/../VERSION")
+pkgrel=1
+pkgdesc='Configuración del instalador Calamares de Arctiva'
+arch=(any)
+url='https://github.com/catlinux/arctiva'
+license=(GPL-3.0-or-later)
+depends=(calamares btrfs-progs snapper util-linux ntfs-3g curl sudo polkit)
+
+package() {
+    cd -- "$startdir"
+    find calamares -type f -exec install -Dm644 {} "$pkgdir/etc/{}" \;
+    install -Dm644 -t "$pkgdir/etc/calamares/branding/arctiva" \
+        ../branding/logo/arctiva-mark.svg ../branding/logo/arctiva-icon.svg
+    sed -i "s/@VERSION@/${pkgver}/g" "$pkgdir/etc/calamares/branding/arctiva/branding.desc"
+    install -Dm755 -t "$pkgdir/usr/lib/arctiva-installer" scripts/*
+    install -Dm755 -t "$pkgdir/usr/bin" bin/arctiva-installer
+    install -Dm644 -t "$pkgdir/usr/share/applications" applications/arctiva-installer.desktop
+}

@@ -13,6 +13,8 @@ mkinitcpio
 mkinitcpio-archiso
 grub
 grub-btrfs
+# grub-btrfsd vigila /.snapshots con inotifywait.
+inotify-tools
 efibootmgr
 os-prober
 memtest86+-efi
@@ -26,6 +28,8 @@ dosfstools
 e2fsprogs
 exfatprogs
 ntfs-3g
+# ntfsresize y mkntfs: KPMcore los necesita para reducir Windows («Instalar junto a»).
+ntfsprogs
 gptfdisk
 parted
 smartmontools
@@ -106,5 +110,7 @@ firefox-i18n-ca
 noto-fonts
 noto-fonts-emoji
 
-# Instalador (paquete propio de packages/, repositorio arctiva-local). Se quita del sistema instalado.
+# Instalador (paquetes propios de packages/ e installer/, repositorio arctiva-local).
+# Se quitan del sistema instalado.
 calamares
+arctiva-calamares-config

@@ -1,0 +1,126 @@
+/*
+ * Hoja de estilo de las páginas de widgets del instalador (sobre todo «partition»); las QML
+ * llevan su propio estilo. Paleta del logo: noche #0d1730, azul #1d4ed8, brillante #3d86ff,
+ * cian #4cc3ff.
+ */
+
+QWidget {
+    font-family: "Noto Sans";
+    font-size: 10.5pt;
+    color: #0d1730;
+}
+
+/* Fondo del área de páginas; la barra lateral es QML y no usa esta hoja. */
+#mainApp, QStackedWidget {
+    background: #f5f7fc;
+}
+
+QLabel { background: transparent; }
+QLabel[accessibleName="warning"] { color: #b45309; }
+
+/* Botones */
+QPushButton {
+    background: #ffffff;
+    border: 1px solid #dbe3f4;
+    border-radius: 7px;
+    padding: 6px 16px;
+}
+QPushButton:hover { border-color: #3d86ff; }
+QPushButton:pressed { background: #e9efff; }
+QPushButton:default {
+    background: #1d4ed8;
+    border-color: #1d4ed8;
+    color: #ffffff;
+    font-weight: 600;
+}
+QPushButton:disabled { color: #9aa6c2; background: #f0f3fa; }
+
+/* Opciones de particionado (Junto a, Reemplazar, Borrar, Manual) */
+QRadioButton, QCheckBox { spacing: 8px; background: transparent; }
+QRadioButton::indicator, QCheckBox::indicator {
+    width: 16px; height: 16px;
+    border: 1.5px solid #9fb0d6;
+    background: #ffffff;
+}
+QRadioButton::indicator { border-radius: 9px; }
+QCheckBox::indicator { border-radius: 4px; }
+QRadioButton::indicator:checked {
+    border-color: #1d4ed8;
+    background: qradialgradient(cx:0.5, cy:0.5, radius:0.5, fx:0.5, fy:0.5,
+                                stop:0 #1d4ed8, stop:0.45 #1d4ed8, stop:0.55 #ffffff, stop:1 #ffffff);
+}
+QCheckBox::indicator:checked {
+    background: #1d4ed8;
+    border-color: #1d4ed8;
+    /* Sin imagen, Qt no dibuja la marca al cambiar el fondo. Ruta absoluta: QSS no resuelve
+     * rutas relativas al branding. */
+    image: url(/etc/calamares/branding/arctiva/check.svg);
+}
+QRadioButton:focus, QCheckBox:focus { color: #1d4ed8; }
+
+/* Campos de texto y desplegables (contraseña de cifrado, disco, sistema de archivos) */
+QLineEdit, QComboBox, QSpinBox {
+    background: #ffffff;
+    border: 1px solid #dbe3f4;
+    border-radius: 7px;
+    padding: 5px 9px;
+    min-height: 22px;
+    selection-background-color: #3d86ff;
+}
+QLineEdit:focus, QComboBox:focus, QSpinBox:focus { border-color: #3d86ff; }
+QComboBox::drop-down { border: none; width: 24px; }
+QComboBox QAbstractItemView {
+    background: #ffffff;
+    border: 1px solid #dbe3f4;
+    selection-background-color: #e9efff;
+    selection-color: #1d4ed8;
+}
+
+/* Lista de particiones del modo manual */
+QTreeView, QListView, QTableView {
+    background: #ffffff;
+    alternate-background-color: #f8faff;
+    border: 1px solid #dbe3f4;
+    border-radius: 8px;
+    selection-background-color: #e9efff;
+    selection-color: #0d1730;
+}
+QHeaderView::section {
+    background: #eef2fa;
+    color: #5b6785;
+    border: none;
+    border-bottom: 1px solid #dbe3f4;
+    padding: 5px 8px;
+}
+
+/* Cuadros de grupo y marcos */
+QGroupBox {
+    background: #ffffff;
+    border: 1px solid #dbe3f4;
+    border-radius: 10px;
+    margin-top: 14px;
+    padding: 10px;
+}
+QGroupBox::title { subcontrol-origin: margin; left: 10px; color: #5b6785; }
+
+/* Progreso (también la barra de instalación si se usa la vista de widgets) */
+QProgressBar {
+    border: none;
+    border-radius: 4px;
+    background: #e3e9f5;
+    height: 8px;
+    text-align: center;
+    color: transparent;
+}
+QProgressBar::chunk {
+    border-radius: 4px;
+    background: qlineargradient(x1:0, y1:0, x2:1, y2:0, stop:0 #1d4ed8, stop:1 #4cc3ff);
+}
+
+/* Barras de desplazamiento discretas */
+QScrollBar:vertical { background: transparent; width: 10px; }
+QScrollBar::handle:vertical { background: #c7d2ea; border-radius: 5px; min-height: 30px; }
+QScrollBar::add-line, QScrollBar::sub-line { height: 0; }
+
+/* La barra de colores de las particiones se dibuja en C++ con los colores de KPMcore:
+ * esta hoja no la cambia. Si desentona, se acepta tal cual (sin parches en C++). */

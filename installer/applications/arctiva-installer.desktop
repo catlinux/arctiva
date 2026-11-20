@@ -1,0 +1,16 @@
+[Desktop Entry]
+Type=Application
+Name=Install Arctiva
+Name[es]=Instalar Arctiva
+Name[ca]=Instal·la Arctiva
+GenericName=System installer
+GenericName[es]=Instalador del sistema
+GenericName[ca]=Instal·lador del sistema
+Comment=Install Arctiva on this computer
+Comment[es]=Instala Arctiva en este equipo
+Comment[ca]=Instal·la Arctiva en aquest ordinador
+Exec=arctiva-installer
+Icon=calamares
+Terminal=false
+Categories=Qt;System;
+StartupNotify=true

@@ -18,10 +18,16 @@ mkdir -p -- "$dest"
 build_dir="$(mktemp -d)"
 trap 'rm -rf -- "$build_dir"' EXIT
 cp -a -- "${repo_dir}/packages/." "$build_dir/"
+# La configuración del instalador vive en installer/ y toma de ../ la versión (VERSION) y el logo
+# (branding/logo/).
+cp -a -- "${repo_dir}/installer" "${build_dir}/arctiva-calamares-config"
+cp -- "${repo_dir}/VERSION" "${build_dir}/VERSION"
+mkdir -p -- "${build_dir}/branding"
+cp -a -- "${repo_dir}/branding/logo" "${build_dir}/branding/logo"
 chown -R arctivabuild: "$build_dir" "$dest"
 
-# Orden de dependencias: calamares necesita ckbcomp.
-for name in ckbcomp calamares; do
+# Orden de dependencias: calamares necesita ckbcomp, y la configuración, calamares.
+for name in ckbcomp calamares arctiva-calamares-config; do
     d="${build_dir}/${name}"
     echo "== Compilando $(basename -- "$d")"
     # makepkg no importa keys/pgp/ por sí solo: se hace aquí para verificar las firmas de las fuentes.

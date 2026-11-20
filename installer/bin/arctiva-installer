@@ -1,0 +1,20 @@
+#!/usr/bin/env bash
+# SPDX-License-Identifier: GPL-3.0-or-later
+# Lanzador del instalador: revisa el equipo y abre Calamares (D-03).
+set -euo pipefail
+
+# Root sin contraseña con sudo en la live; si no, polkit.
+as_root() {
+    if sudo -n true 2>/dev/null; then
+        sudo -E "$@"
+    else
+        pkexec env DISPLAY="${DISPLAY:-}" WAYLAND_DISPLAY="${WAYLAND_DISPLAY:-}" \
+            XDG_RUNTIME_DIR="${XDG_RUNTIME_DIR:-}" XAUTHORITY="${XAUTHORITY:-}" "$@"
+    fi
+}
+
+as_root /usr/lib/arctiva-installer/detect-system >/dev/null || true
+
+# La página «Comprobación» lee /run/arctiva/equipo.json con XMLHttpRequest, que Qt solo
+# permite sobre file:// con esta variable.
+as_root env QML_XHR_ALLOW_FILE_READ=1 calamares "$@"

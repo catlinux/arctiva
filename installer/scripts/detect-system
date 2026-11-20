@@ -1,0 +1,95 @@
+#!/usr/bin/env bash
+# SPDX-License-Identifier: GPL-3.0-or-later
+# Revisa el equipo antes de abrir el instalador (D-03, sección «Windows en el mismo equipo») y
+# escribe el resultado en /run/arctiva/equipo.json para la página «Comprobación».
+# Necesita root: lee las particiones y monta las ESP en solo lectura.
+set -euo pipefail
+
+out="${1:-/run/arctiva/equipo.json}"
+mkdir -p -- "$(dirname -- "$out")"
+
+esp_type=c12a7328-f81f-11d2-ba4b-00a0c93ec93b
+windows=false
+bitlocker=()
+hibernado=()
+
+json_list() {
+    local first=1 item
+    printf '['
+    for item in "$@"; do
+        (( first )) || printf ', '
+        printf '"%s"' "$item"
+        first=0
+    done
+    printf ']'
+}
+
+while read -r name parttype; do
+    # blkid -p lee el disco: lsblk usa la caché de udev, que puede no estar al día.
+    fstype="$(blkid -p -s TYPE -o value -- "$name" 2>/dev/null || true)"
+    case "$fstype" in
+        BitLocker)
+            bitlocker+=("$name")
+            ;;
+        ntfs)
+            # 14: NTFS hibernado (hibernación o inicio rápido de Windows). ntfs-3g.probe(8).
+            rc=0
+            ntfs-3g.probe --readwrite "$name" >/dev/null 2>&1 || rc=$?
+            (( rc == 14 )) && hibernado+=("$name")
+            ;;
+        vfat)
+            if [[ "$parttype" == "$esp_type" ]]; then
+                mnt="$(mktemp -d)"
+                if mount -o ro -t vfat -- "$name" "$mnt" 2>/dev/null; then
+                    # Las ESP son FAT: sin distinguir mayúsculas.
+                    [[ -n "$(find "$mnt" -maxdepth 4 -ipath '*/efi/microsoft/boot/bootmgfw.efi' -print -quit 2>/dev/null)" ]] \
+                        && windows=true
+                    umount -- "$mnt"
+                fi
+                rmdir -- "$mnt"
+            fi
+            ;;
+    esac
+done < <(lsblk -prno NAME,TYPE,PARTTYPE | awk '$2 == "part" { print $1, $3 }')
+
+# Con BitLocker o NTFS hibernado hay Windows aunque su ESP no se haya podido leer.
+(( ${#bitlocker[@]} + ${#hibernado[@]} )) && windows=true
+
+# Batería: solo cuenta si hay batería y ningún cargador conectado.
+bateria=false
+if compgen -G '/sys/class/power_supply/*/type' >/dev/null; then
+    has_battery=false ac_online=false
+    for supply in /sys/class/power_supply/*; do
+        case "$(<"${supply}/type")" in
+            Battery) has_battery=true ;;
+            Mains|USB) [[ "$(<"${supply}/online" 2>/dev/null)" == 1 ]] && ac_online=true ;;
+        esac
+    done
+    [[ "$has_battery" == true && "$ac_online" == false ]] && bateria=true
+fi
+
+red=false
+curl -fsS --max-time 5 -o /dev/null http://ping.archlinux.org/nm-check.txt 2>/dev/null && red=true
+
+if (( ${#hibernado[@]} )); then
+    nivel=bloqueo
+elif (( ${#bitlocker[@]} )); then
+    nivel=aviso
+else
+    nivel=correcto
+fi
+
+tmp="${out}.tmp"
+{
+    printf '{\n'
+    printf '  "nivel": "%s",\n' "$nivel"
+    printf '  "windows": %s,\n' "$windows"
+    printf '  "bitlocker": %s,\n' "$(json_list "${bitlocker[@]}")"
+    printf '  "hibernado": %s,\n' "$(json_list "${hibernado[@]}")"
+    printf '  "bateria": %s,\n' "$bateria"
+    printf '  "red": %s\n' "$red"
+    printf '}\n'
+} >"$tmp"
+chmod 644 -- "$tmp"
+mv -f -- "$tmp" "$out"
+cat -- "$out"

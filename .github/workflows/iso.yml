@@ -6,6 +6,7 @@ on:
     paths:
       - 'iso/**'
       - 'packages/**'
+      - 'installer/**'
       - 'build.sh'
       - 'tests/boot-test.sh'
       - 'VERSION'

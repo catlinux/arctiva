@@ -44,7 +44,7 @@ sudo ./build.sh -o ~/out -d latest  # today's packages, no pinned date
 - To pin another package date, change `iso/archive-date` (format `YYYY/MM/DD`).
 - The ISO only boots in UEFI mode. The "safe graphics" entry boots with `nomodeset`.
 - Automatic boot test, as in CI: `tests/boot-test.sh ~/out/arctiva-*.iso` (needs `qemu-system-x86_64`, `OVMF` and `7z`; without `7z` it must run with `sudo`). Firmware path in the `OVMF` variable; with access to `/dev/kvm` (`kvm` group) it takes a few minutes.
-- `build.sh` first builds the in-house packages in `packages/` (Calamares and `ckbcomp`) with `packages/build-packages.sh` into an unsigned local `arctiva-local` repository (only until phase 3). Use `-l <dir>` to reuse a prebuilt one. It adds ~10 minutes and needs network; the PKGBUILDs use current packages, not the Archive date.
+- `build.sh` first builds the in-house packages in `packages/` (Calamares and `ckbcomp`) and `installer/` with `packages/build-packages.sh` into an unsigned local `arctiva-local` repository (only until phase 3). Use `-l <dir>` to reuse a prebuilt one. It adds ~10 minutes and needs network; the PKGBUILDs use current packages, not the Archive date.
 - Live services are enabled with `Wants=` in `iso/airootfs/etc/systemd/system/*.target.d/`: the repository holds no symbolic links because it is edited from Windows.
 
 ### On any Linux with Docker
@@ -68,6 +68,18 @@ docker run --rm --privileged --cpus=2 -v arctiva-pkgcache:/var/cache/pacman/pkg 
 3. Open `http://localhost:6080/vnc.html` in the browser and click "Connect". VS Code forwards the port by itself; without VS Code: `ssh -L 6080:localhost:6080 <host>`.
 
 - `-d` boots from the virtual disk (the installed system, from phase 2 on); `-r` wipes the disk and the NVRAM and starts afresh.
+
+### Testing the installer
+
+The Calamares configuration lives in `installer/` (package `arctiva-calamares-config`): `calamares/` is installed to `/etc/calamares/` and `scripts/` to `/usr/lib/arctiva-installer/`. It is built with the rest of `packages/` when building the ISO.
+
+1. `tests/run-live.sh -r` boots the ISO with an empty virtual disk (40 GB, the installer's minimum).
+2. In the live session, open "Install Arctiva" from the menu, or run `arctiva-installer -d` in Konsole (`-d` prints Calamares' log to the terminal). The launcher first checks the machine and writes the result to `/run/arctiva/equipo.json`, which the "Check" page shows.
+3. When it finishes, power off and boot the installed system with `tests/run-live.sh -d`.
+
+- When online, the installer runs `pacman -Syu` and installs `linux-lts`: the older the `iso/archive-date` date, the longer it takes.
+- If you change the live-only files in `iso/airootfs/`, also change the `exclude` list in `installer/calamares/modules/unpackfs.conf`.
+- To test the "Check" page without Windows, run `sudo tests/fake-windows-disk.sh <limpio|hibernado|bitlocker>` in the live session (copy the script into the VM; **it wipes the virtual disk**) and open the launcher again.
 - The disk and the NVRAM live in `~/arctiva-vm` (`VM_DIR` variable), outside the repository.
 - No 3D acceleration or sound: the desktop works, but games and the real GPU are tested on hardware from a USB stick.
 

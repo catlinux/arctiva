@@ -1,0 +1,45 @@
+#!/usr/bin/env bash
+# SPDX-License-Identifier: GPL-3.0-or-later
+# Prepara el sistema copiado de la live, antes de generar los initramfs.
+# Lo ejecuta Calamares (shellprocess@prepare) desde la live, con la raíz del destino montada.
+set -euo pipefail
+
+root="${1:?uso: $0 <raíz-del-destino>}"
+[[ -d "${root}/usr/lib/modules" ]] || { echo "prepare-target: ${root} no parece un sistema instalado." >&2; exit 1; }
+
+in_target() { chroot "$root" "$@"; }
+
+# mkarchiso vacía /boot y el kernel va aparte en la ISO. Se copia igual que lo hace el hook de
+# pacman de mkinitcpio, desde /usr/lib/modules/<versión>/vmlinuz.
+found=0
+for pkgbase_file in "${root}"/usr/lib/modules/*/pkgbase; do
+    [[ -e "$pkgbase_file" ]] || continue
+    read -r pkgbase <"$pkgbase_file"
+    install -Dm644 -- "${pkgbase_file%/pkgbase}/vmlinuz" "${root}/boot/vmlinuz-${pkgbase}"
+    echo "Kernel copiado: /boot/vmlinuz-${pkgbase}"
+    found=1
+done
+(( found )) || { echo "prepare-target: no hay ningún kernel en /usr/lib/modules." >&2; exit 1; }
+
+# Paquetes que solo sirven en la live. -s quita también sus dependencias huérfanas (kpmcore, ckbcomp…).
+live_only=(arctiva-calamares-config calamares mkinitcpio-archiso)
+mapfile -t installed < <(in_target pacman -Qq "${live_only[@]}" 2>/dev/null || true)
+if (( ${#installed[@]} )); then
+    in_target pacman -Rns --noconfirm -- "${installed[@]}"
+fi
+
+# La imagen trae el resolv.conf genérico: sin el de la live, pacman no resuelve nombres dentro del
+# chroot. finish-target deja el original al terminar (en el sistema instalado lo gestiona NetworkManager).
+if [[ ! -e "${root}/etc/resolv.conf.arctiva-orig" ]]; then
+    cp -a -- "${root}/etc/resolv.conf" "${root}/etc/resolv.conf.arctiva-orig"
+fi
+cp --remove-destination -L -- /etc/resolv.conf "${root}/etc/resolv.conf"
+
+# En la live el llavero de pacman vive en un tmpfs: la imagen lo trae vacío.
+in_target pacman-key --init
+in_target pacman-key --populate
+# gpg-agent queda vivo dentro del destino e impediría desmontarlo al final.
+in_target gpgconf --homedir /etc/pacman.d/gnupg --kill all || true
+
+# La live arranca el escritorio por la línea de órdenes del kernel; el sistema instalado, por defecto.
+in_target systemctl set-default graphical.target

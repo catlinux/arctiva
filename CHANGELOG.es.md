@@ -8,6 +8,50 @@ El formato se basa en [Keep a Changelog](https://keepachangelog.com/es-ES/1.1.0/
 
 ## [Sin publicar]
 
+## [0.2.4] - 2026-11-20
+
+Fase 2, paso 4 (primera parte): identidad del instalador. Pendiente de la aprobación del usuario con capturas; las páginas QML (`*q`) y la presentación quedan para la segunda parte. Probado también «Instalar junto a» en QEMU (disco de 80 GB, NTFS simulado de 60 GB): Calamares lo reduce con `ntfsresize`, instala y arranca, y el NTFS queda sano; `os-prober` no reconoce el Windows simulado y se comprobará con uno real (paso 2.5).
+
+### Añadido
+
+- Barra lateral y navegación del instalador en QML, según las maquetas: degradado azul noche, símbolo y versión de Arctiva, pasos numerados (el actual en una píldora azul, los hechos con marca), «Siguiente» en azul y «Hecho» como botón principal en la última página.
+- `stylesheet.qss` para las páginas de widgets (particionado, usuarios, resumen) con la paleta del logo; el logo y el icono salen de `branding/logo/` al empaquetar.
+
+### Corregido
+
+- La entrada «Install System» de Calamares seguía en el menú de la live junto a «Instalar Arctiva»: ahora la quita la preparación de la live.
+
+## [0.2.3] - 2026-11-20
+
+Fase 2, paso 3: lanzador y página «Comprobación». Probado en QEMU con un disco que simula Windows (los tres niveles); falta la prueba con un Windows 11 real (paso 2.5).
+
+### Añadido
+
+- Lanzador `arctiva-installer` (entrada «Instalar Arctiva» del menú, que sustituye a la de Calamares): revisa el equipo con `detect-system` y abre Calamares. Detecta Windows (`bootmgfw.efi` en una ESP), particiones BitLocker, NTFS hibernado (`ntfs-3g.probe`, código 14), batería sin cargador y conexión a Internet, y lo deja en `/run/arctiva/equipo.json`.
+- Página «Comprobación» (`notesqml`) antes de la de disco, en castellano, catalán e inglés según el idioma elegido: bloqueo (Windows hibernado o con inicio rápido, con botón para salir), aviso (BitLocker, batería) o correcto, más avisos de la hora de Windows y de la falta de red.
+- `tests/fake-windows-disk.sh`: simula en la VM un disco con Windows limpio, hibernado o con BitLocker.
+- `ntfsprogs` en la ISO: `ntfsresize`, que KPMcore necesita para reducir Windows, ya no viene en `ntfs-3g`.
+
+### Cambiado
+
+- D-03: el nivel de bloqueo es una recomendación (Calamares no deja desactivar «Siguiente» desde QML); lo que impide instalar junto a un Windows hibernado es `ntfsresize`.
+
+## [0.2.2] - 2026-11-20
+
+Fase 2, paso 2: configuración base del instalador (sin interfaz propia). Probado en QEMU con UEFI: instalación borrando el disco, sin cifrar y cifrada, arranque del sistema instalado, `snapper list` y arranque de la instantánea inicial desde GRUB (también con la raíz cifrada; GRUB desbloquea en unos 5 s).
+
+### Añadido
+
+- Paquete `arctiva-calamares-config` en `installer/` (va a `/etc/calamares/` de la ISO live y se quita del sistema instalado): secuencia de páginas con los módulos de widgets, Btrfs con `@`, `@home`, `@cache`, `@log` y `@snapshots`, sin swap en disco, cifrado LUKS1 opcional con una sola contraseña en GRUB, GRUB en `EFI/arctiva` con `os-prober`, copia de respaldo `BOOTX64.EFI`, `linux` como entrada por defecto, submenú «Arctiva snapshots» y sin las entradas «EFI BootNext» de GRUB 2.16, hooks clásicos de mkinitcpio con `grub-btrfs-overlayfs`, servicios del sistema y `linux-lts` (con `pacman -Syu` antes) si hay red.
+- Scripts del instalador: `prepare-target` (copia el kernel, que mkarchiso deja fuera de `/boot`; quita Calamares y `mkinitcpio-archiso`; inicia el llavero de pacman; usa el DNS de la live durante la instalación) y `finish-target` (deja el `resolv.conf` original, Snapper sobre `@snapshots`, instantánea inicial «Arctiva: estado inicial» y menú de GRUB con ella).
+- zram (la mitad de la RAM, como máximo 8 GiB) en la live y en el sistema instalado, e `inotify-tools` para `grub-btrfsd`.
+
+### Cambiado
+
+- `packages/build-packages.sh` compila también `arctiva-calamares-config`, y el CI se lanza con cambios en `installer/`.
+- La sesión live ya no bloquea la pantalla por inactividad (se bloqueaba en mitad de la instalación).
+- `tests/run-live.sh` arranca siempre primero la ISO cuando se le pasa una, aunque la NVRAM recuerde otro orden.
+
 ## [0.2.1] - 2026-11-20
 
 Fase 2, paso 1: paquetes del instalador.
