@@ -8,6 +8,16 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 
 ## [Unreleased]
 
+## [0.2.1] - 2026-11-20
+
+Phase 2, step 1: installer packages.
+
+### Added
+
+- `packages/calamares` PKGBUILD (Calamares 3.4.3, Qt6, source signature verified against the maintainer's key) and `packages/ckbcomp` (from console-setup 1.249, checksum pinned).
+- `packages/build-packages.sh` builds them into a local `arctiva-local` pacman repository; `build.sh` does it automatically, or uses a prebuilt one with the new `-l` option.
+- `calamares` is part of the live ISO (1.76 GiB).
+
 ## [0.2.0] - 2026-11-20
 
 Phase 1 completed: minimal live ISO.

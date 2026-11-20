@@ -105,3 +105,6 @@ firefox-i18n-ca
 # Fuentes
 noto-fonts
 noto-fonts-emoji
+
+# Instalador (paquete propio de packages/, repositorio arctiva-local). Se quita del sistema instalado.
+calamares

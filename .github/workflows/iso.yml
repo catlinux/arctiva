@@ -5,6 +5,7 @@ on:
     branches: [main]
     paths:
       - 'iso/**'
+      - 'packages/**'
       - 'build.sh'
       - 'tests/boot-test.sh'
       - 'VERSION'

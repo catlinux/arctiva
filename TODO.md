@@ -12,6 +12,9 @@ Pending work grouped by priority. Phases and decisions: [roadmap](docs/en/roadma
 
 - [ ] Test the live ISO on real hardware from a USB stick (the PC's RTX 4060; laptop with Windows and Manjaro). The "safe graphics" entry already works in VirtualBox.
 
+- [ ] Build the in-house packages (`packages/`) against the same Arch Linux Archive date as the ISO, so Calamares is never built with newer libraries than the ones shipped.
+- [ ] Check visually that Calamares opens from Konsole in the live session (the build and boot test only prove it is installed and the ISO boots).
+
 ## Medium — studies
 
 - [ ] Store proof of concept (D-07) in the VM: AppStream catalogue, `pyalpm` on a temporary database, installation with `pacman -Syu --needed` through a polkit helper, Flatpak with progress and `flatpak-kcm`, and the AUR flow with PKGBUILD, diff and `paru`. Before phase 5.

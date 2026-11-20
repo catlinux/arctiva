@@ -12,6 +12,9 @@ Trabajo pendiente agrupado por prioridad. Fases y decisiones: [hoja de ruta](doc
 
 - [ ] Probar la ISO live en hardware real con un USB (RTX 4060 del PC; portátil con Windows y Manjaro). La entrada «safe graphics» ya funciona en VirtualBox.
 
+- [ ] Compilar los paquetes propios (`packages/`) con la misma fecha del Arch Linux Archive que la ISO, para que Calamares no se compile con bibliotecas más nuevas que las incluidas.
+- [ ] Comprobar a ojo que Calamares abre desde Konsole en la sesión live (la construcción y la prueba de arranque solo demuestran que está instalado y que la ISO arranca).
+
 ## Media: estudios
 
 - [ ] Prueba de concepto de la tienda (D-07) en la VM: catálogo AppStream, `pyalpm` sobre una base temporal, instalación con `pacman -Syu --needed` a través de un ayudante polkit, Flatpak con progreso y `flatpak-kcm`, y flujo del AUR con PKGBUILD, diff y `paru`. Antes de la fase 5.

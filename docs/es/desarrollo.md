@@ -44,6 +44,7 @@ sudo ./build.sh -o ~/out -d latest  # paquetes del día, sin fecha fijada
 - Para fijar otra fecha de paquetes, cambia `iso/archive-date` (formato `AAAA/MM/DD`).
 - La ISO solo arranca en UEFI. La entrada «safe graphics» arranca con `nomodeset`.
 - Prueba de arranque automática, como en el CI: `tests/boot-test.sh ~/out/arctiva-*.iso` (necesita `qemu-system-x86_64`, `OVMF` y `7z`; sin `7z` hay que ejecutarlo con `sudo`). Ruta del firmware en la variable `OVMF`; con acceso a `/dev/kvm` (grupo `kvm`) tarda unos minutos.
+- `build.sh` compila antes los paquetes propios de `packages/` (Calamares y `ckbcomp`) con `packages/build-packages.sh` en un repositorio local `arctiva-local` sin firma (solo hasta la fase 3). Usa `-l <directorio>` para reutilizar uno ya compilado. Añade ~10 minutos y necesita red; los PKGBUILD usan los paquetes del día, no la fecha del Archive.
 - Los servicios del live se activan con `Wants=` en `iso/airootfs/etc/systemd/system/*.target.d/`: el repositorio no guarda enlaces simbólicos porque se edita desde Windows.
 
 ### En cualquier Linux con Docker

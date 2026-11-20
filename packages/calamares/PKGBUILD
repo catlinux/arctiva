@@ -1,0 +1,39 @@
+# SPDX-License-Identifier: GPL-3.0-or-later
+# Maintainer: CatLinux
+pkgname=calamares
+pkgver=3.4.3
+pkgrel=1
+pkgdesc='Instalador de distribuciones (Qt6), compilado para Arctiva'
+arch=(x86_64)
+url='https://calamares.io'
+license=(GPL-3.0-or-later)
+depends=(boost-libs ckbcomp cryptsetup dosfstools efibootmgr gptfdisk icu kconfig
+         kcoreaddons kpmcore libpwquality os-prober parted polkit-qt6 python
+         qt6-base qt6-declarative qt6-svg rsync squashfs-tools yaml-cpp)
+makedepends=(cmake extra-cmake-modules ninja qt6-tools)
+source=("https://codeberg.org/Calamares/calamares/releases/download/v${pkgver}/calamares-${pkgver}.tar.gz"{,.asc})
+sha256sums=('144cbbf6bdcebfb21685950db4f0777218519df095f62f4aa392f28348110d18'
+            'SKIP')
+# Clave primaria del mantenedor; firma con la subclave 6D08 3784 1C06 8A23 3F24 127B 14B6 CC38 1BC2 56D6.
+# build-packages.sh la importa desde keys/pgp/ (makepkg no lo hace solo).
+validpgpkeys=(00ACD15E25A79FEE028B0EE57FEA3DA6169C77D6)
+
+build() {
+    # Se omiten los módulos de otras distribuciones, ZFS, dracut, OpenRC y los que no usamos.
+    cmake -S "calamares-${pkgver}" -B build -G Ninja \
+        -DCMAKE_BUILD_TYPE=Release \
+        -DCMAKE_INSTALL_PREFIX=/usr \
+        -DCMAKE_INSTALL_LIBDIR=lib \
+        -DWITH_QT6=ON \
+        -DBUILD_TESTING=OFF \
+        -DBUILD_CRASH_REPORTING=OFF \
+        -DINSTALL_CONFIG=OFF \
+        -DSKIP_MODULES="dracut dracutlukscfg dummycpp dummyprocess dummypython \
+fsresizer initramfs initramfscfg interactiveterminal mkinitfs openrcdmcryptcfg \
+plasmalnf plymouthcfg services-openrc tracking zfs zfshostid"
+    cmake --build build
+}
+
+package() {
+    DESTDIR="$pkgdir" cmake --install build
+}

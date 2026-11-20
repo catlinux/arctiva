@@ -43,4 +43,5 @@ Las copias y los forks deben conservar esta atribución y enlazar a https://gith
 
 ### Material de terceros
 
+- `packages/calamares` compila [Calamares](https://calamares.io) (GPL-3.0-or-later, © los autores de Calamares) y `packages/ckbcomp` empaqueta `ckbcomp` de [console-setup](https://salsa.debian.org/installer-team/console-setup) (GPL-2.0-or-later, © Anton Zinoviev). Los PKGBUILD son GPL-3.0-or-later.
 - `iso/` deriva del perfil `releng` de [archiso](https://gitlab.archlinux.org/archlinux/archiso) 92 (GPL-3.0-or-later, © los autores de archiso); los archivos adaptados y copiados conservan esa licencia.

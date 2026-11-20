@@ -1,0 +1,18 @@
+# SPDX-License-Identifier: GPL-3.0-or-later
+# Maintainer: CatLinux
+# ckbcomp es un script Perl de console-setup (GPL-2.0-or-later, Anton Zinoviev).
+pkgname=ckbcomp
+pkgver=1.249
+pkgrel=1
+pkgdesc='Compila distribuciones de teclado XKB; lo usa Calamares'
+arch=(any)
+url='https://salsa.debian.org/installer-team/console-setup'
+license=(GPL-2.0-or-later)
+depends=(perl xkeyboard-config)
+source=("https://deb.debian.org/debian/pool/main/c/console-setup/console-setup_${pkgver}.tar.xz")
+# Suma publicada en console-setup_${pkgver}.dsc de Debian.
+sha256sums=('2042e268b085ad900f2f9863715d67fadb95b8994554f10d407fc14f224b73ae')
+
+package() {
+    install -Dm755 console-setup/Keyboard/ckbcomp "$pkgdir/usr/bin/ckbcomp"
+}

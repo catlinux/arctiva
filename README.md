@@ -43,4 +43,5 @@ Copies and forks must keep this attribution and link to https://github.com/catli
 
 ### Third-party material
 
+- `packages/calamares` builds [Calamares](https://calamares.io) (GPL-3.0-or-later, © the Calamares authors) and `packages/ckbcomp` packages `ckbcomp` from [console-setup](https://salsa.debian.org/installer-team/console-setup) (GPL-2.0-or-later, © Anton Zinoviev). The PKGBUILDs are GPL-3.0-or-later.
 - `iso/` is derived from the `releng` profile of [archiso](https://gitlab.archlinux.org/archlinux/archiso) 92 (GPL-3.0-or-later, © the archiso authors); adapted and copied files keep that licence.
