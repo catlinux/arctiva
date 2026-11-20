@@ -1,16 +1,16 @@
-# Archtiva
+# Arctiva
 
 **Linux, without the barriers.**
 
 > Versión en castellano: [README.es.md](README.es.md)
 
-Archtiva is a Linux distribution based on Arch Linux. It keeps Arch's official repositories, pacman and its rolling-release model, and adds a graphical installer, a Windows-friendly KDE Plasma desktop, simple updates with automatic snapshots, and hassle-free gaming and graphics drivers.
+Arctiva is a Linux distribution based on Arch Linux. It keeps Arch's official repositories, pacman and its rolling-release model, and adds a graphical installer, a Windows-friendly KDE Plasma desktop, simple updates with automatic snapshots, and hassle-free gaming and graphics drivers.
 
-Archtiva is an independent project. It is not affiliated with or endorsed by Arch Linux.
+Arctiva is an independent project. It is not affiliated with or endorsed by Arch Linux.
 
 ## Status
 
-**Early design stage (0.1.0).** There is no ISO to download yet. The architecture is a proposal pending approval.
+**Early design stage.** There is no ISO to download yet. The architecture is a proposal under review.
 
 - [Architecture and decisions](docs/en/architecture.md)
 - [Roadmap](docs/en/roadmap.md)

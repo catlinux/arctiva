@@ -8,6 +8,16 @@ El formato se basa en [Keep a Changelog](https://keepachangelog.com/es-ES/1.1.0/
 
 ## [Sin publicar]
 
+## [0.1.1] - 2026-11-20
+
+### Cambiado
+
+- El proyecto pasa a llamarse Arctiva en lugar de Archtiva, también en los nombres de paquetes, repositorio e ISO.
+- D-03: Calamares sigue como motor de instalación, con la interfaz rehecha en QML y una hoja de estilo Qt para que lleve la identidad del proyecto, sin parchear su código.
+- D-07: la tienda ofrecerá los repositorios oficiales, Flathub y el AUR como fuentes separadas, con el AUR desactivado por defecto y con avisos; la solución concreta pasa a estudio.
+- D-13: identidad actualizada con el nombre nuevo.
+- D-14 aprobada: ISO de menos de 2 GiB publicada en GitHub Releases.
+
 ## [0.1.0] - 2026-11-20
 
 ### Añadido

@@ -1,6 +1,6 @@
-# Archtiva architecture
+# Arctiva architecture
 
-> **Status:** proposal pending approval (version 0.1.0).
+> **Status:** proposal under review (version 0.1.1). D-14 approved; D-03, D-07 and D-13 revised after the first review.
 > Versión en castellano: [../es/arquitectura.md](../es/arquitectura.md)
 
 This document analyses the project's feasibility and records the architecture decisions (D-01…D-16) with their rationale. Each approved decision will be marked **Approved**; decisions that change are rewritten here, and the change is recorded in the CHANGELOG.
@@ -21,9 +21,9 @@ What is **not** realistic and will not be promised:
 
 | Initial idea | Problem | Proposal |
 |---|---|---|
-| "No own repositories" | The installer (Calamares is not in the official repositories), the branding and the in-house tools need a channel to reach and update users. | A **minimal, signed** repository (`[archtiva]`) containing only our own packages and the essentials that Arch does not ship. It never contains modified official packages (D-01). |
-| AUR inside the store | The AUR is unreviewed: anyone can publish scripts that run with build permissions. Putting it in a store for users coming from Windows is a security risk. | The AUR is an advanced option that users enable deliberately, with a warning, and it is never part of the store (D-07). |
-| A store mixing pacman, AUR and Flatpak | On Arch, Discover with PackageKit works poorly: the ArchWiki advises against using PackageKit front-ends to upgrade, and KDE calls Arch support very poor. Background database refreshes can cause partial upgrades, which Arch does not support. | Store = Discover with Flatpak/Flathub and firmware only. System packages are installed from a curated catalogue in Archtiva Center that always upgrades the whole system (D-07). |
+| "No own repositories" | The installer (Calamares is not in the official repositories), the branding and the in-house tools need a channel to reach and update users. | A **minimal, signed** repository (`[arctiva]`) containing only our own packages and the essentials that Arch does not ship. It never contains modified official packages (D-01). |
+| AUR inside the store | The AUR is unreviewed: anyone can publish scripts that run with build permissions. For users coming from Windows this is a security risk. | Accepted with conditions: a separate, clearly visible source, disabled until the user enables it, a warning before every installation and a viewable PKGBUILD (D-07). |
+| A store mixing pacman, AUR and Flatpak | On Arch, Discover with PackageKit works poorly: the ArchWiki advises against using PackageKit front-ends to upgrade, and KDE calls Arch support very poor. Background database refreshes can cause partial upgrades, which Arch does not support. | A store that keeps the three sources apart and never leaves the system partially upgraded. The concrete solution comes from a dedicated study (D-07). |
 | A complete ISO on GitHub | GitHub Releases requires each file to be under 2 GiB. | An ISO under 2 GiB with the full desktop, with extras downloaded during installation; fallback to an external mirror (D-14). |
 
 ## 3. Architecture decisions
@@ -31,20 +31,27 @@ What is **not** realistic and will not be promised:
 ### D-01 Base: unmodified Arch plus a minimal own repository
 
 - Official `core`, `extra` and `multilib` repositories, unchanged and without delays. Pacman remains the only system package manager.
-- A GPG-signed `[archtiva]` repository hosted on GitHub, containing our own packages (`archtiva-settings`, `archtiva-branding`, `archtiva-keyring`, `archtiva-center`, Calamares configuration) and builds of the essentials that only exist in the AUR (`calamares`, `ckbcomp`).
+- A GPG-signed `[arctiva]` repository hosted on GitHub, containing our own packages (`arctiva-settings`, `arctiva-branding`, `arctiva-keyring`, `arctiva-center`, Calamares configuration) and builds of the essentials that only exist in the AUR (`calamares`, `ckbcomp`).
 - Forbidden: repackaging or holding back official packages. If an official package breaks, the response is warnings and snapshots, not a fork.
 
 ### D-02 ISO build: archiso
 
-- `archiso` is the official tool Arch uses to build its own ISO. The Archtiva profile derives from the `releng` profile.
+- `archiso` is the official tool Arch uses to build its own ISO. The Arctiva profile derives from the `releng` profile.
 - **Reproducibility:** each release pins a date of the Arch Linux Archive (`archive.archlinux.org/repos/YYYY/MM/DD`), so a given ISO can be rebuilt with the same packages. The build script and the pinned date are versioned.
 
-### D-03 Installer: Calamares
+### D-03 Installer: a tailored Calamares
 
-- Alternatives considered: **archinstall** (official but text-only), **Anaconda** (tied to Fedora), **an in-house installer** (huge cost and partitioning risk).
-- **Calamares**: a mature Qt installer (a good fit with KDE), modular and brandable, used by EndeavourOS, Manjaro, KaOS, Debian live and others. It covers language, keyboard, time zone, users, manual and automatic partitioning, installing alongside Windows, UEFI and LUKS encryption.
+- Alternatives considered: **archinstall** (official but text-only), **Anaconda** (tied to Fedora), the Ubuntu, elementary/Pop!_OS and Vanilla OS installers (each tied to its distribution) and **an in-house installer** (huge cost; partitioning, especially resizing Windows for dual boot, is where data loss is most likely).
+- **Calamares** is the engine: mature, Qt-based (a good fit with KDE), modular, used by EndeavourOS, Manjaro, KaOS, Debian live and others. It covers language, keyboard, time zone, users, manual and automatic partitioning, installing alongside Windows, UEFI and LUKS encryption.
+- **Its plain look is the default configuration, not a limitation.** The interface is rebuilt in QML so that it carries the Arctiva identity:
+  - Custom QML sidebar and navigation (`sidebar: qml` and `navigation: qml` in the branding).
+  - QML versions of the pages (`welcomeq`, `localeq`, `keyboardq`, `usersq`, `summaryq`) with our own design, plus our own QML pages where they add value (for example, choosing a profile: Basic, Gaming, Office).
+  - The partitioning page has no QML version: it is integrated through a Qt stylesheet (`stylesheet.qss`) so it follows the same design.
+  - A QML slideshow while files are copied.
+  - **No patches to Calamares' C++ code**: only configuration, branding and our own modules (QML or Python). If a patch is ever needed, it is proposed upstream.
+- If the result fell short, the alternative would be a custom interface on top of the archinstall engine, solving Windows partition resizing separately. It would be assessed with a prototype.
 - Install mode: **offline**, copying the already tested live system (`unpackfs` module) and removing live-only bits. Then **optional online extras** (gaming, office…) through the `netinstall` module when a connection is available. This is fast, works without a network, and what gets installed is what was tested.
-- Risk: Calamares is not in the official repositories. It is built into `[archtiva]` and its releases are tracked (the 3.4 series is active in 2026).
+- Risk: Calamares is not in the official repositories. It is built into `[arctiva]` and its releases are tracked (the 3.4 series is active in 2026). Its QML API changes between releases, so the version is pinned in our repository and every update is tested before release.
 
 ### D-04 Disk, boot and recovery
 
@@ -67,16 +74,22 @@ Arch does not provide Secure Boot out of the box (the signed `shim` is in the AU
 - Wayland session by default (KDE has announced that it is dropping Plasma's X11 session).
 - Login manager: **Plasma Login Manager** (KDE's official one, in `extra`). Its Breeze look is fixed, so the identity is limited to the wallpaper and colours. Fallback: SDDM with a custom theme if the former falls short.
 
-### D-07 Applications: store, catalogue and AUR
+### D-07 Applications: store and sources (**under study**)
 
-- **Store:** KDE Discover with the **Flatpak (Flathub)** and **fwupd** (firmware) back-ends only. Flathub is the default source of desktop applications: they are sandboxed, their permissions are visible and adjustable, and they update independently of the system. Discover shows the origin of every application.
-- Discover's PackageKit back-end is **not installed** (see section 2).
-- **System packages** (drivers, codecs, printing, Steam, gaming tools): a curated catalogue in Archtiva Center (D-09), installed with `pacman -Syu --needed <packages>` so the system is always up to date first, which avoids partial upgrades.
-- **AUR:** an advanced option, disabled by default. It is enabled from Archtiva Center with a clear warning, which installs a helper (`paru`) from `[archtiva]`. It is never part of the store.
+Fixed requirements:
+
+- A graphical store to search, install, update and remove software from **three sources**: the official repositories (pacman), Flathub (Flatpak) and the AUR.
+- The origin of every application is always visible, with a distinct badge per source. If an application exists in several sources, they are shown as separate options with one marked as recommended.
+- **AUR:** disabled by default. When enabling it, and before every installation, a clear warning that it is unreviewed community software, with a viewable PKGBUILD. Packages are built without root through a helper (`paru`) from `[arctiva]`.
+- **pacman integrity:** no operation refreshes the databases without upgrading the whole system. Installing a repository package on an outdated system requires upgrading first.
+- Flatpak permissions visible and adjustable. Understandable errors, with the original text available.
+- Already rejected: Discover's PackageKit back-end, because of the risk of partial upgrades (section 2).
+
+Options to study: Discover with a custom back-end for pacman and the AUR, Pamac, Bauh, Octopi, and our own Qt/QML store on top of libalpm, paru and libflatpak. Criteria: long-term maintenance, security, Plasma integration, look and licence. Expected outcome: the final decision backed by a proof of concept. Meanwhile, the live ISO uses Discover with Flathub.
 
 ### D-08 Updates
 
-In the Archtiva Center update module:
+In the Arctiva Center update module:
 
 1. Detect updates with `checkupdates` (pacman-contrib), which uses a temporary database and cannot cause partial upgrades.
 2. Show the archlinux.org news published since the last upgrade. If an item requires manual intervention, the process stops until the user has read it, with the explanation and the concrete action.
@@ -90,11 +103,11 @@ Before writing this logic, reusing **arch-update** will be evaluated (an AUR too
 
 ### D-09 In-house tools: a single application
 
-**Archtiva Center**, in Python 3 + PySide6 (Qt 6, both in the official repositories), with `pyalpm` for read-only queries. Modules: first-boot welcome, drivers, updates, extras (catalogue) and advanced options (AUR). Privileged actions go through a polkit helper exposing a **closed set of operations**, never arbitrary commands. One application instead of several keeps maintenance down.
+**Arctiva Center**, in Python 3 + PySide6 (Qt 6, both in the official repositories), with `pyalpm` for read-only queries. Modules: first-boot welcome, drivers, updates and extras (catalogue). The store will be integrated here or be a separate application, depending on the D-07 study. Privileged actions go through a polkit helper exposing a **closed set of operations**, never arbitrary commands. One application instead of several keeps maintenance down.
 
 ### D-10 Graphics
 
-Detection with `lspci` and a mapping file (family → packages), shared by the installer and Archtiva Center.
+Detection with `lspci` and a mapping file (family → packages), shared by the installer and Arctiva Center.
 
 | GPU | Packages |
 |---|---|
@@ -109,7 +122,7 @@ Detection with `lspci` and a mapping file (family → packages), shared by the i
 - `multilib` enabled by default.
 - Native Steam (`steam`, from multilib), `gamemode`, `mangohud`, `gamescope`; Proton is managed from Steam.
 - Heroic (Epic/GOG) and ProtonPlus or ProtonUp-Qt as Flatpaks; Lutris from `extra`.
-- Installed as a "Gaming" profile during installation or from Archtiva Center.
+- Installed as a "Gaming" profile during installation or from Arctiva Center.
 
 ### D-12 Windows software
 
@@ -120,11 +133,13 @@ Detection with `lspci` and a mapping file (family → packages), shared by the i
 
 ### D-13 Identity and trademark
 
-- Arch's trademark policy allows saying "based on Arch Linux" but not using its marks to name the product or implying that it is official. **Before publishing**, `trademarks@archlinux.org` will be asked whether the name "Archtiva" is acceptable.
-- The logo must not resemble the Arch logo. The current draft (an "A" with an inner curve) is too close; it needs to move away from it and exist as vector art (SVG), with a monochrome variant for small icons and the boot splash.
-- Arch does not support derivatives: Archtiva will have its own help channels and will never send users to the Arch forums.
+- Name: **Arctiva** (formerly "Archtiva"). It no longer contains the "Arch" mark. Arch's trademark policy allows describing it as "based on Arch Linux"; it will never present itself as official.
+- No distribution or software with this name has been found. There is a registered US trademark "ARCTIVA" in class 5 (pharmaceuticals), which is distinct from software (class 9). Low risk; to be reviewed before 1.0.
+- Our own vector logo in `branding/logo/`: an open arch, like a gateway without barriers, crossed by a glowing orbit. Its rounded shape is distinct from the peak of the Arch logo. Colour, monochrome and app-icon variants are provided.
+- The name and logo are not covered by the code licence: their use is governed by [TRADEMARKS.md](../../TRADEMARKS.md).
+- Arch does not support derivatives: Arctiva will have its own help channels and will never send users to the Arch forums.
 
-### D-14 ISO distribution
+### D-14 ISO distribution (**Approved**)
 
 GitHub Releases accepts files **under 2 GiB** each, with no limit on total size or bandwidth. Options considered:
 
@@ -149,21 +164,22 @@ To stay under 2 GiB: a selection of Plasma packages instead of every meta-packag
 
 ### D-16 Versioning
 
-- The project follows SemVer `x.y.z` (`VERSION` file). Each published ISO carries the project version: `archtiva-X.Y.Z-x86_64.iso`.
+- The project follows SemVer `x.y.z` (`VERSION` file). Each published ISO carries the project version: `arctiva-X.Y.Z-x86_64.iso`.
 - Before 1.0: each completed phase bumps the minor version; fixes and documentation bump the patch.
 - From 1.0: major when users must migrate (for example, a different subvolume layout), minor when features are added, patch for fixes or rebuilds.
-- Each `[archtiva]` package has its own `pkgver` in its PKGBUILD.
+- Each `[arctiva]` package has its own `pkgver` in its PKGBUILD.
 
 ## 4. What we build and what we integrate
 
 | In-house (small) | Integrated, no own code |
 |---|---|
 | archiso profile and build scripts | Arch Linux (core, extra, multilib), pacman |
-| Calamares configuration and branding | Calamares, KDE Plasma, Discover, Flatpak/Flathub |
-| `archtiva-settings` (defaults) | Btrfs, Snapper, snap-pac, grub-btrfs, zram-generator |
-| `archtiva-branding` (logo, wallpapers, Plymouth, global theme) | Mesa, NVIDIA open, Vulkan, firmware, fwupd |
-| `archtiva-keyring` and the `[archtiva]` repository | Steam, Proton, Lutris, Heroic, Bottles, gamemode, MangoHud |
-| Archtiva Center (welcome, drivers, updates, extras) | reflector, pacman-contrib, CUPS, ufw + plasma-firewall |
+| Calamares QML interface, configuration and branding | Calamares, KDE Plasma, Discover, Flatpak/Flathub |
+| Store (according to the D-07 study) | libalpm, paru, libflatpak |
+| `arctiva-settings` (defaults) | Btrfs, Snapper, snap-pac, grub-btrfs, zram-generator |
+| `arctiva-branding` (logo, wallpapers, Plymouth, global theme) | Mesa, NVIDIA open, Vulkan, firmware, fwupd |
+| `arctiva-keyring` and the `[arctiva]` repository | Steam, Proton, Lutris, Heroic, Bottles, gamemode, MangoHud |
+| Arctiva Center (welcome, drivers, updates, extras) | reflector, pacman-contrib, CUPS, ufw + plasma-firewall |
 | GitHub Actions workflows and tests | arch-update (if the evaluation confirms it) |
 
 ## 5. Main risks
@@ -175,8 +191,8 @@ To stay under 2 GiB: a selection of Plasma packages instead of every meta-packag
 | Calamares or KDE changes | Medium | Configuration only, versions tracked in CI |
 | Secure Boot required on some machines | Medium | Clear documentation; `sbctl` later |
 | ISO over 2 GiB | Medium | Package selection and an external mirror |
-| Name and logo versus the Arch trademark | Medium | Ask Arch and use a distinct logo before publishing |
-| AUR security | Medium | Kept out of the store, optional with a warning |
+| Name and logo versus other trademarks | Low | Name without "Arch", own logo, review before 1.0 |
+| AUR security | Medium | Disabled by default, kept separate and with warnings in the store |
 | Repository signing keys | High | Offline primary key; signing subkey in Actions secrets |
 | VirtualBox tests not representative (3D, Wayland) | Medium | Live-USB tests on real hardware before every release |
 
@@ -186,9 +202,9 @@ To stay under 2 GiB: a selection of Plasma packages instead of every meta-packag
 
 | Machine | CPU | RAM | Disk | Notes |
 |---|---|---|---|---|
-| Build VM (Arch Linux) | 4–6 vCPU | 8 GB | 80 GB dynamic | EFI. Builds packages and the ISO. The current "Archtiva" VM has 2 vCPU, 4 GB and 10 GB, so it needs to be enlarged |
+| Build VM (Arch Linux) | 4–6 vCPU | 8 GB | 80 GB dynamic | EFI. Builds packages and the ISO. The current "Arctiva" VM has 2 vCPU, 4 GB and 10 GB, so it needs to be enlarged |
 | ISO test VM | 2–4 vCPU | 4 GB | 40 GB dynamic | EFI, VMSVGA with 128 MB video memory. Recreated for every test |
 | Real hardware | — | — | USB stick of 8 GB or more | The host's RTX 4060 can be used to test NVIDIA from the live USB |
 | GitHub Actions | standard runner | 16 GB | ~14 GB free | Enough for an ISO under 2 GiB |
 
-**Archtiva minimum requirements (target):** x86-64 with UEFI, 4 GB RAM (8 GB recommended), 40 GB disk (64 GB recommended because of snapshots), and a Vulkan-capable GPU for gaming.
+**Arctiva minimum requirements (target):** x86-64 with UEFI, 4 GB RAM (8 GB recommended), 40 GB disk (64 GB recommended because of snapshots), and a Vulkan-capable GPU for gaming.
