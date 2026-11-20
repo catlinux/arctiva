@@ -22,6 +22,9 @@ Uso: sudo ./build.sh [-d AAAA/MM/DD|latest] [-o salida] [-w trabajo]
       (por defecto: ${work_dir}). No uses /tmp: está en RAM.
   -l  Directorio con un repositorio pacman «arctiva-local» ya compilado
       (por defecto se compila uno desde packages/ en un directorio temporal).
+  -c  Directorio que se conserva entre construcciones para el repositorio local:
+      solo se recompila lo que ha cambiado de versión (y siempre la configuración
+      del instalador). Ahorra compilar Calamares en cada ISO.
   -k  Conservar el directorio de trabajo (para medir qué ocupa espacio).
 EOF
 }
@@ -30,9 +33,11 @@ die() { echo "build.sh: $*" >&2; exit 1; }
 
 keep_work=0
 local_repo=""
-while getopts 'd:o:w:l:kh' opt; do
+cache_repo=""
+while getopts 'd:o:w:l:c:kh' opt; do
     case "$opt" in
         k) keep_work=1 ;;
+        c) cache_repo="$OPTARG" ;;
         l) local_repo="$OPTARG" ;;
         d) archive_date="$OPTARG" ;;
         o) out_dir="$OPTARG" ;;
@@ -65,7 +70,10 @@ else
 fi
 
 # Paquetes propios (packages/): repositorio local sin firma, solo hasta que exista el firmado (fase 3).
-if [[ -z "$local_repo" ]]; then
+if [[ -n "$cache_repo" ]]; then
+    local_repo="$cache_repo"
+    "${repo_dir}/packages/build-packages.sh" "$local_repo"
+elif [[ -z "$local_repo" ]]; then
     local_repo="$(mktemp -d /var/tmp/arctiva-repo.XXXXXX)"
     trap 'rm -rf -- "$stage" "$local_repo"' EXIT
     "${repo_dir}/packages/build-packages.sh" "$local_repo"

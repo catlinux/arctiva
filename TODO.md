@@ -10,8 +10,6 @@ Pending work grouped by priority. Phases and decisions: [roadmap](docs/en/roadma
 
 ## Medium — phase 1 follow-up
 
-- [ ] Test the live ISO on real hardware from a USB stick (the PC's RTX 4060; laptop with Windows and Manjaro). The "safe graphics" entry already works in VirtualBox.
-
 - [ ] Build the in-house packages (`packages/`) against the same Arch Linux Archive date as the ISO, so Calamares is never built with newer libraries than the ones shipped.
 
 ## Medium — phase 2 (installer)
@@ -20,9 +18,10 @@ Pending work grouped by priority. Phases and decisions: [roadmap](docs/en/roadma
 - [ ] `/etc/os-release` says "Arch Linux": the Arctiva identity package (`arctiva-branding`/`arctiva-settings`) will change it.
 - [ ] Have the installer pick fast mirrors (`reflector`) before `pacman -Syu`: the installed system keeps every HTTPS mirror in the default order.
 - [ ] Warn on the summary page when the root is not Btrfs (manual mode): there will be no snapshots (step 2.4).
-- [ ] "Check" page texts live in the QML itself (Spanish, Catalan and English); move them to the branding translations with the rest of the interface (step 2.4).
-- [ ] Remove Discover from the installed system (D-07: live only): it is still installed and shows "Update problem" when opened. In `prepare-target`, next to Calamares.
-- [ ] Test in a new ISO the last two 0.2.4 changes: translated step names in the sidebar and BitLocker detected with `blkid -p`.
+- [ ] The installer's QML pages carry their texts in Spanish, Catalan and English inside the QML itself; move them to branding translations (`.ts`) so more languages can be added.
+- [ ] Offline map on the "Language and region" page: Calamares' map downloads tiles from the Internet, so the page currently uses lists only.
+- [ ] Basic, Gaming and Office profiles: `packagechooserq` only allows one choice, so decide between the widget `packagechooser` (`optionalmultiple`) and `netinstall`, and define each profile's packages (Gaming needs `multilib`).
+- [ ] After switching language on the welcome page, the requirement texts stay in the language they were checked in (Calamares builds them before the choice): re-run the check or translate them in the page.
 - [ ] Move `zram-generator.conf` from `iso/airootfs/` to the `arctiva-settings` package when it exists.
 
 ## Medium — studies
@@ -33,6 +32,7 @@ Pending work grouped by priority. Phases and decisions: [roadmap](docs/en/roadma
 ## Later
 
 - Phases 2 to 7 as described in the roadmap.
+- Real-hardware tests (USB stick on the PC with the RTX 4060; laptop with Windows and Manjaro), only at the end, with everything implemented (phase 7). The "safe graphics" entry already works in VirtualBox.
 - Convert the tagline in `branding/logo/arctiva-logo.svg`, currently live text, to paths once the corporate typeface is chosen (D-13).
 - Hibernation: an `@swap` subvolume with a swap file alongside zram (D-04). Out of scope for 1.0, which only has suspend.
 - Bit-for-bit reproducible ISO: two builds with the same Arch Linux Archive date have the same packages and size but different checksums (D-02).

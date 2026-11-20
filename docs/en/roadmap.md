@@ -45,18 +45,16 @@ Status of each work item: `[x]` done (with the version that closed it) and `[ ]`
 - [x] CI workflow with build and QEMU boot test (0.2.0)
 - [x] Docker build on any Linux (0.2.0)
 - [x] `tests/run-live.sh`: boot and view the ISO in the browser from another computer (0.2.0)
-- [ ] Test on real hardware from a USB stick (NVIDIA RTX 4060)
 
 ### Phase 2: installer (0.3.0)
 
-- [ ] `calamares` 3.4.3 and `ckbcomp` packages, and a local repository for the ISO
-- [ ] Base configuration: automatic and manual partitioning, Btrfs with subvolumes, optional LUKS1 with a single passphrase, GRUB, Snapper with bootable snapshots
-- [ ] Kernel copied to the installed system, live-only bits removed and `linux-lts` when online
-- [ ] Launcher and "Check" page (BitLocker, Windows Fast Startup)
+- [x] `calamares` 3.4.3 and `ckbcomp` packages, and a local repository for the ISO (0.2.1)
+- [x] Base configuration: automatic and manual partitioning, Btrfs with subvolumes, optional LUKS1 with a single passphrase, GRUB, Snapper with bootable snapshots (0.2.2)
+- [x] Kernel copied to the installed system, live-only bits removed and `linux-lts` when online (0.2.2)
+- [x] Launcher and "Check" page (BitLocker, Windows Fast Startup) (0.2.3)
 - [ ] QML interface with the Arctiva identity and approved mock-ups
 - [ ] Basic, Gaming and Office profiles
-- [ ] Tests: installation without a terminal, alongside Windows, encrypted, manual partitioning
-- [ ] Real test on a laptop with Windows and Manjaro: replace Manjaro with Arctiva from a USB stick, keeping Windows and its EFI partition
+- [ ] Tests in virtual machines: installation without a terminal, alongside Windows, encrypted, manual partitioning
 
 ### Phase 3: own repository and hardware (0.4.0)
 
@@ -91,7 +89,7 @@ Status of each work item: `[x]` done (with the version that closed it) and `[ ]`
 
 ### Phase 7: beta (0.8.0–0.9.x)
 
-- [ ] Real-hardware test matrix
+- [ ] Real-hardware test matrix, once everything is implemented: USB stick on the PC (NVIDIA RTX 4060) and a laptop with Windows and Manjaro (replace Manjaro with Arctiva, keeping Windows and its EFI partition)
 - [ ] User documentation
 - [ ] Signed release (ISO, `sha256`, GPG signature) with an external mirror
 - [ ] Public beta and own help channels

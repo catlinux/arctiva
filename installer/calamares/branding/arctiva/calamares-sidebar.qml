@@ -82,8 +82,8 @@ Rectangle {
                     spacing: 10
 
                     Rectangle {
-                        width: 22
-                        height: 22
+                        Layout.preferredWidth: 22
+                        Layout.preferredHeight: 22
                         radius: 11
                         color: actual ? "#ffffff" : hecho ? "#16306f" : "transparent"
                         border.color: actual ? "#ffffff" : hecho ? "#16306f" : "#3a4f86"

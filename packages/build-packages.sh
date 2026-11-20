@@ -34,8 +34,23 @@ for name in ckbcomp calamares arctiva-calamares-config; do
     for key in "$d"/keys/pgp/*.asc; do
         [[ -e "$key" ]] && sudo -u arctivabuild gpg --batch --quiet --import "$key"
     done
-    sudo -u arctivabuild env PKGDEST="$dest" bash -c \
-        'cd "$1" && makepkg --syncdeps --noconfirm --needed --noprogressbar' _ "$d"
+    # Con un repositorio que se conserva (build.sh -c), lo que ya está con la misma versión no se
+    # recompila. La configuración del instalador cambia sin cambiar de versión: siempre se rehace.
+    if [[ "$name" == arctiva-calamares-config ]]; then
+        rm -f -- "$dest"/arctiva-calamares-config-[0-9]*.pkg.tar.zst
+    fi
+    mapfile -t built < <(sudo -u arctivabuild env PKGDEST="$dest" bash -c \
+        'cd "$1" && makepkg --packagelist' _ "$d")
+    missing=0
+    for pkg in "${built[@]}"; do [[ -e "$pkg" ]] || missing=1; done
+    if (( missing )); then
+        # Versiones anteriores del mismo paquete: fuera, para que el repositorio tenga solo una.
+        rm -f -- "$dest"/"$name"-[0-9]*.pkg.tar.zst
+        sudo -u arctivabuild env PKGDEST="$dest" bash -c \
+            'cd "$1" && makepkg --syncdeps --noconfirm --needed --noprogressbar' _ "$d"
+    else
+        echo "   ya compilado: ${built[*]##*/}"
+    fi
     # Los paquetes dependientes (calamares → ckbcomp) necesitan los anteriores instalados.
     pacman -U --noconfirm --needed "$dest"/"$(basename -- "$d")"-[0-9]*.pkg.tar.zst >/dev/null
 done

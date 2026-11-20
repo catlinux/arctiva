@@ -22,7 +22,8 @@ done
 (( found )) || { echo "prepare-target: no hay ningún kernel en /usr/lib/modules." >&2; exit 1; }
 
 # Paquetes que solo sirven en la live. -s quita también sus dependencias huérfanas (kpmcore, ckbcomp…).
-live_only=(arctiva-calamares-config calamares mkinitcpio-archiso)
+# Discover tampoco va en el sistema instalado (D-07): la tienda será la de Arctiva Center.
+live_only=(arctiva-calamares-config calamares mkinitcpio-archiso discover)
 mapfile -t installed < <(in_target pacman -Qq "${live_only[@]}" 2>/dev/null || true)
 if (( ${#installed[@]} )); then
     in_target pacman -Rns --noconfirm -- "${installed[@]}"

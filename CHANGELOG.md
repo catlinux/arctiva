@@ -8,6 +8,32 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 
 ## [Unreleased]
 
+## [0.2.6] - 2026-11-20
+
+Phase 2, step 4 (second part): Arctiva's own installer QML pages. Awaiting the user's approval with screenshots. Profiles are postponed: `packagechooserq` only allows one choice.
+
+### Added
+
+- Arctiva QML pages for welcome, language and region, keyboard, account, summary and finish, with the mock-up colours and texts in Spanish, Catalan and English. Language and region works offline (lists instead of Calamares' map, which downloads its tiles from the Internet). The keyboard page searches layouts and has a test field; the account page shows password strength.
+- Own slideshow during the installation: snapshots, Plasma, an up-to-date Arch base and encryption.
+- `build.sh -c <dir>`: a local repository kept between builds; only what changes version is rebuilt (the installer configuration, always). Avoids building Calamares for every ISO.
+
+### Changed
+
+- The installer uses Calamares' QML modules (`welcomeq`, `localeq`, `keyboardq`, `usersq`, `summaryq`, `finishedq`) instead of the widget ones, except for the disk page.
+
+## [0.2.5] - 2026-11-20
+
+Installer fix (patch). Tested in QEMU with the 0.2.5 ISO: the installed system boots without Discover or Calamares; the two remaining 0.2.4 changes were also checked (BitLocker detected with `blkid -p` and translated step names).
+
+### Fixed
+
+- Discover was still on the installed system and showed "Update problem" when opened: target preparation now removes it along with Calamares (D-07; it stays on the live ISO).
+
+### Changed
+
+- Real-hardware tests (PC with NVIDIA and laptop with Windows and Manjaro) move to phase 7: they will be done at the end, with everything implemented. Phase 2 closes with virtual-machine tests.
+
 ## [0.2.4] - 2026-11-20
 
 Phase 2, step 4 (first part): installer identity. Awaiting the user's approval with screenshots; the QML pages (`*q`) and the slideshow are left for the second part. "Install alongside" was also tested in QEMU (80 GB disk, simulated 60 GB NTFS): Calamares shrinks it with `ntfsresize`, installs and boots, and the NTFS stays healthy; `os-prober` does not recognise the simulated Windows and will be checked with a real one (step 2.5).

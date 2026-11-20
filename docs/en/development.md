@@ -44,7 +44,7 @@ sudo ./build.sh -o ~/out -d latest  # today's packages, no pinned date
 - To pin another package date, change `iso/archive-date` (format `YYYY/MM/DD`).
 - The ISO only boots in UEFI mode. The "safe graphics" entry boots with `nomodeset`.
 - Automatic boot test, as in CI: `tests/boot-test.sh ~/out/arctiva-*.iso` (needs `qemu-system-x86_64`, `OVMF` and `7z`; without `7z` it must run with `sudo`). Firmware path in the `OVMF` variable; with access to `/dev/kvm` (`kvm` group) it takes a few minutes.
-- `build.sh` first builds the in-house packages in `packages/` (Calamares and `ckbcomp`) and `installer/` with `packages/build-packages.sh` into an unsigned local `arctiva-local` repository (only until phase 3). Use `-l <dir>` to reuse a prebuilt one. It adds ~10 minutes and needs network; the PKGBUILDs use current packages, not the Archive date.
+- `build.sh` first builds the in-house packages in `packages/` (Calamares and `ckbcomp`) and `installer/` with `packages/build-packages.sh` into an unsigned local `arctiva-local` repository (only until phase 3). Use `-l <dir>` to reuse a prebuilt one, or `-c <dir>` to keep the repository between builds: only packages whose version changed are rebuilt (the installer configuration always is), so Calamares is not compiled for every ISO. Clear that directory when `iso/archive-date` changes. It adds ~10 minutes and needs network; the PKGBUILDs use current packages, not the Archive date.
 - Live services are enabled with `Wants=` in `iso/airootfs/etc/systemd/system/*.target.d/`: the repository holds no symbolic links because it is edited from Windows.
 
 ### On any Linux with Docker

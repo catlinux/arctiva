@@ -10,8 +10,6 @@ Trabajo pendiente agrupado por prioridad. Fases y decisiones: [hoja de ruta](doc
 
 ## Media: seguimiento de la fase 1
 
-- [ ] Probar la ISO live en hardware real con un USB (RTX 4060 del PC; portátil con Windows y Manjaro). La entrada «safe graphics» ya funciona en VirtualBox.
-
 - [ ] Compilar los paquetes propios (`packages/`) con la misma fecha del Arch Linux Archive que la ISO, para que Calamares no se compile con bibliotecas más nuevas que las incluidas.
 
 ## Media: fase 2 (instalador)
@@ -20,9 +18,10 @@ Trabajo pendiente agrupado por prioridad. Fases y decisiones: [hoja de ruta](doc
 - [ ] `/etc/os-release` dice «Arch Linux»: lo cambiará el paquete de identidad de Arctiva (`arctiva-branding`/`arctiva-settings`).
 - [ ] Que el instalador elija mirrors rápidos (`reflector`) antes de `pacman -Syu`: el sistema instalado se queda con todos los mirrors HTTPS en el orden por defecto.
 - [ ] Avisar en la página de resumen si la raíz no es Btrfs (modo manual): no habrá instantáneas (paso 2.4).
-- [ ] Textos de la página «Comprobación»: están en el propio QML (castellano, catalán e inglés); pasarlos a las traducciones del branding con el resto de la interfaz (paso 2.4).
-- [ ] Quitar Discover del sistema instalado (D-07: solo en la live): sigue instalado y da «Problema de actualización» al abrirlo. Con `prepare-target`, junto a Calamares.
-- [ ] Probar en una ISO nueva los dos últimos cambios de 0.2.4: nombres de los pasos traducidos en la barra lateral y BitLocker detectado con `blkid -p`.
+- [ ] Las páginas QML del instalador llevan sus textos en castellano, catalán e inglés dentro del propio QML; pasarlos a traducciones del branding (`.ts`) para poder añadir más idiomas.
+- [ ] Mapa sin conexión en la página «Idioma y zona»: el de Calamares descarga los mosaicos de Internet, así que de momento la página usa solo listas.
+- [ ] Perfiles Básico, Juegos y Oficina: `packagechooserq` solo admite una opción, así que hay que elegir entre `packagechooser` de widgets (`optionalmultiple`) y `netinstall`, y definir los paquetes de cada perfil (Juegos necesita `multilib`).
+- [ ] Tras cambiar de idioma en la bienvenida, los textos de los requisitos siguen en el idioma en que se comprobaron (Calamares los genera antes de elegir): repetir la comprobación o traducirlos en la página.
 - [ ] Pasar `zram-generator.conf` de `iso/airootfs/` al paquete `arctiva-settings` cuando exista.
 
 ## Media: estudios
@@ -33,6 +32,7 @@ Trabajo pendiente agrupado por prioridad. Fases y decisiones: [hoja de ruta](doc
 ## Más adelante
 
 - Fases 2 a 7 según la hoja de ruta.
+- Pruebas en hardware real (USB en el PC con la RTX 4060; portátil con Windows y Manjaro), solo al final, con todo implementado (fase 7). La entrada «safe graphics» ya funciona en VirtualBox.
 - Convertir en trazos el lema de `branding/logo/arctiva-logo.svg`, que ahora es texto, cuando se elija la tipografía corporativa (D-13).
 - Hibernación: subvolumen `@swap` con un archivo de intercambio además de zram (D-04). Queda fuera de la 1.0, que solo tiene suspensión.
 - ISO reproducible bit a bit: dos construcciones con la misma fecha del Arch Linux Archive tienen los mismos paquetes y tamaño, pero distinta suma (D-02).

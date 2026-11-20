@@ -40,5 +40,5 @@ style:
     SidebarTextCurrent: "#ffffff"
     SidebarBackgroundCurrent: "#1d4ed8"
 
-slideshow: /usr/share/calamares/branding/default/show.qml
+slideshow: show.qml
 slideshowAPI: 2

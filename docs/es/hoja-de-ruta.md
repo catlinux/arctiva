@@ -45,18 +45,16 @@ Estado de cada trabajo: `[x]` hecho (con la versión en que se cerró) y `[ ]` p
 - [x] Flujo de CI con construcción y prueba de arranque en QEMU (0.2.0)
 - [x] Construcción con Docker en cualquier Linux (0.2.0)
 - [x] `tests/run-live.sh`: arrancar y ver la ISO en el navegador desde otro equipo (0.2.0)
-- [ ] Prueba en hardware real con un USB (NVIDIA RTX 4060)
 
 ### Fase 2: instalador (0.3.0)
 
-- [ ] Paquetes `calamares` 3.4.3 y `ckbcomp`, y repositorio local para la ISO
-- [ ] Configuración base: particionado automático y manual, Btrfs con subvolúmenes, LUKS1 opcional con una sola contraseña, GRUB, Snapper con instantáneas arrancables
-- [ ] Copia del kernel al sistema instalado, limpieza de lo exclusivo de la live y `linux-lts` si hay red
-- [ ] Lanzador y página «Comprobación» (BitLocker, inicio rápido de Windows)
+- [x] Paquetes `calamares` 3.4.3 y `ckbcomp`, y repositorio local para la ISO (0.2.1)
+- [x] Configuración base: particionado automático y manual, Btrfs con subvolúmenes, LUKS1 opcional con una sola contraseña, GRUB, Snapper con instantáneas arrancables (0.2.2)
+- [x] Copia del kernel al sistema instalado, limpieza de lo exclusivo de la live y `linux-lts` si hay red (0.2.2)
+- [x] Lanzador y página «Comprobación» (BitLocker, inicio rápido de Windows) (0.2.3)
 - [ ] Interfaz QML con la identidad de Arctiva y aprobación de las maquetas
 - [ ] Perfiles Básico, Juegos y Oficina
-- [ ] Pruebas: instalación sin terminal, junto a Windows, cifrada, particionado manual
-- [ ] Prueba real en un portátil con Windows y Manjaro: sustituir Manjaro por Arctiva desde un USB, conservando Windows y su partición EFI
+- [ ] Pruebas en máquinas virtuales: instalación sin terminal, junto a Windows, cifrada, particionado manual
 
 ### Fase 3: repositorio propio y hardware (0.4.0)
 
@@ -91,7 +89,7 @@ Estado de cada trabajo: `[x]` hecho (con la versión en que se cerró) y `[ ]` p
 
 ### Fase 7: beta (0.8.0–0.9.x)
 
-- [ ] Matriz de pruebas en hardware real
+- [ ] Matriz de pruebas en hardware real, cuando todo esté implementado: USB en el PC (NVIDIA RTX 4060) y portátil con Windows y Manjaro (sustituir Manjaro por Arctiva conservando Windows y su partición EFI)
 - [ ] Documentación de usuario
 - [ ] Publicación firmada (ISO, `sha256`, firma GPG) con réplica externa
 - [ ] Beta pública y canales de ayuda propios

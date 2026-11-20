@@ -8,6 +8,32 @@ El formato se basa en [Keep a Changelog](https://keepachangelog.com/es-ES/1.1.0/
 
 ## [Sin publicar]
 
+## [0.2.6] - 2026-11-20
+
+Fase 2, paso 4 (segunda parte): páginas QML propias del instalador. Pendiente de la aprobación del usuario con capturas. Los perfiles se aplazan: `packagechooserq` solo admite una opción.
+
+### Añadido
+
+- Páginas QML de Arctiva para la bienvenida, idioma y zona, teclado, cuenta, resumen y fin, con los colores de las maquetas y textos en castellano, catalán e inglés. La de idioma y zona funciona sin conexión (listas en lugar del mapa de Calamares, que descarga los mosaicos de Internet). La del teclado busca distribuciones y tiene un campo de prueba; la de la cuenta indica la fuerza de la contraseña.
+- Presentación propia durante la instalación: instantáneas, Plasma, Arch al día y cifrado.
+- `build.sh -c <dir>`: repositorio local que se conserva entre construcciones; solo se recompila lo que cambia de versión (la configuración del instalador, siempre). Evita compilar Calamares en cada ISO.
+
+### Cambiado
+
+- El instalador usa los módulos QML de Calamares (`welcomeq`, `localeq`, `keyboardq`, `usersq`, `summaryq`, `finishedq`) en lugar de los de widgets, salvo el de disco.
+
+## [0.2.5] - 2026-11-20
+
+Corrección del instalador (parche). Probado en QEMU con la ISO 0.2.5: el sistema instalado arranca sin Discover ni Calamares; también se comprobaron los dos cambios de 0.2.4 que faltaban (BitLocker detectado con `blkid -p` y nombres de los pasos traducidos).
+
+### Corregido
+
+- Discover seguía en el sistema instalado y mostraba «Problema de actualización» al abrirlo: la preparación del destino lo quita junto a Calamares (D-07; en la live se queda).
+
+### Cambiado
+
+- Las pruebas en hardware real (PC con NVIDIA y portátil con Windows y Manjaro) pasan a la fase 7: se harán al final, con todo implementado. La fase 2 se cierra con pruebas en máquinas virtuales.
+
 ## [0.2.4] - 2026-11-20
 
 Fase 2, paso 4 (primera parte): identidad del instalador. Pendiente de la aprobación del usuario con capturas; las páginas QML (`*q`) y la presentación quedan para la segunda parte. Probado también «Instalar junto a» en QEMU (disco de 80 GB, NTFS simulado de 60 GB): Calamares lo reduce con `ntfsresize`, instala y arranca, y el NTFS queda sano; `os-prober` no reconoce el Windows simulado y se comprobará con uno real (paso 2.5).
