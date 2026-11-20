@@ -25,6 +25,25 @@ Comprobado el 2026-11-20 con VirtualBox en Windows 11.
 
 > Hyper-V está activo en el equipo anfitrión, así que VirtualBox funciona sobre él: es más lento y sin virtualización anidada. Las pruebas con QEMU/KVM se hacen en el CI o dentro de la VM de construcción si el rendimiento lo permite.
 
+## Construir la ISO de Arctiva
+
+> **Aún sin probar** en la VM; se confirmará al construir la primera ISO de la fase 1.
+
+El perfil está en `iso/` (derivado de `releng`) y se construye con `build.sh`, dentro de la VM:
+
+```sh
+cd ~/arctiva && git pull
+sudo ./build.sh -o ~/out          # paquetes del Arch Linux Archive de iso/archive-date
+sudo ./build.sh -o ~/out -d latest  # paquetes del día, sin fecha fijada
+```
+
+- La ISO sale como `arctiva-<VERSION>-x86_64.iso` con su `.sha256`. El script falla si pasa de 1,9 GiB (D-14).
+- El directorio de trabajo (por defecto `/var/tmp/arctiva-work`) no debe existir; mkarchiso lo borra al acabar.
+- Para fijar otra fecha de paquetes, cambia `iso/archive-date` (formato `AAAA/MM/DD`).
+- La ISO solo arranca en UEFI. La entrada «safe graphics» arranca con `nomodeset`.
+- Prueba de arranque automática, como en el CI: `sudo tests/boot-test.sh ~/out/arctiva-*.iso` (necesita `qemu-system-x86_64` y `OVMF`; ruta del firmware en la variable `OVMF`).
+- Los servicios del live se activan con `Wants=` en `iso/airootfs/etc/systemd/system/*.target.d/`: el repositorio no guarda enlaces simbólicos porque se edita desde Windows.
+
 ## Finales de línea
 
 El repositorio fuerza finales de línea LF (`.gitattributes`). Los scripts de shell y los PKGBUILD con CRLF fallan en Linux.

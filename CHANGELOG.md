@@ -8,6 +8,12 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 
 ## [Unreleased]
 
+### Added
+
+- Arctiva archiso profile in `iso/`, derived from `releng` (archiso 92): Plasma with automatic login for the `live` user, UEFI-only boot, xz compression and the system package selection. Not yet built or tested.
+- `build.sh`: reproducible build with an Arch Linux Archive date (`iso/archive-date`), `sha256` checksum and a 1.9 GiB limit.
+- GitHub Actions workflow `iso.yml` with the build, a QEMU UEFI boot test (`tests/boot-test.sh`) and a weekly build.
+
 ## [0.1.7] - 2026-11-20
 
 ### Changed

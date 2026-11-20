@@ -1,0 +1,70 @@
+name: ISO
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'iso/**'
+      - 'build.sh'
+      - 'tests/boot-test.sh'
+      - 'VERSION'
+      - '.github/workflows/iso.yml'
+  workflow_dispatch:
+    inputs:
+      archive_date:
+        description: 'Fecha del Arch Linux Archive (AAAA/MM/DD o latest); vacío = iso/archive-date'
+        required: false
+        default: ''
+  # Construcción semanal con los paquetes del día, para ver roturas de Arch antes que los usuarios (D-15).
+  schedule:
+    - cron: '0 4 * * 1'
+
+permissions:
+  contents: read
+
+concurrency:
+  group: iso-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  build:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 150
+    env:
+      ARCHIVE_DATE: ${{ github.event_name == 'schedule' && 'latest' || inputs.archive_date }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Liberar espacio en el runner
+        run: |
+          sudo rm -rf /usr/share/dotnet /usr/local/lib/android /opt/ghc /opt/hostedtoolcache/CodeQL
+          df -h /
+
+      - name: Construir la ISO
+        run: |
+          docker run --rm --privileged -e ARCHIVE_DATE -v "$PWD:/repo" -w /repo archlinux:latest \
+            bash -c 'pacman -Syu --noconfirm --needed archiso && ./build.sh -o /repo/out -w /var/tmp/arctiva-work'
+
+      - name: Tamaño
+        run: |
+          iso=$(ls out/arctiva-*-x86_64.iso)
+          size=$(stat -c %s "$iso")
+          echo "$(basename "$iso"): $size bytes ($(numfmt --to=iec-i --suffix=B "$size"))" | tee -a "$GITHUB_STEP_SUMMARY"
+          cat out/*.sha256 | tee -a "$GITHUB_STEP_SUMMARY"
+
+      - name: Prueba de arranque (QEMU, UEFI)
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y --no-install-recommends qemu-system-x86 ovmf
+          sudo tests/boot-test.sh out/arctiva-*-x86_64.iso boot-test.log
+
+      # La ISO no se sube como artefacto: no cabe en la cuota de almacenamiento.
+      - name: Guardar registro y suma
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: iso-informe
+          path: |
+            out/*.sha256
+            boot-test.log
+          if-no-files-found: ignore

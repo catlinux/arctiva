@@ -1,0 +1,16 @@
+#!/usr/bin/env bash
+# SPDX-License-Identifier: GPL-3.0-or-later
+# Prepara la sesión live: usuario «live» sin contraseña y los idiomas básicos.
+set -euo pipefail
+
+live_user=live
+
+if ! id "$live_user" &>/dev/null; then
+    useradd -m -G wheel -c "Arctiva Live" -s /bin/bash "$live_user"
+    passwd -d "$live_user" >/dev/null
+fi
+install -m 0440 /dev/stdin /etc/sudoers.d/10-arctiva-live <<<"$live_user ALL=(ALL:ALL) NOPASSWD: ALL"
+
+# glibc solo trae C.UTF-8 compilado; el resto se genera al arrancar.
+sed -i -E 's/^#[[:space:]]*((en_US|es_ES|ca_ES)\.UTF-8 UTF-8)/\1/' /etc/locale.gen
+locale-gen >/dev/null

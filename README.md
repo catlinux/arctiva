@@ -43,4 +43,4 @@ Copies and forks must keep this attribution and link to https://github.com/catli
 
 ### Third-party material
 
-This project contains no third-party material.
+- `iso/` is derived from the `releng` profile of [archiso](https://gitlab.archlinux.org/archlinux/archiso) 92 (GPL-3.0-or-later, © the archiso authors); adapted and copied files keep that licence.

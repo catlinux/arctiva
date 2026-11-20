@@ -1,0 +1,108 @@
+# Paquetes de la ISO live. El instalador copia este sistema tal cual (D-03),
+# así que esta lista es también la base del sistema instalado.
+
+# Base y arranque
+base
+linux
+linux-lts
+linux-firmware
+sof-firmware
+amd-ucode
+intel-ucode
+mkinitcpio
+mkinitcpio-archiso
+grub
+grub-btrfs
+efibootmgr
+os-prober
+memtest86+-efi
+
+# Disco y sistemas de archivos
+btrfs-progs
+snapper
+snap-pac
+cryptsetup
+dosfstools
+e2fsprogs
+exfatprogs
+ntfs-3g
+gptfdisk
+parted
+smartmontools
+
+# Sistema
+sudo
+zram-generator
+networkmanager
+bluez
+bluez-utils
+cups
+pipewire
+pipewire-alsa
+pipewire-pulse
+wireplumber
+reflector
+pacman-contrib
+fwupd
+ufw
+wireless-regdb
+usbutils
+xdg-user-dirs
+man-db
+nano
+vim
+less
+bash-completion
+
+# Gráficos libres (los de NVIDIA se instalan según la gráfica, D-10)
+mesa
+vulkan-radeon
+vulkan-intel
+intel-media-driver
+xorg-xwayland
+
+# Escritorio Plasma (selección, no los meta-paquetes completos: D-14)
+plasma-desktop
+plasma-workspace
+plasma-login-manager
+plasma-nm
+plasma-pa
+plasma-firewall
+plasma-systemmonitor
+powerdevil
+bluedevil
+kscreen
+kinfocenter
+systemsettings
+polkit-kde-agent
+kwallet-pam
+kwalletmanager
+kde-cli-tools
+kde-gtk-config
+breeze-gtk
+xdg-desktop-portal-kde
+print-manager
+
+# Tienda en la live: Discover solo con Flathub (D-07)
+discover
+flatpak
+flatpak-kcm
+archlinux-appstream-data
+
+# Aplicaciones
+konsole
+dolphin
+kate
+ark
+spectacle
+gwenview
+okular
+ffmpegthumbs
+kdegraphics-thumbnailers
+firefox
+firefox-i18n-es-es
+firefox-i18n-ca
+
+# Fuentes
+noto-fonts
+noto-fonts-emoji

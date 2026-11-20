@@ -25,6 +25,25 @@ Verified on 2026-11-20 with VirtualBox on Windows 11.
 
 > Hyper-V is active on the host, so VirtualBox runs on top of it: slower, and no nested virtualisation. QEMU/KVM tests run in CI, or inside the build VM if performance allows.
 
+## Building the Arctiva ISO
+
+> **Not yet tested** in the VM; it will be confirmed when the first phase 1 ISO is built.
+
+The profile lives in `iso/` (derived from `releng`) and is built with `build.sh`, inside the VM:
+
+```sh
+cd ~/arctiva && git pull
+sudo ./build.sh -o ~/out          # packages from the Arch Linux Archive date in iso/archive-date
+sudo ./build.sh -o ~/out -d latest  # today's packages, no pinned date
+```
+
+- The ISO is named `arctiva-<VERSION>-x86_64.iso` and comes with its `.sha256`. The script fails if it exceeds 1.9 GiB (D-14).
+- The working directory (by default `/var/tmp/arctiva-work`) must not exist; mkarchiso deletes it when done.
+- To pin another package date, change `iso/archive-date` (format `YYYY/MM/DD`).
+- The ISO only boots in UEFI mode. The "safe graphics" entry boots with `nomodeset`.
+- Automatic boot test, as in CI: `sudo tests/boot-test.sh ~/out/arctiva-*.iso` (needs `qemu-system-x86_64` and `OVMF`; firmware path in the `OVMF` variable).
+- Live services are enabled with `Wants=` in `iso/airootfs/etc/systemd/system/*.target.d/`: the repository holds no symbolic links because it is edited from Windows.
+
 ## Line endings
 
 The repository enforces LF line endings (`.gitattributes`). Shell scripts and PKGBUILDs with CRLF fail on Linux.

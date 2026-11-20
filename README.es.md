@@ -43,4 +43,4 @@ Las copias y los forks deben conservar esta atribución y enlazar a https://gith
 
 ### Material de terceros
 
-Este proyecto no contiene material de terceros.
+- `iso/` deriva del perfil `releng` de [archiso](https://gitlab.archlinux.org/archlinux/archiso) 92 (GPL-3.0-or-later, © los autores de archiso); los archivos adaptados y copiados conservan esa licencia.

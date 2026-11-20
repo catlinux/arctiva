@@ -10,9 +10,8 @@ Trabajo pendiente agrupado por prioridad. Fases y decisiones: [hoja de ruta](doc
 
 ## Media: fase 1 (ISO live mínima)
 
-- [ ] Perfil archiso de Arctiva derivado de `releng`, con Plasma e inicio de sesión automático en el live; arranque solo UEFI (D-04).
-- [ ] Script de construcción reproducible con una fecha fijada del Arch Linux Archive.
-- [ ] Flujo de GitHub Actions: construcción de la ISO y prueba de arranque en QEMU.
+- [ ] Probar en la VM el perfil `iso/`, `build.sh` y `tests/boot-test.sh` (escritos, sin construir): la ISO debe arrancar en VirtualBox (UEFI) hasta el escritorio con sesión automática.
+- [ ] Primer run del flujo `iso.yml` de GitHub Actions (necesita push): construcción y prueba de arranque en QEMU.
 - [ ] Medir el tamaño de la ISO y confirmar que no pasa de 2 GiB (D-14).
 
 ## Media: estudios

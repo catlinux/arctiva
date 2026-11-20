@@ -10,9 +10,8 @@ Pending work grouped by priority. Phases and decisions: [roadmap](docs/en/roadma
 
 ## Medium — phase 1 (minimal live ISO)
 
-- [ ] Arctiva archiso profile derived from `releng`, with Plasma and automatic live login; UEFI-only boot (D-04).
-- [ ] Reproducible build script with a pinned Arch Linux Archive date.
-- [ ] GitHub Actions workflow: ISO build and QEMU boot test.
+- [ ] Test the `iso/` profile, `build.sh` and `tests/boot-test.sh` in the VM (written, not built yet): the ISO must boot in VirtualBox (UEFI) to the desktop with automatic login.
+- [ ] First run of the `iso.yml` GitHub Actions workflow (needs a push): build and QEMU boot test.
 - [ ] Measure the ISO size and confirm it stays under 2 GiB (D-14).
 
 ## Medium — studies

@@ -1,0 +1,10 @@
+[Unit]
+Description=Prepare the Arctiva live session
+# Solo en la live: el sistema instalado no arranca con archisobasedir.
+ConditionKernelCommandLine=archisobasedir
+Before=systemd-user-sessions.service display-manager.service plasmalogin.service
+
+[Service]
+Type=oneshot
+RemainAfterExit=yes
+ExecStart=/usr/local/bin/arctiva-live-setup
