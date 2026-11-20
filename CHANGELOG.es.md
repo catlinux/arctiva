@@ -8,6 +8,21 @@ El formato se basa en [Keep a Changelog](https://keepachangelog.com/es-ES/1.1.0/
 
 ## [Sin publicar]
 
+## [0.1.5] - 2026-11-20
+
+### Cambiado
+
+- Decisiones de arquitectura D-01…D-16 aprobadas, salvo D-07 (tienda), que sigue en estudio.
+- D-03 y D-05: avisos para el arranque dual con Windows (BitLocker no se puede redimensionar desde el instalador, se pide la clave de recuperación al cambiar Secure Boot, el inicio rápido debe estar desactivado).
+- D-04: nuevo subvolumen `@snapshots` para que Snapper pueda volver atrás, las instantáneas de solo lectura arrancan con `grub-btrfs-overlayfs`, sin hibernación en la 1.0 y cifrado LUKS limitado a lo que admite GRUB.
+- D-06: solo sesión Wayland, ya que KDE retiró la sesión X11 en Plasma 6.8.
+- D-15: espacio en disco del runner de GitHub Actions y desactivación de las tareas programadas tras 60 días sin actividad.
+
+### Corregido
+
+- D-10: el paquete de NVIDIA para el kernel LTS es `nvidia-open-lts`.
+- Los requisitos de hardware reflejan la VM de construcción ya preparada.
+
 ## [0.1.4] - 2026-11-20
 
 ### Cambiado

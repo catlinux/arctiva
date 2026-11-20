@@ -12,7 +12,7 @@ Arctiva is an independent project. It is not affiliated with or endorsed by Arch
 
 ## Status
 
-**Early design stage.** There is no ISO to download yet. The architecture is a proposal under review.
+**Early design stage.** There is no ISO to download yet. The architecture is approved, except for the application store (D-07), which is still under study.
 
 - [Architecture and decisions](docs/en/architecture.md)
 - [Roadmap](docs/en/roadmap.md)

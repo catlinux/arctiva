@@ -6,7 +6,6 @@ Trabajo pendiente agrupado por prioridad. Fases y decisiones: [hoja de ruta](doc
 
 ## Alta: fase 0 (fundamentos)
 
-- [ ] Revisar y aprobar las decisiones de arquitectura restantes (D-14 ya está aprobada).
 - [ ] Aprobar el logo nuevo de `branding/logo/` (D-13). El lema de `arctiva-logo.svg` es texto: convertirlo en trazos cuando se elija la tipografía corporativa.
 - [ ] Decidir cuándo se hace público el repositorio.
 
@@ -25,6 +24,7 @@ Trabajo pendiente agrupado por prioridad. Fases y decisiones: [hoja de ruta](doc
 ## Más adelante
 
 - Fases 2 a 7 según la hoja de ruta.
+- Hibernación: subvolumen `@swap` con un archivo de intercambio además de zram (D-04). Queda fuera de la 1.0, que solo tiene suspensión.
 
 ## Descartado
 

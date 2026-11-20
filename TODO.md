@@ -6,7 +6,6 @@ Pending work grouped by priority. Phases and decisions: [roadmap](docs/en/roadma
 
 ## High — phase 0 (foundations)
 
-- [ ] Review and approve the remaining architecture decisions (D-14 already approved).
 - [ ] Approve the new logo in `branding/logo/` (D-13). The tagline in `arctiva-logo.svg` is live text: convert it to paths once the corporate typeface is chosen.
 - [ ] Decide when the repository becomes public.
 
@@ -25,6 +24,7 @@ Pending work grouped by priority. Phases and decisions: [roadmap](docs/en/roadma
 ## Later
 
 - Phases 2 to 7 as described in the roadmap.
+- Hibernation: an `@swap` subvolume with a swap file alongside zram (D-04). Out of scope for 1.0, which only has suspend.
 
 ## Rejected
 

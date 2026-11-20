@@ -1,6 +1,6 @@
 # Arquitectura de Arctiva
 
-> **Estado:** propuesta en revisión (versión 0.1.1). D-14 aprobada; D-03, D-07 y D-13 revisadas tras la primera revisión.
+> **Estado:** aprobada (versión 0.1.5), salvo D-07, que sigue en estudio.
 > English version: [../en/architecture.md](../en/architecture.md)
 
 Este documento analiza la viabilidad del proyecto y recoge las decisiones de arquitectura (D-01…D-16) con su justificación. Cada decisión aprobada se marcará como **Aprobada**; las que cambien se reescriben aquí y su cambio queda en el CHANGELOG.
@@ -28,18 +28,18 @@ Lo que **no** es realista y no se promete:
 
 ## 3. Decisiones de arquitectura
 
-### D-01 Base: Arch sin modificar y repositorio propio mínimo
+### D-01 Base: Arch sin modificar y repositorio propio mínimo (**Aprobada**)
 
 - Repositorios oficiales `core`, `extra` y `multilib` sin cambios ni retrasos. Pacman sigue siendo el único gestor de paquetes del sistema.
 - Repositorio `[arctiva]` firmado con GPG y alojado en GitHub, con paquetes propios (`arctiva-settings`, `arctiva-branding`, `arctiva-keyring`, `arctiva-center`, configuración de Calamares) y compilaciones de lo imprescindible que solo está en el AUR (`calamares`, `ckbcomp`).
 - Prohibido: reempaquetar o retener paquetes oficiales. Si un paquete oficial se rompe, se mitiga con avisos e instantáneas, no con un fork.
 
-### D-02 Construcción de la ISO: archiso
+### D-02 Construcción de la ISO: archiso (**Aprobada**)
 
 - `archiso` es la herramienta oficial con la que Arch construye su propia ISO. El perfil de Arctiva deriva del perfil `releng`.
 - **Reproducibilidad:** cada publicación fija una fecha del Arch Linux Archive (`archive.archlinux.org/repos/AAAA/MM/DD`), así una ISO concreta se puede reconstruir con los mismos paquetes. El script de construcción y la fecha quedan versionados.
 
-### D-03 Instalador: Calamares a medida
+### D-03 Instalador: Calamares a medida (**Aprobada**)
 
 - Alternativas valoradas: **archinstall** (oficial, pero solo en modo texto), **Anaconda** (atado a Fedora), los instaladores de Ubuntu, elementary/Pop!_OS y Vanilla OS (cada uno atado a su distribución) y un **instalador propio** (coste enorme; el particionado, sobre todo redimensionar Windows para el arranque dual, es la parte con más riesgo de perder datos).
 - **Calamares** es el motor: maduro, en Qt (encaja con KDE), modular, usado por EndeavourOS, Manjaro, KaOS, Debian live y otras. Cubre idioma, teclado, zona horaria, usuarios, particionado manual y automático, instalación junto a Windows, UEFI y cifrado LUKS.
@@ -51,28 +51,30 @@ Lo que **no** es realista y no se promete:
   - **Sin parches al código C++ de Calamares**: solo configuración, branding y módulos propios (QML o Python). Si algún día hace falta un parche, se propone a upstream.
 - Si el resultado no alcanzara el nivel deseado, la alternativa sería una interfaz propia sobre el motor de archinstall, resolviendo aparte el redimensionado de particiones de Windows. Se valoraría con un prototipo.
 - Modo de instalación: **offline**, copiando el sistema live ya probado (módulo `unpackfs`) y quitando lo exclusivo del live. Después, **extras opcionales online** (juegos, ofimática…) con el módulo `netinstall` si hay conexión. Es rápido, no depende de la red y lo instalado es lo que se ha probado.
-- Riesgo: Calamares no está en los repos oficiales; se compila en `[arctiva]` y se vigilan sus versiones (la serie 3.4 está activa en 2026). Su API QML cambia entre versiones: la versión queda fijada en el repositorio propio y cada actualización se prueba antes de publicarla.
+- **Arranque dual con Windows:** muchos equipos con Windows 11 traen la partición cifrada con BitLocker (cifrado del dispositivo), y Calamares no puede redimensionar una partición cifrada. El instalador avisa antes de particionar: reducir la partición desde Windows (Administración de discos), tener a mano la clave de recuperación de BitLocker y desactivar el inicio rápido de Windows, que deja NTFS en estado hibernado.
+- Riesgo: Calamares no está en los repos oficiales; se compila en `[arctiva]` y se vigilan sus versiones (la serie 3.4 está activa; la 3.4.2 es de marzo de 2026). Su API QML cambia entre versiones: la versión queda fijada en el repositorio propio y cada actualización se prueba antes de publicarla.
 
-### D-04 Disco, arranque y recuperación
+### D-04 Disco, arranque y recuperación (**Aprobada**)
 
 - **Solo UEFI con GPT** en la 1.0: cualquier PC compatible con Windows 10/11 lo tiene, y así la matriz de pruebas es la mitad. BIOS heredada queda descartada de momento.
-- **Btrfs** con subvolúmenes (`@`, `@home`, `@cache`, `@log`) y compresión zstd.
+- **Btrfs** con subvolúmenes (`@`, `@home`, `@cache`, `@log`, `@snapshots`) y compresión zstd. `@snapshots` se monta en `/.snapshots`, fuera de `@`: sin él, Snapper no puede devolver el sistema a una instantánea anterior.
 - **Snapper + snap-pac**: instantánea automática antes y después de cada transacción de pacman.
-- **GRUB + grub-btrfs**: se puede arrancar una instantánea desde el menú, que es la recuperación ante una actualización fallida. systemd-boot no puede arrancar instantáneas; Limine sí, pero sus integraciones están en el AUR. Todo lo elegido está en los repos oficiales.
+- **GRUB + grub-btrfs**: se puede arrancar una instantánea desde el menú, que es la recuperación ante una actualización fallida. Las instantáneas son de solo lectura: el hook `grub-btrfs-overlayfs` de mkinitcpio les pone encima una capa temporal escribible para que arranquen. systemd-boot no puede arrancar instantáneas; Limine sí, pero sus integraciones están en el AUR. Todo lo elegido está en los repos oficiales.
 - **Kernels:** `linux` (por defecto) y `linux-lts` como entrada de reserva.
-- **Swap:** zram (`zram-generator`).
+- **Swap:** zram (`zram-generator`). zram no permite hibernar: la 1.0 no tiene hibernación (la suspensión sí funciona). Añadirla más adelante (subvolumen `@swap` con un archivo de intercambio) queda pendiente.
+- **Cifrado (opcional):** LUKS desde el instalador. GRUB 2.12 no admite Argon2, así que el cifrado debe usar LUKS1 o LUKS2 con PBKDF2; el detalle (`/boot` cifrado o no, cuántas veces se pide la contraseña) se fija en el estudio del instalador.
 
-### D-05 Secure Boot
+### D-05 Secure Boot (**Aprobada**)
 
-Arch no ofrece Secure Boot de serie (el `shim` firmado está en el AUR). En la 1.0 el usuario tendrá que desactivarlo, y la documentación y el instalador lo explicarán. Más adelante se estudiará `sbctl` con claves propias. Es una barrera real para quien viene de Windows 11 y se documenta como tal.
+Arch no ofrece Secure Boot de serie (el `shim` firmado está en el AUR). En la 1.0 el usuario tendrá que desactivarlo, y la documentación y el instalador lo explicarán. Más adelante se estudiará `sbctl` con claves propias. Es una barrera real para quien viene de Windows 11 y se documenta como tal. En un equipo con BitLocker, cambiar Secure Boot hace que Windows pida la clave de recuperación en el siguiente arranque: se advierte antes, junto con dónde encontrarla.
 
-### D-06 Escritorio: KDE Plasma 6 sobre Wayland
+### D-06 Escritorio: KDE Plasma 6 sobre Wayland (**Aprobada**)
 
 - Valorados: **GNOME** (paradigma lejano a Windows y extensiones que se rompen en cada versión), **Cinnamon** (muy parecido a Windows, pero Wayland aún inmaduro), **COSMIC** (prometedor, aún joven), **Xfce** (sigue en X11).
 - **Plasma**: distribución similar a Windows de serie (menú, barra de tareas, bandeja), configuración gráfica completa, Dolphin, buen soporte de VRR/HDR, juegos y portátiles, y temas globales (Look-and-Feel) que permiten dar identidad **sin parchear KDE**.
 - Personalización únicamente con paquetes de configuración (`/etc/xdg`, `/etc/skel`, tema global). Así, una actualización de Plasma no rompe nada propio.
-- Sesión Wayland por defecto (KDE ha anunciado que abandona la sesión X11 de Plasma).
-- Gestor de inicio: **Plasma Login Manager** (oficial de KDE, en `extra`); tiene el aspecto Breeze fijo, por lo que la identidad se limita a fondo y colores. Reserva: SDDM con tema propio si el primero no convence.
+- Solo sesión Wayland: desde Plasma 6.8, KDE ya no ofrece sesión X11. Las aplicaciones X11 siguen funcionando mediante Xwayland.
+- Gestor de inicio: **Plasma Login Manager** (oficial de KDE, en `extra`; Calamares 3.4 ya sabe configurarlo); tiene el aspecto Breeze fijo, por lo que la identidad se limita a fondo y colores. Reserva: SDDM con tema propio si el primero no convence.
 
 ### D-07 Aplicaciones: tienda y fuentes (**en estudio**)
 
@@ -87,7 +89,7 @@ Requisitos fijados:
 
 Opciones a estudiar: Discover con un motor propio para pacman y AUR, Pamac, Bauh, Octopi y una tienda propia en Qt/QML sobre libalpm, paru y libflatpak. Criterios: mantenimiento a largo plazo, seguridad, integración con Plasma, aspecto y licencia. Resultado esperado: la decisión definitiva con una prueba de concepto. Mientras tanto, la ISO live usa Discover con Flathub.
 
-### D-08 Actualizaciones
+### D-08 Actualizaciones (**Aprobada**)
 
 En el módulo de actualizaciones de Arctiva Center:
 
@@ -101,11 +103,11 @@ En el módulo de actualizaciones de Arctiva Center:
 
 Antes de escribir esta lógica se evaluará reutilizar **arch-update** (herramienta del AUR que ya hace noticias, `.pacnew` y Flatpak, mantenida por un empaquetador de Arch). Solo se programa lo que falte.
 
-### D-09 Herramientas propias: una sola aplicación
+### D-09 Herramientas propias: una sola aplicación (**Aprobada**)
 
 **Arctiva Center**, en Python 3 + PySide6 (Qt 6; ambos en los repos oficiales) y `pyalpm` para consultas de solo lectura. Módulos: bienvenida en el primer arranque, controladores, actualizaciones y extras (catálogo). La tienda se integrará aquí o será una aplicación aparte según el estudio de D-07. Las acciones privilegiadas pasan por un ayudante polkit con un **conjunto cerrado de operaciones**, nunca por órdenes arbitrarias. Es una sola aplicación en lugar de varias para reducir mantenimiento.
 
-### D-10 Gráficas
+### D-10 Gráficas (**Aprobada**)
 
 Detección con `lspci` y un archivo de correspondencias (familia → paquetes), compartido por el instalador y Arctiva Center.
 
@@ -113,25 +115,25 @@ Detección con `lspci` y un archivo de correspondencias (familia → paquetes), 
 |---|---|
 | AMD Radeon (GCN en adelante) | `mesa`, `vulkan-radeon`, `lib32-mesa`, `lib32-vulkan-radeon` |
 | Intel integradas y Arc | `mesa`, `vulkan-intel`, `intel-media-driver`, versiones `lib32` |
-| NVIDIA Turing y posteriores (GTX 16, RTX 20+) | `nvidia-open` y `nvidia-lts-open` (módulos precompilados para los dos kernels), `nvidia-utils`, `lib32-nvidia-utils`, KMS temprano |
+| NVIDIA Turing y posteriores (GTX 16, RTX 20+) | `nvidia-open` y `nvidia-open-lts` (módulos precompilados para los dos kernels), `nvidia-utils`, `lib32-nvidia-utils`, KMS temprano |
 | NVIDIA Pascal/Maxwell (GTX 10/900) | Desde diciembre de 2025 el controlador 580xx solo está en el AUR. **No se instala automáticamente**: se usa `nouveau` y se avisa al usuario con las opciones |
 | Portátiles híbridos | `switcheroo-control` e integración de Plasma para lanzar con la gráfica dedicada |
 
-### D-11 Juegos
+### D-11 Juegos (**Aprobada**)
 
 - `multilib` activado de serie.
 - Steam nativo (`steam`, de multilib), `gamemode`, `mangohud`, `gamescope`; Proton se gestiona desde Steam.
 - Heroic (Epic/GOG) y ProtonPlus o ProtonUp-Qt como Flatpak; Lutris desde `extra`.
 - Se instalan como perfil «Juegos» durante la instalación o desde Arctiva Center.
 
-### D-12 Programas de Windows
+### D-12 Programas de Windows (**Aprobada**)
 
 - **Bottles** como herramienta principal, **solo en Flatpak**: es el único formato que sus desarrolladores soportan.
 - Al abrir un `.exe` o `.msi`, un diálogo propio explica qué va a pasar, ofrece abrirlo con Bottles y enlaza a la base de datos de compatibilidad (WineHQ AppDB, ProtonDB).
 - Limitaciones que se comunican claramente: juegos con antitrampas a nivel de kernel (consultar «Are We Anti-Cheat Yet?»), suites como Adobe y Microsoft Office recientes, controladores y utilidades de hardware de Windows.
 - `wine` y `winetricks` de los repos, para usuarios avanzados.
 
-### D-13 Identidad y marca
+### D-13 Identidad y marca (**Aprobada**)
 
 - Nombre: **Arctiva** (antes «Archtiva»). Ya no contiene la marca «Arch». La política de marcas de Arch permite describirlo como «basada en Arch Linux»; nunca se presentará como oficial.
 - No se han encontrado distribuciones ni software con ese nombre. Existe una marca registrada «ARCTIVA» en EE. UU. en la clase 5 (productos farmacéuticos), distinta del software (clase 9). Riesgo bajo; se revisará antes de la 1.0.
@@ -153,16 +155,16 @@ GitHub Releases acepta archivos de **menos de 2 GiB** cada uno, sin límite de t
 
 Para mantenerla por debajo de 2 GiB: Plasma con una selección de paquetes en lugar de todos los meta-paquetes, compresión xz del sistema de archivos, y Steam, ofimática y juegos como perfiles online en la instalación. El CI fallará si la ISO pasa de 1,9 GiB. **El tamaño real se medirá en la fase 1**; hasta entonces es un objetivo, no un hecho.
 
-### D-15 Automatización (GitHub Actions)
+### D-15 Automatización (GitHub Actions) (**Aprobada**)
 
 1. **Lint:** shellcheck, `namcap` para los PKGBUILD y comprobación de enlaces de la documentación.
 2. **Paquetes:** compilación en contenedor Arch limpio y firma.
-3. **ISO:** `mkarchiso` en un contenedor `archlinux` privilegiado.
+3. **ISO:** `mkarchiso` en un contenedor `archlinux` privilegiado. El runner estándar deja unos 14 GB libres, justos para construir: si no bastan, se borran antes las herramientas preinstaladas que no se usan.
 4. **Prueba de arranque:** QEMU/KVM sin pantalla con firmware UEFI (OVMF); se comprueba por consola serie que se llega al escritorio. Más adelante, instalación automatizada.
-5. **Construcción semanal programada** con los paquetes del día, para detectar roturas de Arch antes que los usuarios.
+5. **Construcción semanal programada** con los paquetes del día, para detectar roturas de Arch antes que los usuarios. GitHub desactiva las tareas programadas de un repositorio público tras 60 días sin actividad: si ocurre, hay que reactivarla.
 6. **Publicación** solo con una etiqueta aprobada: ISO, `sha256`, firma GPG y notas generadas desde el CHANGELOG.
 
-### D-16 Versionado
+### D-16 Versionado (**Aprobada**)
 
 - El proyecto sigue SemVer `x.y.z` (archivo `VERSION`). Cada ISO publicada lleva la versión del proyecto: `arctiva-X.Y.Z-x86_64.iso`.
 - Antes de la 1.0: cada fase terminada sube la versión menor; las correcciones y la documentación suben el parche.
@@ -190,6 +192,7 @@ Para mantenerla por debajo de 2 GiB: Plasma con una selección de paquetes en lu
 | Un único mantenedor | Alto | Poco código propio, todo documentado y automatizado |
 | Cambios en Calamares o KDE | Medio | Solo configuración, versiones vigiladas en CI |
 | Secure Boot obligatorio en algunos equipos | Medio | Documentación clara; `sbctl` más adelante |
+| Windows con BitLocker en arranque dual | Alto | Avisos en el instalador y la documentación: clave de recuperación a mano, reducir la partición desde Windows, inicio rápido desactivado |
 | ISO de más de 2 GiB | Medio | Selección de paquetes y réplica externa |
 | Nombre y logo frente a otras marcas | Bajo | Nombre sin «Arch», logo propio, revisión antes de la 1.0 |
 | Seguridad del AUR | Medio | Desactivado por defecto, separado y con avisos en la tienda |
@@ -202,7 +205,7 @@ Para mantenerla por debajo de 2 GiB: Plasma con una selección de paquetes en lu
 
 | Máquina | CPU | RAM | Disco | Notas |
 |---|---|---|---|---|
-| VM de construcción (Arch Linux) | 4–6 vCPU | 8 GB | 80 GB dinámico | EFI. Construye paquetes e ISO. La VM «Arctiva» actual tiene 2 vCPU, 4 GB y 10 GB: hay que ampliarla |
+| VM de construcción (Arch Linux) | 4–6 vCPU | 8 GB | 80 GB dinámico | EFI. Construye paquetes e ISO. La VM «Arctiva» ya está preparada con 4 vCPU, 8 GB y 80 GB (ver [desarrollo.md](desarrollo.md)) |
 | VM de pruebas de la ISO | 2–4 vCPU | 4 GB | 40 GB dinámico | EFI, VMSVGA con 128 MB de vídeo. Se recrea en cada prueba |
 | Hardware real | — | — | USB de 8 GB o más | La RTX 4060 del anfitrión sirve para probar NVIDIA con el USB live |
 | GitHub Actions | runner estándar | 16 GB | ~14 GB libres | Suficiente para una ISO de menos de 2 GiB |
