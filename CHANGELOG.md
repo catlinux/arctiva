@@ -8,6 +8,17 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 
 ## [Unreleased]
 
+## [0.1.7] - 2026-11-20
+
+### Changed
+
+- D-03: installer design settled on Calamares 3.4.3 (Qt 6): page order, QML pages (including the profile page with `packagechooserq` and a "Check" page), visual identity, and a launcher that detects BitLocker and Windows Fast Startup before partitioning, which Calamares does not do.
+- D-04: optional LUKS1 encryption with `/boot` inside `@` and a single passphrase prompt in GRUB, with a warning about the US keyboard layout at boot; EFI partition at `/boot/efi`; the ISO boots in UEFI mode only.
+
+### Fixed
+
+- D-04: GRUB has supported Argon2 since 2.14 (Arch ships 2.16); LUKS2 is still left out because of the memory problems reported with the Argon2id settings Calamares uses.
+
 ## [0.1.6] - 2026-11-20
 
 ### Changed

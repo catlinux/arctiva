@@ -1,6 +1,6 @@
 # Arctiva architecture
 
-> **Status:** approved (version 0.1.6).
+> **Status:** approved (version 0.1.7).
 > Versión en castellano: [../es/arquitectura.md](../es/arquitectura.md)
 
 This document analyses the project's feasibility and records the architecture decisions (D-01…D-16) with their rationale. Each approved decision will be marked **Approved**; decisions that change are rewritten here, and the change is recorded in the CHANGELOG.
@@ -45,24 +45,33 @@ What is **not** realistic and will not be promised:
 - **Calamares** is the engine: mature, Qt-based (a good fit with KDE), modular, used by EndeavourOS, Manjaro, KaOS, Debian live and others. It covers language, keyboard, time zone, users, manual and automatic partitioning, installing alongside Windows, UEFI and LUKS encryption.
 - **Its plain look is the default configuration, not a limitation.** The interface is rebuilt in QML so that it carries the Arctiva identity:
   - Custom QML sidebar and navigation (`sidebar: qml` and `navigation: qml` in the branding).
-  - QML versions of the pages (`welcomeq`, `localeq`, `keyboardq`, `usersq`, `summaryq`) with our own design, plus our own QML pages where they add value (for example, choosing a profile: Basic, Gaming, Office).
-  - The partitioning page has no QML version: it is integrated through a Qt stylesheet (`stylesheet.qss`) so it follows the same design.
+  - QML versions of the pages Calamares ships (`welcomeq`, `localeq`, `keyboardq`, `usersq`, `summaryq`, `finishedq`) with our own design. The profile (Basic, Gaming, Office; the last two are downloaded when a connection is available) is chosen with `packagechooserq`, and the "Check" page (see dual boot) uses `notesqml`.
+  - Page order: welcome, language and region, keyboard, profile, check, disk, users, summary, installation and finish.
+  - The partitioning page has no QML version: it is integrated through a Qt stylesheet (`stylesheet.qss`) so it follows the same design. If some part drawn in C++ (the partition bar) ignores it, it is left as is.
+  - Identity: sidebar with the logo's night-blue gradient, light content with a blue accent, and warnings shown with an icon and text, never colour alone. Noto Sans as a provisional typeface until the corporate one is chosen.
   - A QML slideshow while files are copied.
   - **No patches to Calamares' C++ code**: only configuration, branding and our own modules (QML or Python). If a patch is ever needed, it is proposed upstream.
 - If the result fell short, the alternative would be a custom interface on top of the archinstall engine, solving Windows partition resizing separately. It would be assessed with a prototype.
 - Install mode: **offline**, copying the already tested live system (`unpackfs` module) and removing live-only bits. Then **optional online extras** (gaming, office…) through the `netinstall` module when a connection is available. This is fast, works without a network, and what gets installed is what was tested.
-- **Dual boot with Windows:** many Windows 11 machines ship with the partition encrypted by BitLocker (device encryption), and Calamares cannot resize an encrypted partition. The installer warns before partitioning: shrink the partition from Windows (Disk Management), keep the BitLocker recovery key at hand, and turn off Windows Fast Startup, which leaves NTFS in a hibernated state.
-- Risk: Calamares is not in the official repositories. It is built into `[arctiva]` and its releases are tracked (the 3.4 series is active; 3.4.2 is from March 2026). Its QML API changes between releases, so the version is pinned in our repository and every update is tested before release.
+- **Dual boot with Windows:** many Windows 11 machines ship with the partition encrypted by BitLocker (device encryption). Calamares cannot resize an encrypted partition, and it does not detect BitLocker or Windows Fast Startup, which leaves NTFS in a hibernated state. Our own launcher runs before Calamares and checks the machine (BitLocker partitions, hibernated NTFS through `ntfs-3g.probe`, presence of Windows); the "Check" page, before the disk page, shows the result:
+  - **Block:** Windows is hibernated or uses Fast Startup. The page explains how to shut it down fully; installing alongside Windows is not possible until that is fixed.
+  - **Warning:** BitLocker is on. Shrink the partition from Windows (Disk Management) and keep the recovery key at hand, as Windows will ask for it after Secure Boot was changed (D-05).
+  - GRUB lists Windows in its menu (`os-prober`). Arctiva keeps the firmware clock in UTC and Windows in local time: the help explains how to align them.
+- Risk: Calamares is not in the official repositories. It is built into `[arctiva]` and its releases are tracked (3.4.3, from September 2026, is the pinned one; it builds with Qt 6). Its QML API changes between releases, so the version is pinned in our repository and every update is tested before release.
 
 ### D-04 Disk, boot and recovery (**Approved**)
 
-- **UEFI with GPT only** in 1.0: every PC that runs Windows 10/11 has it, and it halves the test matrix. Legacy BIOS is out for now.
+- **UEFI with GPT only** in 1.0: every PC that runs Windows 10/11 has it, and it halves the test matrix. Legacy BIOS is out for now. The ISO only boots in UEFI mode, so a machine without UEFI never reaches the installer (Calamares does not check the boot mode).
+- **EFI partition** mounted at `/boot/efi`; it only holds GRUB, so the Windows one can be reused. **`/boot` lives inside `@`**: every snapshot keeps the kernel and initramfs that match its modules and boots without mismatches.
 - **Btrfs** with subvolumes (`@`, `@home`, `@cache`, `@log`, `@snapshots`) and zstd compression. `@snapshots` is mounted at `/.snapshots`, outside `@`: without it, Snapper cannot roll the system back to an earlier snapshot.
 - **Snapper + snap-pac**: automatic snapshots before and after every pacman transaction.
 - **GRUB + grub-btrfs**: snapshots can be booted from the menu, which is the recovery path after a failed upgrade. Snapshots are read-only: the `grub-btrfs-overlayfs` mkinitcpio hook adds a temporary writable layer on top so they can boot. systemd-boot cannot boot snapshots; Limine can, but its integrations live in the AUR. Everything chosen is in the official repositories.
 - **Kernels:** `linux` (default) and `linux-lts` as a fallback entry.
 - **Swap:** zram (`zram-generator`). zram does not allow hibernation: 1.0 has no hibernation (suspend works). Adding it later (an `@swap` subvolume with a swap file) is pending.
-- **Encryption (optional):** LUKS from the installer. GRUB 2.12 does not support Argon2, so encryption must use LUKS1 or LUKS2 with PBKDF2; the details (encrypted `/boot` or not, how many times the passphrase is asked) are settled in the installer study.
+- **Encryption (optional, off by default):** **LUKS1** on the Arctiva partition, with `/boot` encrypted inside it. GRUB asks for the passphrase **only once**; a key file inside the initramfs, which lives on the encrypted partition, unlocks the system without asking again (`luksbootkeyfile` and `initcpiocfg` modules with the `encrypt` hook, which is also the one `grub-btrfs-overlayfs` needs).
+  - Why not LUKS2: GRUB supports Argon2 since 2.14 (Arch ships 2.16), but Calamares does not let us choose the key derivation function and uses Argon2id with 1 GiB of memory, which has been reported to leave GRUB out of memory at boot. LUKS1 is Calamares' default and the best-tested path.
+  - When encryption is ticked, the installer warns that the passphrase is typed at boot with the **US keyboard layout** (better to use letters without accents and digits) and that without it the data cannot be recovered.
+  - Later: LUKS2 to unlock with TPM2 or FIDO2, once Calamares lets us choose the function or through a conversion from the live USB.
 
 ### D-05 Secure Boot (**Approved**)
 

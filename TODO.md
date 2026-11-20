@@ -10,7 +10,7 @@ Pending work grouped by priority. Phases and decisions: [roadmap](docs/en/roadma
 
 ## Medium — phase 1 (minimal live ISO)
 
-- [ ] Arctiva archiso profile derived from `releng`, with Plasma and automatic live login.
+- [ ] Arctiva archiso profile derived from `releng`, with Plasma and automatic live login; UEFI-only boot (D-04).
 - [ ] Reproducible build script with a pinned Arch Linux Archive date.
 - [ ] GitHub Actions workflow: ISO build and QEMU boot test.
 - [ ] Measure the ISO size and confirm it stays under 2 GiB (D-14).
@@ -18,13 +18,15 @@ Pending work grouped by priority. Phases and decisions: [roadmap](docs/en/roadma
 ## Medium — studies
 
 - [ ] Store proof of concept (D-07) in the VM: AppStream catalogue, `pyalpm` on a temporary database, installation with `pacman -Syu --needed` through a polkit helper, Flatpak with progress and `flatpak-kcm`, and the AUR flow with PKGBUILD, diff and `paru`. Before phase 5.
-- [ ] Installer interface design (D-03): mock-ups of the QML pages and the partitioning stylesheet, before phase 2.
+- [ ] Installer checks in the VM, before phase 2 (D-03, D-04): what Calamares 3.4.3's `localeq`, `packagechooserq` and `notesqml` do and need; that the "Check" page can read the launcher's result; encrypted install with a single passphrase prompt and GRUB unlock time; booting a snapshot with an encrypted root; `os-prober` with Windows, BitLocker and Fast Startup; how far `stylesheet.qss` reaches on the disk page.
 
 ## Later
 
 - Phases 2 to 7 as described in the roadmap.
 - Convert the tagline in `branding/logo/arctiva-logo.svg`, currently live text, to paths once the corporate typeface is chosen (D-13).
 - Hibernation: an `@swap` subvolume with a swap file alongside zram (D-04). Out of scope for 1.0, which only has suspend.
+- LUKS2 encryption with TPM2 or FIDO2 unlocking, once Calamares lets us choose the key derivation function (D-04).
+- Encryption passphrase typed with the user's keyboard layout in GRUB (`grub-kbdcomp`) instead of the US one (D-04).
 
 ## Rejected
 
@@ -32,6 +34,7 @@ Pending work grouped by priority. Phases and decisions: [roadmap](docs/en/roadma
 - **Discover's PackageKit back-end:** poor support on Arch and risk of partial upgrades (D-07).
 - **Discover with a custom back-end, Pamac, Bauh or Octopi as the store:** Discover has no pacman back-end and no stable interface to write one; the others depend on the AUR, are stalled or lack Flatpak (D-07).
 - **An installer written from scratch:** partitioning and resizing Windows is where data loss happens; Calamares is customised instead (D-03).
+- **LUKS2 with Argon2id or an unencrypted `/boot` in 1.0:** Argon2id has been reported to leave GRUB out of memory at boot, and a separate `/boot` breaks bootable snapshots (D-04).
 - **Legacy BIOS in 1.0:** doubles the test matrix for very little benefit (D-04).
 - **Splitting the ISO into parts:** USB writing tools need a single file (D-14).
 - **Native Bottles package:** upstream only supports Flatpak (D-12).

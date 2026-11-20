@@ -1,6 +1,6 @@
 # Arquitectura de Arctiva
 
-> **Estado:** aprobada (versión 0.1.6).
+> **Estado:** aprobada (versión 0.1.7).
 > English version: [../en/architecture.md](../en/architecture.md)
 
 Este documento analiza la viabilidad del proyecto y recoge las decisiones de arquitectura (D-01…D-16) con su justificación. Cada decisión aprobada se marcará como **Aprobada**; las que cambien se reescriben aquí y su cambio queda en el CHANGELOG.
@@ -45,24 +45,33 @@ Lo que **no** es realista y no se promete:
 - **Calamares** es el motor: maduro, en Qt (encaja con KDE), modular, usado por EndeavourOS, Manjaro, KaOS, Debian live y otras. Cubre idioma, teclado, zona horaria, usuarios, particionado manual y automático, instalación junto a Windows, UEFI y cifrado LUKS.
 - **Su aspecto básico es la configuración por defecto, no un límite.** La interfaz se rehace con QML para que tenga la identidad de Arctiva:
   - Barra lateral y navegación propias en QML (`sidebar: qml` y `navigation: qml` en el branding).
-  - Versiones QML de las páginas (`welcomeq`, `localeq`, `keyboardq`, `usersq`, `summaryq`) con diseño propio, y páginas QML propias donde aporten (por ejemplo, elegir perfil: Básico, Juegos, Oficina).
-  - La página de particionado no tiene versión QML: se integra con una hoja de estilo Qt (`stylesheet.qss`) para que siga el mismo diseño.
+  - Versiones QML de las páginas que trae Calamares (`welcomeq`, `localeq`, `keyboardq`, `usersq`, `summaryq`, `finishedq`) con diseño propio. El perfil (Básico, Juegos, Oficina; los dos últimos se descargan si hay conexión) se elige con `packagechooserq`, y la página «Comprobación» (ver arranque dual) usa `notesqml`.
+  - Orden de las páginas: bienvenida, idioma y zona, teclado, perfil, comprobación, disco, usuarios, resumen, instalación y fin.
+  - La página de particionado no tiene versión QML: se integra con una hoja de estilo Qt (`stylesheet.qss`) para que siga el mismo diseño. Si alguna parte dibujada en C++ (la barra de particiones) no la acepta, se deja como está.
+  - Identidad: barra lateral con el degradado azul noche del logo, contenido claro con acento azul y avisos con icono y texto, no solo color. Tipografía provisional Noto Sans hasta elegir la corporativa.
   - Presentación en QML durante la copia de archivos.
   - **Sin parches al código C++ de Calamares**: solo configuración, branding y módulos propios (QML o Python). Si algún día hace falta un parche, se propone a upstream.
 - Si el resultado no alcanzara el nivel deseado, la alternativa sería una interfaz propia sobre el motor de archinstall, resolviendo aparte el redimensionado de particiones de Windows. Se valoraría con un prototipo.
 - Modo de instalación: **offline**, copiando el sistema live ya probado (módulo `unpackfs`) y quitando lo exclusivo del live. Después, **extras opcionales online** (juegos, ofimática…) con el módulo `netinstall` si hay conexión. Es rápido, no depende de la red y lo instalado es lo que se ha probado.
-- **Arranque dual con Windows:** muchos equipos con Windows 11 traen la partición cifrada con BitLocker (cifrado del dispositivo), y Calamares no puede redimensionar una partición cifrada. El instalador avisa antes de particionar: reducir la partición desde Windows (Administración de discos), tener a mano la clave de recuperación de BitLocker y desactivar el inicio rápido de Windows, que deja NTFS en estado hibernado.
-- Riesgo: Calamares no está en los repos oficiales; se compila en `[arctiva]` y se vigilan sus versiones (la serie 3.4 está activa; la 3.4.2 es de marzo de 2026). Su API QML cambia entre versiones: la versión queda fijada en el repositorio propio y cada actualización se prueba antes de publicarla.
+- **Arranque dual con Windows:** muchos equipos con Windows 11 traen la partición cifrada con BitLocker (cifrado del dispositivo), y Calamares no puede redimensionar una partición cifrada ni detecta BitLocker o el inicio rápido de Windows, que deja NTFS en estado hibernado. Un lanzador propio se ejecuta antes de Calamares y comprueba el equipo (particiones BitLocker, NTFS hibernado con `ntfs-3g.probe`, presencia de Windows); la página «Comprobación», antes de la de disco, muestra el resultado:
+  - **Bloqueo:** Windows hibernado o con inicio rápido. Explica cómo apagarlo del todo; no se puede instalar junto a Windows hasta corregirlo.
+  - **Aviso:** BitLocker activo. Reducir la partición desde Windows (Administración de discos) y tener a mano la clave de recuperación, que Windows pedirá por haber cambiado Secure Boot (D-05).
+  - GRUB lista Windows en su menú (`os-prober`). Arctiva guarda la hora del firmware en UTC y Windows en hora local: la ayuda explica cómo ajustarlo.
+- Riesgo: Calamares no está en los repos oficiales; se compila en `[arctiva]` y se vigilan sus versiones (la 3.4.3, de septiembre de 2026, es la fijada; compila con Qt 6). Su API QML cambia entre versiones: la versión queda fijada en el repositorio propio y cada actualización se prueba antes de publicarla.
 
 ### D-04 Disco, arranque y recuperación (**Aprobada**)
 
-- **Solo UEFI con GPT** en la 1.0: cualquier PC compatible con Windows 10/11 lo tiene, y así la matriz de pruebas es la mitad. BIOS heredada queda descartada de momento.
+- **Solo UEFI con GPT** en la 1.0: cualquier PC compatible con Windows 10/11 lo tiene, y así la matriz de pruebas es la mitad. BIOS heredada queda descartada de momento. La ISO solo arranca en UEFI, así que un equipo sin UEFI no llega al instalador (Calamares no comprueba el modo de arranque).
+- **Partición EFI** montada en `/boot/efi`; solo contiene GRUB, así que sirve la de Windows. **`/boot` va dentro de `@`**: cada instantánea guarda el kernel y el initramfs que corresponden a sus módulos y arranca sin desajustes.
 - **Btrfs** con subvolúmenes (`@`, `@home`, `@cache`, `@log`, `@snapshots`) y compresión zstd. `@snapshots` se monta en `/.snapshots`, fuera de `@`: sin él, Snapper no puede devolver el sistema a una instantánea anterior.
 - **Snapper + snap-pac**: instantánea automática antes y después de cada transacción de pacman.
 - **GRUB + grub-btrfs**: se puede arrancar una instantánea desde el menú, que es la recuperación ante una actualización fallida. Las instantáneas son de solo lectura: el hook `grub-btrfs-overlayfs` de mkinitcpio les pone encima una capa temporal escribible para que arranquen. systemd-boot no puede arrancar instantáneas; Limine sí, pero sus integraciones están en el AUR. Todo lo elegido está en los repos oficiales.
 - **Kernels:** `linux` (por defecto) y `linux-lts` como entrada de reserva.
 - **Swap:** zram (`zram-generator`). zram no permite hibernar: la 1.0 no tiene hibernación (la suspensión sí funciona). Añadirla más adelante (subvolumen `@swap` con un archivo de intercambio) queda pendiente.
-- **Cifrado (opcional):** LUKS desde el instalador. GRUB 2.12 no admite Argon2, así que el cifrado debe usar LUKS1 o LUKS2 con PBKDF2; el detalle (`/boot` cifrado o no, cuántas veces se pide la contraseña) se fija en el estudio del instalador.
+- **Cifrado (opcional, desmarcado por defecto):** **LUKS1** sobre la partición de Arctiva, con `/boot` cifrado dentro. GRUB pide la contraseña **una sola vez**; un archivo de clave dentro del initramfs, que vive en la partición cifrada, desbloquea el sistema sin pedirla de nuevo (módulos `luksbootkeyfile` e `initcpiocfg` con el hook `encrypt`, que es además el que necesita `grub-btrfs-overlayfs`).
+  - Por qué no LUKS2: GRUB admite Argon2 desde la 2.14 (Arch tiene la 2.16), pero Calamares no deja elegir el método de derivación de la clave y usa Argon2id con 1 GiB de memoria, con el que hay informes de GRUB sin memoria al arrancar. LUKS1 es el valor por defecto de Calamares y el camino más probado.
+  - Al marcar el cifrado, el instalador avisa de que la contraseña se teclea al arrancar con la **distribución de teclado estadounidense** (mejor letras sin acentos ni ñ, y números) y de que sin ella los datos no se recuperan.
+  - Más adelante: LUKS2 para desbloquear con TPM2 o FIDO2, cuando Calamares permita elegir el método o con una conversión desde el USB live.
 
 ### D-05 Secure Boot (**Aprobada**)
 
