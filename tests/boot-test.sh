@@ -40,7 +40,7 @@ qemu-system-x86_64 "${accel[@]}" -m 4096 -smp 2 \
     -bios "$ovmf" \
     -drive "file=${iso},media=cdrom,readonly=on" \
     -kernel "${tmp}/vmlinuz-linux" -initrd "${tmp}/initramfs-linux.img" \
-    -append "archisobasedir=arctiva archisosearchuuid=${uuid} systemd.unit=graphical.target console=ttyS0,115200" \
+    -append "archisobasedir=arctiva archisosearchuuid=${uuid} systemd.unit=graphical.target systemd.firstboot=off console=ttyS0,115200" \
     -display none -serial "file:${log}" -no-reboot &
 qemu_pid=$!
 

@@ -10,9 +10,8 @@ Trabajo pendiente agrupado por prioridad. Fases y decisiones: [hoja de ruta](doc
 
 ## Media: fase 1 (ISO live mínima)
 
-- [ ] Probar en la VM el perfil `iso/`, `build.sh` y `tests/boot-test.sh` (escritos, sin construir): la ISO debe arrancar en VirtualBox (UEFI) hasta el escritorio con sesión automática.
-- [ ] Primer run del flujo `iso.yml` de GitHub Actions (necesita push): construcción y prueba de arranque en QEMU.
-- [ ] Medir el tamaño de la ISO y confirmar que no pasa de 2 GiB (D-14).
+- [ ] Primer run del flujo `iso.yml` de GitHub Actions (necesita push): construcción y prueba de arranque en QEMU con `tests/boot-test.sh`, que aún no se ha ejecutado. Es lo último que falta para cerrar la fase 1 (0.2.0).
+- [ ] Probar la ISO en hardware real con un USB (RTX 4060 del anfitrión) y la entrada «safe graphics».
 
 ## Media: estudios
 

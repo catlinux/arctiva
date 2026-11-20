@@ -66,7 +66,7 @@ Lo que **no** es realista y no se promete:
 - **Btrfs** con subvolúmenes (`@`, `@home`, `@cache`, `@log`, `@snapshots`) y compresión zstd. `@snapshots` se monta en `/.snapshots`, fuera de `@`: sin él, Snapper no puede devolver el sistema a una instantánea anterior.
 - **Snapper + snap-pac**: instantánea automática antes y después de cada transacción de pacman.
 - **GRUB + grub-btrfs**: se puede arrancar una instantánea desde el menú, que es la recuperación ante una actualización fallida. Las instantáneas son de solo lectura: el hook `grub-btrfs-overlayfs` de mkinitcpio les pone encima una capa temporal escribible para que arranquen. systemd-boot no puede arrancar instantáneas; Limine sí, pero sus integraciones están en el AUR. Todo lo elegido está en los repos oficiales.
-- **Kernels:** `linux` (por defecto) y `linux-lts` como entrada de reserva.
+- **Kernels:** `linux` (por defecto) y `linux-lts` como entrada de reserva. `linux-lts` no va en la ISO (ocuparía unos 250 MB, D-14): el instalador lo descarga si hay conexión y, si no, Arctiva Center lo ofrece después.
 - **Swap:** zram (`zram-generator`). zram no permite hibernar: la 1.0 no tiene hibernación (la suspensión sí funciona). Añadirla más adelante (subvolumen `@swap` con un archivo de intercambio) queda pendiente.
 - **Cifrado (opcional, desmarcado por defecto):** **LUKS1** sobre la partición de Arctiva, con `/boot` cifrado dentro. GRUB pide la contraseña **una sola vez**; un archivo de clave dentro del initramfs, que vive en la partición cifrada, desbloquea el sistema sin pedirla de nuevo (módulos `luksbootkeyfile` e `initcpiocfg` con el hook `encrypt`, que es además el que necesita `grub-btrfs-overlayfs`).
   - Por qué no LUKS2: GRUB admite Argon2 desde la 2.14 (Arch tiene la 2.16), pero Calamares no deja elegir el método de derivación de la clave y usa Argon2id con 1 GiB de memoria, con el que hay informes de GRUB sin memoria al arrancar. LUKS1 es el valor por defecto de Calamares y el camino más probado.
@@ -170,7 +170,9 @@ GitHub Releases acepta archivos de **menos de 2 GiB** cada uno, sin límite de t
 | **ISO de menos de 2 GiB con escritorio completo y extras descargados al instalar** | **Recomendada** |
 | Réplica externa (SourceForge o servidor propio) | Plan B si la ISO supera el límite; GitHub conserva las sumas de comprobación y la firma |
 
-Para mantenerla por debajo de 2 GiB: Plasma con una selección de paquetes en lugar de todos los meta-paquetes, compresión xz del sistema de archivos, y Steam, ofimática y juegos como perfiles online en la instalación. El CI fallará si la ISO pasa de 1,9 GiB. **El tamaño real se medirá en la fase 1**; hasta entonces es un objetivo, no un hecho.
+Para mantenerla por debajo de 2 GiB: Plasma con una selección de paquetes en lugar de todos los meta-paquetes, compresión xz del sistema de archivos, y Steam, ofimática y juegos como perfiles online en la instalación. El CI fallará si la ISO pasa de 1,9 GiB.
+
+**Medido el 2026-11-20** (paquetes del 2026-11-19): con `linux-lts` y la documentación de los paquetes la ISO ocupaba 2,12 GiB. Sin ellos ocupa **1,75 GiB**. Lo que más pesa: el firmware (unos 500 MB que ya vienen comprimidos), Firefox, `qt6-webengine` (lo exigen Discover y las aplicaciones de KDE) y las traducciones (unos 480 MB sin comprimir, que se conservan todas). Si vuelve a acercarse al límite, el siguiente candidato es limitar las traducciones de la ISO.
 
 ### D-15 Automatización (GitHub Actions) (**Aprobada**)
 

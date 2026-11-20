@@ -10,9 +10,8 @@ Pending work grouped by priority. Phases and decisions: [roadmap](docs/en/roadma
 
 ## Medium — phase 1 (minimal live ISO)
 
-- [ ] Test the `iso/` profile, `build.sh` and `tests/boot-test.sh` in the VM (written, not built yet): the ISO must boot in VirtualBox (UEFI) to the desktop with automatic login.
-- [ ] First run of the `iso.yml` GitHub Actions workflow (needs a push): build and QEMU boot test.
-- [ ] Measure the ISO size and confirm it stays under 2 GiB (D-14).
+- [ ] First run of the `iso.yml` GitHub Actions workflow (needs a push): build and QEMU boot test with `tests/boot-test.sh`, which has not run yet. It is the last item before closing phase 1 (0.2.0).
+- [ ] Test the ISO on real hardware from a USB stick (the host's RTX 4060) and the "safe graphics" entry.
 
 ## Medium — studies
 

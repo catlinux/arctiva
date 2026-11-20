@@ -20,13 +20,16 @@ Uso: sudo ./build.sh [-d AAAA/MM/DD|latest] [-o salida] [-w trabajo]
   -o  Directorio de salida de la ISO (por defecto: ./out).
   -w  Directorio de trabajo de mkarchiso; no debe existir
       (por defecto: ${work_dir}). No uses /tmp: está en RAM.
+  -k  Conservar el directorio de trabajo (para medir qué ocupa espacio).
 EOF
 }
 
 die() { echo "build.sh: $*" >&2; exit 1; }
 
-while getopts 'd:o:w:h' opt; do
+keep_work=0
+while getopts 'd:o:w:kh' opt; do
     case "$opt" in
+        k) keep_work=1 ;;
         d) archive_date="$OPTARG" ;;
         o) out_dir="$OPTARG" ;;
         w) work_dir="$OPTARG" ;;
@@ -59,7 +62,9 @@ fi
 
 export ARCTIVA_VERSION="$version"
 mkdir -p -- "$out_dir"
-mkarchiso -v -r -w "$work_dir" -o "$out_dir" "${stage}/profile"
+mkarchiso_opts=(-v -w "$work_dir" -o "$out_dir")
+(( keep_work )) || mkarchiso_opts+=(-r)
+mkarchiso "${mkarchiso_opts[@]}" "${stage}/profile"
 
 iso_name="arctiva-${version}-x86_64.iso"
 iso="${out_dir}/${iso_name}"

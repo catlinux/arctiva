@@ -66,7 +66,7 @@ What is **not** realistic and will not be promised:
 - **Btrfs** with subvolumes (`@`, `@home`, `@cache`, `@log`, `@snapshots`) and zstd compression. `@snapshots` is mounted at `/.snapshots`, outside `@`: without it, Snapper cannot roll the system back to an earlier snapshot.
 - **Snapper + snap-pac**: automatic snapshots before and after every pacman transaction.
 - **GRUB + grub-btrfs**: snapshots can be booted from the menu, which is the recovery path after a failed upgrade. Snapshots are read-only: the `grub-btrfs-overlayfs` mkinitcpio hook adds a temporary writable layer on top so they can boot. systemd-boot cannot boot snapshots; Limine can, but its integrations live in the AUR. Everything chosen is in the official repositories.
-- **Kernels:** `linux` (default) and `linux-lts` as a fallback entry.
+- **Kernels:** `linux` (default) and `linux-lts` as a fallback entry. `linux-lts` is not on the ISO (it would take about 250 MB, D-14): the installer downloads it when a connection is available, and otherwise Arctiva Center offers it later.
 - **Swap:** zram (`zram-generator`). zram does not allow hibernation: 1.0 has no hibernation (suspend works). Adding it later (an `@swap` subvolume with a swap file) is pending.
 - **Encryption (optional, off by default):** **LUKS1** on the Arctiva partition, with `/boot` encrypted inside it. GRUB asks for the passphrase **only once**; a key file inside the initramfs, which lives on the encrypted partition, unlocks the system without asking again (`luksbootkeyfile` and `initcpiocfg` modules with the `encrypt` hook, which is also the one `grub-btrfs-overlayfs` needs).
   - Why not LUKS2: GRUB supports Argon2 since 2.14 (Arch ships 2.16), but Calamares does not let us choose the key derivation function and uses Argon2id with 1 GiB of memory, which has been reported to leave GRUB out of memory at boot. LUKS1 is Calamares' default and the best-tested path.
@@ -170,7 +170,9 @@ GitHub Releases accepts files **under 2 GiB** each, with no limit on total size 
 | **ISO under 2 GiB with the full desktop, extras downloaded during installation** | **Recommended** |
 | External mirror (SourceForge or own server) | Fallback if the ISO exceeds the limit; GitHub keeps the checksums and signature |
 
-To stay under 2 GiB: a selection of Plasma packages instead of every meta-package, xz compression of the filesystem, and Steam, office and gaming as online profiles at install time. CI will fail if the ISO grows beyond 1.9 GiB. **The real size will be measured in phase 1**; until then it is a target, not a fact.
+To stay under 2 GiB: a selection of Plasma packages instead of every meta-package, xz compression of the filesystem, and Steam, office and gaming as online profiles at install time. CI will fail if the ISO grows beyond 1.9 GiB.
+
+**Measured on 2026-11-20** (packages from 2026-11-19): with `linux-lts` and package documentation the ISO took 2.12 GiB. Without them it takes **1.75 GiB**. The largest parts: firmware (about 500 MB that is already compressed), Firefox, `qt6-webengine` (required by Discover and the KDE applications) and translations (about 480 MB uncompressed, all of them kept). If it gets close to the limit again, the next candidate is limiting the translations on the ISO.
 
 ### D-15 Automation (GitHub Actions) (**Approved**)
 

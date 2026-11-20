@@ -10,8 +10,12 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 
 ### Added
 
-- Arctiva archiso profile in `iso/`, derived from `releng` (archiso 92): Plasma with automatic login for the `live` user, UEFI-only boot, xz compression and the system package selection. Not yet built or tested.
-- `build.sh`: reproducible build with an Arch Linux Archive date (`iso/archive-date`), `sha256` checksum and a 1.9 GiB limit.
+- Arctiva archiso profile in `iso/`, derived from `releng` (archiso 92): Plasma with automatic login for the `live` user, UEFI-only boot, xz compression and the system package selection. Built and tested in VirtualBox: it reaches the desktop and takes 1.75 GiB.
+- `build.sh`: reproducible build with an Arch Linux Archive date (`iso/archive-date`), `sha256` checksum, a 1.9 GiB limit and a `-k` option to keep the working directory.
+
+### Changed
+
+- D-04 and D-14: `linux-lts` is installed during installation when a connection is available instead of shipping on the ISO, and the ISO leaves out package documentation; this brings it down from 2.12 to 1.75 GiB. Size measured and broken down in D-14.
 - GitHub Actions workflow `iso.yml` with the build, a QEMU UEFI boot test (`tests/boot-test.sh`) and a weekly build.
 
 ## [0.1.7] - 2026-11-20

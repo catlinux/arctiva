@@ -4,7 +4,7 @@
 # Base y arranque
 base
 linux
-linux-lts
+# linux-lts no va en la ISO (unos 250 MB): se instala durante la instalación si hay red (D-04, D-14).
 linux-firmware
 sof-firmware
 amd-ucode
@@ -50,7 +50,6 @@ usbutils
 xdg-user-dirs
 man-db
 nano
-vim
 less
 bash-completion
 

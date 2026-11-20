@@ -27,7 +27,7 @@ Comprobado el 2026-11-20 con VirtualBox en Windows 11.
 
 ## Construir la ISO de Arctiva
 
-> **Aún sin probar** en la VM; se confirmará al construir la primera ISO de la fase 1.
+> Comprobado el 2026-11-20 en la VM (4 vCPU, 4 GB): la construcción tarda unos 12 minutos y la ISO arranca en VirtualBox hasta el escritorio en unos 2 minutos y medio. La prueba automática `tests/boot-test.sh` y el CI aún no se han ejecutado.
 
 El perfil está en `iso/` (derivado de `releng`) y se construye con `build.sh`, dentro de la VM:
 
@@ -38,7 +38,9 @@ sudo ./build.sh -o ~/out -d latest  # paquetes del día, sin fecha fijada
 ```
 
 - La ISO sale como `arctiva-<VERSION>-x86_64.iso` con su `.sha256`. El script falla si pasa de 1,9 GiB (D-14).
-- El directorio de trabajo (por defecto `/var/tmp/arctiva-work`) no debe existir; mkarchiso lo borra al acabar.
+- El directorio de trabajo (por defecto `/var/tmp/arctiva-work`) no debe existir; mkarchiso lo borra al acabar. Con `-k` se conserva, para medir qué ocupa espacio (`du`, `pacman --root <trabajo>/x86_64/airootfs -Qi`); después hay que borrarlo con `sudo rm -rf`.
+- La ISO no lleva la documentación de los paquetes (`NoExtract` en `iso/pacman.conf`) para no pasar del límite.
+- Pruebas en VirtualBox: la VM de pruebas tiene 4 GB y la de construcción otros 4; con 16 GB en el anfitrión no caben las dos encendidas a la vez si hay otros programas abiertos (falla con `VERR_UNRESOLVED_ERROR`).
 - Para fijar otra fecha de paquetes, cambia `iso/archive-date` (formato `AAAA/MM/DD`).
 - La ISO solo arranca en UEFI. La entrada «safe graphics» arranca con `nomodeset`.
 - Prueba de arranque automática, como en el CI: `sudo tests/boot-test.sh ~/out/arctiva-*.iso` (necesita `qemu-system-x86_64` y `OVMF`; ruta del firmware en la variable `OVMF`).

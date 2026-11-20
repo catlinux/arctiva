@@ -27,7 +27,7 @@ Verified on 2026-11-20 with VirtualBox on Windows 11.
 
 ## Building the Arctiva ISO
 
-> **Not yet tested** in the VM; it will be confirmed when the first phase 1 ISO is built.
+> Checked on 2026-11-20 in the VM (4 vCPU, 4 GB): the build takes about 12 minutes and the ISO boots in VirtualBox to the desktop in about two and a half minutes. The automatic `tests/boot-test.sh` and CI have not run yet.
 
 The profile lives in `iso/` (derived from `releng`) and is built with `build.sh`, inside the VM:
 
@@ -38,7 +38,9 @@ sudo ./build.sh -o ~/out -d latest  # today's packages, no pinned date
 ```
 
 - The ISO is named `arctiva-<VERSION>-x86_64.iso` and comes with its `.sha256`. The script fails if it exceeds 1.9 GiB (D-14).
-- The working directory (by default `/var/tmp/arctiva-work`) must not exist; mkarchiso deletes it when done.
+- The working directory (by default `/var/tmp/arctiva-work`) must not exist; mkarchiso deletes it when done. With `-k` it is kept, to measure what takes space (`du`, `pacman --root <work>/x86_64/airootfs -Qi`); delete it afterwards with `sudo rm -rf`.
+- The ISO does not include package documentation (`NoExtract` in `iso/pacman.conf`) to stay under the limit.
+- VirtualBox tests: the test VM has 4 GB and the build VM another 4; with 16 GB on the host both cannot run at once while other programs are open (it fails with `VERR_UNRESOLVED_ERROR`).
 - To pin another package date, change `iso/archive-date` (format `YYYY/MM/DD`).
 - The ISO only boots in UEFI mode. The "safe graphics" entry boots with `nomodeset`.
 - Automatic boot test, as in CI: `sudo tests/boot-test.sh ~/out/arctiva-*.iso` (needs `qemu-system-x86_64` and `OVMF`; firmware path in the `OVMF` variable).
