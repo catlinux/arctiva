@@ -1,6 +1,6 @@
 # Arctiva architecture
 
-> **Status:** approved (version 0.1.5), except D-07, which is still under study.
+> **Status:** approved (version 0.1.6).
 > Versión en castellano: [../es/arquitectura.md](../es/arquitectura.md)
 
 This document analyses the project's feasibility and records the architecture decisions (D-01…D-16) with their rationale. Each approved decision will be marked **Approved**; decisions that change are rewritten here, and the change is recorded in the CHANGELOG.
@@ -23,7 +23,7 @@ What is **not** realistic and will not be promised:
 |---|---|---|
 | "No own repositories" | The installer (Calamares is not in the official repositories), the branding and the in-house tools need a channel to reach and update users. | A **minimal, signed** repository (`[arctiva]`) containing only our own packages and the essentials that Arch does not ship. It never contains modified official packages (D-01). |
 | AUR inside the store | The AUR is unreviewed: anyone can publish scripts that run with build permissions. For users coming from Windows this is a security risk. | Accepted with conditions: a separate, clearly visible source, disabled until the user enables it, a warning before every installation and a viewable PKGBUILD (D-07). |
-| A store mixing pacman, AUR and Flatpak | On Arch, Discover with PackageKit works poorly: the ArchWiki advises against using PackageKit front-ends to upgrade, and KDE calls Arch support very poor. Background database refreshes can cause partial upgrades, which Arch does not support. | A store that keeps the three sources apart and never leaves the system partially upgraded. The concrete solution comes from a dedicated study (D-07). |
+| A store mixing pacman, AUR and Flatpak | On Arch, Discover with PackageKit works poorly: the ArchWiki advises against using PackageKit front-ends to upgrade, and KDE calls Arch support very poor. Background database refreshes can cause partial upgrades, which Arch does not support. | An in-house store, inside Arctiva Center, that keeps the three sources apart and never leaves the system partially upgraded (D-07). |
 | A complete ISO on GitHub | GitHub Releases requires each file to be under 2 GiB. | An ISO under 2 GiB with the full desktop, with extras downloaded during installation; fallback to an external mirror (D-14). |
 
 ## 3. Architecture decisions
@@ -76,18 +76,26 @@ Arch does not provide Secure Boot out of the box (the signed `shim` is in the AU
 - Wayland session only: since Plasma 6.8, KDE no longer ships an X11 session. X11 applications keep working through Xwayland.
 - Login manager: **Plasma Login Manager** (KDE's official one, in `extra`; Calamares 3.4 can already configure it). Its Breeze look is fixed, so the identity is limited to the wallpaper and colours. Fallback: SDDM with a custom theme if the former falls short.
 
-### D-07 Applications: store and sources (**under study**)
+### D-07 Applications: store and sources (**Approved**)
 
-Fixed requirements:
+Requirements:
 
 - A graphical store to search, install, update and remove software from **three sources**: the official repositories (pacman), Flathub (Flatpak) and the AUR.
 - The origin of every application is always visible, with a distinct badge per source. If an application exists in several sources, they are shown as separate options with one marked as recommended.
 - **AUR:** disabled by default. When enabling it, and before every installation, a clear warning that it is unreviewed community software, with a viewable PKGBUILD. Packages are built without root through a helper (`paru`) from `[arctiva]`.
 - **pacman integrity:** no operation refreshes the databases without upgrading the whole system. Installing a repository package on an outdated system requires upgrading first.
 - Flatpak permissions visible and adjustable. Understandable errors, with the original text available.
-- Already rejected: Discover's PackageKit back-end, because of the risk of partial upgrades (section 2).
 
-Options to study: Discover with a custom back-end for pacman and the AUR, Pamac, Bauh, Octopi, and our own Qt/QML store on top of libalpm, paru and libflatpak. Criteria: long-term maintenance, security, Plasma integration, look and licence. Expected outcome: the final decision backed by a proof of concept. Meanwhile, the live ISO uses Discover with Flathub.
+Decision: **an in-house store as the "Applications" module of Arctiva Center** (D-09). The installed system does not ship Discover, to avoid two stores and PackageKit's periodic refresh. The live ISO uses Discover with Flathub only until phase 5.
+
+- **Catalogue:** AppStream data from the repositories (`archlinux-appstream-data`) and from Flathub, read with libappstream. An application available from several sources is shown once, with one option per source. The AUR only appears when enabled, as a list of packages searched through its RPC API.
+- **Recommended source:** the official repositories before Flathub, except for the exceptions set in `arctiva-settings` (for example Bottles, D-12). The AUR is never the recommended one.
+- **pacman:** queries use `pyalpm` on a temporary copy of the databases, like `checkupdates`; the real database is never touched outside an upgrade. Installing is `pacman -Syu --needed <packages>` through the polkit helper; if updates are pending, the D-08 flow (news, snapshot, sensitive packages) runs first.
+- **Flatpak:** libflatpak, or the `flatpak` command if the proof of concept advises it. Permissions are managed by opening `flatpak-kcm`, the existing Plasma module.
+- **AUR:** before installing, the full PKGBUILD and `.install`, votes, popularity, last update and maintainer are shown, with a stronger warning if the package is orphaned, has changed maintainer or is recent. On every update, a diff of the PKGBUILD and `.install` against the installed version, with confirmation: in June 2026 Arch warned of a wave of malicious AUR packages and advised reviewing all changes. Packages are built as the user with `paru`; only installing the built package goes through the helper. AUR updates run after `pacman -Syu`.
+- **Errors:** the same message translator as D-08.
+- Rejected: Discover's PackageKit back-end, because of the risk of partial upgrades (section 2); Discover with a custom back-end for pacman and the AUR (none exists and Discover's back-end interface is not stable, so C++ code would have to keep pace with Plasma); Pamac (AUR only, tied to Manjaro and GTK); Bauh (no development since 2024, Qt5); and Octopi (a package manager without Flatpak or AppStream).
+- Before phase 5, a proof of concept in the VM validates the catalogue, the temporary-database queries, installation through the helper, Flatpak and the AUR flow. The decision will be reconsidered if KDE adds a pacman back-end to Discover.
 
 ### D-08 Updates (**Approved**)
 
@@ -105,7 +113,7 @@ Before writing this logic, reusing **arch-update** will be evaluated (an AUR too
 
 ### D-09 In-house tools: a single application (**Approved**)
 
-**Arctiva Center**, in Python 3 + PySide6 (Qt 6, both in the official repositories), with `pyalpm` for read-only queries. Modules: first-boot welcome, drivers, updates and extras (catalogue). The store will be integrated here or be a separate application, depending on the D-07 study. Privileged actions go through a polkit helper exposing a **closed set of operations**, never arbitrary commands. One application instead of several keeps maintenance down.
+**Arctiva Center**, in Python 3 + PySide6 (Qt 6, both in the official repositories), with `pyalpm` for read-only queries. Modules: first-boot welcome, drivers, updates, extras (catalogue) and applications (the store, D-07). The helper, the error translator and the update flow are shared by all modules. Privileged actions go through a polkit helper exposing a **closed set of operations**, never arbitrary commands. One application instead of several keeps maintenance down.
 
 ### D-10 Graphics (**Approved**)
 
@@ -176,8 +184,8 @@ To stay under 2 GiB: a selection of Plasma packages instead of every meta-packag
 | In-house (small) | Integrated, no own code |
 |---|---|
 | archiso profile and build scripts | Arch Linux (core, extra, multilib), pacman |
-| Calamares QML interface, configuration and branding | Calamares, KDE Plasma, Discover, Flatpak/Flathub |
-| Store (according to the D-07 study) | libalpm, paru, libflatpak |
+| Calamares QML interface, configuration and branding | Calamares, KDE Plasma, Discover (live only), Flatpak/Flathub |
+| Store: the "Applications" module of Arctiva Center (D-07) | pyalpm, paru, libflatpak, AppStream, flatpak-kcm |
 | `arctiva-settings` (defaults) | Btrfs, Snapper, snap-pac, grub-btrfs, zram-generator |
 | `arctiva-branding` (logo, wallpapers, Plymouth, global theme) | Mesa, NVIDIA open, Vulkan, firmware, fwupd |
 | `arctiva-keyring` and the `[arctiva]` repository | Steam, Proton, Lutris, Heroic, Bottles, gamemode, MangoHud |
@@ -195,7 +203,8 @@ To stay under 2 GiB: a selection of Plasma packages instead of every meta-packag
 | Windows with BitLocker in dual boot | High | Warnings in the installer and documentation: recovery key at hand, shrink the partition from Windows, Fast Startup off |
 | ISO over 2 GiB | Medium | Package selection and an external mirror |
 | Name and logo versus other trademarks | Low | Name without "Arch", own logo, review before 1.0 |
-| AUR security | Medium | Disabled by default, kept separate and with warnings in the store |
+| AUR security | Medium | Disabled by default, kept separate, with warnings and a PKGBUILD diff on every update |
+| Cost of building the in-house store | Medium | Shares the helper, the error translator and the D-08 flow; proof of concept before phase 5 |
 | Repository signing keys | High | Offline primary key; signing subkey in Actions secrets |
 | VirtualBox tests not representative (3D, Wayland) | Medium | Live-USB tests on real hardware before every release |
 

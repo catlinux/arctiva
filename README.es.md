@@ -12,7 +12,7 @@ Arctiva es un proyecto independiente, sin relación oficial con Arch Linux ni re
 
 ## Estado
 
-**Fase inicial de diseño.** Todavía no hay ISO para descargar. La arquitectura está aprobada, salvo la tienda de aplicaciones (D-07), que sigue en estudio.
+**Fase inicial de diseño.** Todavía no hay ISO para descargar. La arquitectura está aprobada (decisiones D-01…D-16).
 
 - [Arquitectura y decisiones](docs/es/arquitectura.md)
 - [Hoja de ruta](docs/es/hoja-de-ruta.md)

@@ -8,6 +8,14 @@ El formato se basa en [Keep a Changelog](https://keepachangelog.com/es-ES/1.1.0/
 
 ## [Sin publicar]
 
+## [0.1.6] - 2026-11-20
+
+### Cambiado
+
+- D-07 aprobada: la tienda será un módulo propio de Arctiva Center. Consulta pacman sobre una copia temporal de las bases de datos, instala con `pacman -Syu --needed`, gestiona Flatpak con libflatpak y `flatpak-kcm`, y muestra el PKGBUILD del AUR y su diff en cada actualización. El sistema instalado no lleva Discover, que queda solo en la ISO live.
+- D-09: Arctiva Center incorpora el módulo «Aplicaciones».
+- El logo de `branding/logo/` queda aprobado (D-13).
+
 ## [0.1.5] - 2026-11-20
 
 ### Cambiado

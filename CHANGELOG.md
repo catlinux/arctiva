@@ -8,6 +8,14 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 
 ## [Unreleased]
 
+## [0.1.6] - 2026-11-20
+
+### Changed
+
+- D-07 approved: the store will be an in-house module of Arctiva Center. It queries pacman on a temporary copy of the databases, installs with `pacman -Syu --needed`, manages Flatpak with libflatpak and `flatpak-kcm`, and shows the AUR PKGBUILD and its diff on every update. The installed system does not ship Discover, which stays on the live ISO only.
+- D-09: Arctiva Center gains the "Applications" module.
+- The logo in `branding/logo/` is approved (D-13).
+
 ## [0.1.5] - 2026-11-20
 
 ### Changed

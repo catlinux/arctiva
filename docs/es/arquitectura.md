@@ -1,6 +1,6 @@
 # Arquitectura de Arctiva
 
-> **Estado:** aprobada (versión 0.1.5), salvo D-07, que sigue en estudio.
+> **Estado:** aprobada (versión 0.1.6).
 > English version: [../en/architecture.md](../en/architecture.md)
 
 Este documento analiza la viabilidad del proyecto y recoge las decisiones de arquitectura (D-01…D-16) con su justificación. Cada decisión aprobada se marcará como **Aprobada**; las que cambien se reescriben aquí y su cambio queda en el CHANGELOG.
@@ -23,7 +23,7 @@ Lo que **no** es realista y no se promete:
 |---|---|---|
 | «Sin repositorios propios» | El instalador (Calamares no está en los repos oficiales), el branding y las herramientas propias tienen que llegar al usuario y actualizarse por algún sitio. | Un repositorio propio **mínimo y firmado** (`[arctiva]`) solo con paquetes propios y los imprescindibles que no están en Arch. Nunca contiene versiones modificadas de paquetes oficiales (D-01). |
 | AUR dentro de la tienda | El AUR no está revisado: cualquiera publica scripts que se ejecutan con permisos de compilación. Para usuarios que vienen de Windows es un riesgo de seguridad. | Se acepta con condiciones: fuente separada y bien visible, desactivada hasta que el usuario la activa, aviso antes de cada instalación y PKGBUILD consultable (D-07). |
-| Tienda que mezcla pacman, AUR y Flatpak | En Arch, Discover con PackageKit funciona mal: la ArchWiki desaconseja usar interfaces PackageKit para actualizar y KDE califica de muy pobre el soporte de Arch. El refresco de bases de datos en segundo plano puede provocar actualizaciones parciales, que Arch no soporta. | Una tienda que distingue las tres fuentes y nunca deja el sistema a medio actualizar. La solución concreta sale de un estudio específico (D-07). |
+| Tienda que mezcla pacman, AUR y Flatpak | En Arch, Discover con PackageKit funciona mal: la ArchWiki desaconseja usar interfaces PackageKit para actualizar y KDE califica de muy pobre el soporte de Arch. El refresco de bases de datos en segundo plano puede provocar actualizaciones parciales, que Arch no soporta. | Una tienda propia, dentro de Arctiva Center, que distingue las tres fuentes y nunca deja el sistema a medio actualizar (D-07). |
 | Todo en una ISO completa en GitHub | GitHub Releases limita cada archivo a menos de 2 GiB. | ISO de menos de 2 GiB con escritorio completo y extras descargados durante la instalación; plan B con una réplica externa (D-14). |
 
 ## 3. Decisiones de arquitectura
@@ -76,18 +76,26 @@ Arch no ofrece Secure Boot de serie (el `shim` firmado está en el AUR). En la 1
 - Solo sesión Wayland: desde Plasma 6.8, KDE ya no ofrece sesión X11. Las aplicaciones X11 siguen funcionando mediante Xwayland.
 - Gestor de inicio: **Plasma Login Manager** (oficial de KDE, en `extra`; Calamares 3.4 ya sabe configurarlo); tiene el aspecto Breeze fijo, por lo que la identidad se limita a fondo y colores. Reserva: SDDM con tema propio si el primero no convence.
 
-### D-07 Aplicaciones: tienda y fuentes (**en estudio**)
+### D-07 Aplicaciones: tienda y fuentes (**Aprobada**)
 
-Requisitos fijados:
+Requisitos:
 
 - Una tienda gráfica para buscar, instalar, actualizar y desinstalar desde **tres fuentes**: repositorios oficiales (pacman), Flathub (Flatpak) y AUR.
 - El origen de cada aplicación siempre visible, con un distintivo propio por fuente. Si una aplicación existe en varias fuentes, se muestran como opciones separadas y una de ellas aparece como recomendada.
 - **AUR:** desactivado por defecto. Al activarlo, y antes de cada instalación, un aviso claro de que es software de la comunidad sin revisar, con el PKGBUILD consultable. Se compila sin root mediante un asistente (`paru`) de `[arctiva]`.
 - **Integridad de pacman:** ninguna operación refresca las bases de datos sin actualizar todo el sistema. Para instalar un paquete de los repositorios con el sistema desactualizado, primero hay que actualizar.
 - Permisos de Flatpak visibles y modificables. Errores comprensibles, con el texto original disponible.
-- Ya descartado: el motor PackageKit de Discover, por el riesgo de actualizaciones parciales (sección 2).
 
-Opciones a estudiar: Discover con un motor propio para pacman y AUR, Pamac, Bauh, Octopi y una tienda propia en Qt/QML sobre libalpm, paru y libflatpak. Criterios: mantenimiento a largo plazo, seguridad, integración con Plasma, aspecto y licencia. Resultado esperado: la decisión definitiva con una prueba de concepto. Mientras tanto, la ISO live usa Discover con Flathub.
+Decisión: **tienda propia como módulo «Aplicaciones» de Arctiva Center** (D-09). El sistema instalado no lleva Discover, para no tener dos tiendas ni el refresco periódico de PackageKit. La ISO live usa Discover solo con Flathub hasta la fase 5.
+
+- **Catálogo:** datos AppStream de los repositorios (`archlinux-appstream-data`) y de Flathub, leídos con libappstream. Una aplicación disponible en varias fuentes se muestra una sola vez, con una opción por fuente. El AUR solo aparece si está activado, como lista de paquetes buscada en su API RPC.
+- **Fuente recomendada:** los repositorios oficiales antes que Flathub, salvo las excepciones que fija `arctiva-settings` (por ejemplo Bottles, D-12). El AUR nunca es la recomendada.
+- **pacman:** las consultas se hacen con `pyalpm` sobre una copia temporal de las bases de datos, como `checkupdates`; la base real no se toca fuera de una actualización. Instalar es `pacman -Syu --needed <paquetes>` a través del ayudante polkit; si hay actualizaciones pendientes, antes se pasa por el flujo de D-08 (noticias, instantánea, paquetes delicados).
+- **Flatpak:** libflatpak, o la orden `flatpak` si la prueba de concepto lo aconseja. Los permisos se gestionan abriendo `flatpak-kcm`, el módulo de Plasma que ya existe.
+- **AUR:** antes de instalar se muestran el PKGBUILD y el `.install` completos, los votos, la popularidad, la última actualización y el mantenedor, con un aviso reforzado si el paquete es huérfano, ha cambiado de mantenedor o es reciente. En cada actualización, diff del PKGBUILD y del `.install` respecto a lo instalado, con confirmación: en junio de 2026 Arch avisó de una oleada de paquetes maliciosos en el AUR y recomendó revisar todos los cambios. Se compila como usuario con `paru`; solo la instalación del paquete construido pasa por el ayudante. Las actualizaciones del AUR van después de `pacman -Syu`.
+- **Errores:** el mismo traductor de mensajes que D-08.
+- Descartados: el motor PackageKit de Discover, por el riesgo de actualizaciones parciales (sección 2); Discover con un motor propio para pacman y AUR (no existe ninguno y la interfaz de motores de Discover no es estable, así que habría que mantener código C++ al ritmo de Plasma); Pamac (solo en el AUR, ligado a Manjaro y en GTK); Bauh (sin desarrollo desde 2024 y en Qt5), y Octopi (gestor de paquetes sin Flatpak ni AppStream).
+- Antes de la fase 5, una prueba de concepto en la VM valida el catálogo, las consultas con base temporal, la instalación a través del ayudante, Flatpak y el flujo del AUR. La decisión se reconsiderará si KDE incorpora a Discover un motor para pacman.
 
 ### D-08 Actualizaciones (**Aprobada**)
 
@@ -105,7 +113,7 @@ Antes de escribir esta lógica se evaluará reutilizar **arch-update** (herramie
 
 ### D-09 Herramientas propias: una sola aplicación (**Aprobada**)
 
-**Arctiva Center**, en Python 3 + PySide6 (Qt 6; ambos en los repos oficiales) y `pyalpm` para consultas de solo lectura. Módulos: bienvenida en el primer arranque, controladores, actualizaciones y extras (catálogo). La tienda se integrará aquí o será una aplicación aparte según el estudio de D-07. Las acciones privilegiadas pasan por un ayudante polkit con un **conjunto cerrado de operaciones**, nunca por órdenes arbitrarias. Es una sola aplicación en lugar de varias para reducir mantenimiento.
+**Arctiva Center**, en Python 3 + PySide6 (Qt 6; ambos en los repos oficiales) y `pyalpm` para consultas de solo lectura. Módulos: bienvenida en el primer arranque, controladores, actualizaciones, extras (catálogo) y aplicaciones (la tienda, D-07). El ayudante, el traductor de errores y el flujo de actualización son comunes a todos los módulos. Las acciones privilegiadas pasan por un ayudante polkit con un **conjunto cerrado de operaciones**, nunca por órdenes arbitrarias. Es una sola aplicación en lugar de varias para reducir mantenimiento.
 
 ### D-10 Gráficas (**Aprobada**)
 
@@ -176,8 +184,8 @@ Para mantenerla por debajo de 2 GiB: Plasma con una selección de paquetes en lu
 | Desarrollo propio (pequeño) | Integración sin código propio |
 |---|---|
 | Perfil archiso y scripts de construcción | Arch Linux (core, extra, multilib), pacman |
-| Interfaz QML, configuración y branding de Calamares | Calamares, KDE Plasma, Discover, Flatpak/Flathub |
-| Tienda (según el estudio de D-07) | libalpm, paru, libflatpak |
+| Interfaz QML, configuración y branding de Calamares | Calamares, KDE Plasma, Discover (solo en la live), Flatpak/Flathub |
+| Tienda: módulo «Aplicaciones» de Arctiva Center (D-07) | pyalpm, paru, libflatpak, AppStream, flatpak-kcm |
 | `arctiva-settings` (valores por defecto) | Btrfs, Snapper, snap-pac, grub-btrfs, zram-generator |
 | `arctiva-branding` (logo, fondos, Plymouth, tema global) | Mesa, NVIDIA open, Vulkan, firmware, fwupd |
 | `arctiva-keyring` y el repositorio `[arctiva]` | Steam, Proton, Lutris, Heroic, Bottles, gamemode, MangoHud |
@@ -195,7 +203,8 @@ Para mantenerla por debajo de 2 GiB: Plasma con una selección de paquetes en lu
 | Windows con BitLocker en arranque dual | Alto | Avisos en el instalador y la documentación: clave de recuperación a mano, reducir la partición desde Windows, inicio rápido desactivado |
 | ISO de más de 2 GiB | Medio | Selección de paquetes y réplica externa |
 | Nombre y logo frente a otras marcas | Bajo | Nombre sin «Arch», logo propio, revisión antes de la 1.0 |
-| Seguridad del AUR | Medio | Desactivado por defecto, separado y con avisos en la tienda |
+| Seguridad del AUR | Medio | Desactivado por defecto, separado, con avisos y con diff del PKGBUILD en cada actualización |
+| Coste de construir la tienda propia | Medio | Comparte el ayudante, el traductor de errores y el flujo de D-08; prueba de concepto antes de la fase 5 |
 | Claves de firma del repositorio | Alto | Clave maestra fuera de línea; subclave de firma en secretos de Actions |
 | Pruebas en VirtualBox poco representativas (3D, Wayland) | Medio | Pruebas en hardware real con USB live antes de cada versión |
 
