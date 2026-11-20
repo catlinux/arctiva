@@ -8,10 +8,9 @@ Trabajo pendiente agrupado por prioridad. Fases y decisiones: [hoja de ruta](doc
 
 - [ ] Decidir cuándo se hace público el repositorio.
 
-## Media: fase 1 (ISO live mínima)
+## Media: seguimiento de la fase 1
 
-- [ ] Primer run del flujo `iso.yml` de GitHub Actions (necesita push): construcción y prueba de arranque en QEMU con `tests/boot-test.sh`, que aún no se ha ejecutado. Es lo último que falta para cerrar la fase 1 (0.2.0).
-- [ ] Probar la ISO en hardware real con un USB (RTX 4060 del anfitrión) y la entrada «safe graphics».
+- [ ] Probar la ISO live en hardware real con un USB (RTX 4060 del PC; portátil con Windows y Manjaro). La entrada «safe graphics» ya funciona en VirtualBox.
 
 ## Media: estudios
 
@@ -23,6 +22,7 @@ Trabajo pendiente agrupado por prioridad. Fases y decisiones: [hoja de ruta](doc
 - Fases 2 a 7 según la hoja de ruta.
 - Convertir en trazos el lema de `branding/logo/arctiva-logo.svg`, que ahora es texto, cuando se elija la tipografía corporativa (D-13).
 - Hibernación: subvolumen `@swap` con un archivo de intercambio además de zram (D-04). Queda fuera de la 1.0, que solo tiene suspensión.
+- ISO reproducible bit a bit: dos construcciones con la misma fecha del Arch Linux Archive tienen los mismos paquetes y tamaño, pero distinta suma (D-02).
 - Cifrado LUKS2 con desbloqueo por TPM2 o FIDO2, cuando Calamares permita elegir el método de derivación de la clave (D-04).
 - Contraseña de cifrado con la distribución de teclado del usuario en GRUB (`grub-kbdcomp`), en lugar de la estadounidense (D-04).
 

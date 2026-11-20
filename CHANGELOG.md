@@ -8,15 +8,23 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 
 ## [Unreleased]
 
+## [0.2.0] - 2026-11-20
+
+Phase 1 completed: minimal live ISO.
+
 ### Added
 
 - Arctiva archiso profile in `iso/`, derived from `releng` (archiso 92): Plasma with automatic login for the `live` user, UEFI-only boot, xz compression and the system package selection. Built and tested in VirtualBox: it reaches the desktop and takes 1.75 GiB.
 - `build.sh`: reproducible build with an Arch Linux Archive date (`iso/archive-date`), `sha256` checksum, a 1.9 GiB limit and a `-k` option to keep the working directory.
+- GitHub Actions workflow `iso.yml` with the build, a QEMU UEFI boot test (`tests/boot-test.sh`) and a weekly build. The first run passes.
+- `tests/boot-test.sh` no longer needs root when `7z` is available.
+- Detailed plan with checkboxes for every phase in the roadmap.
+- `tests/run-live.sh`: boots the ISO in QEMU/KVM with a virtual disk and shows it in the browser with noVNC.
+- The workflow uses `actions/checkout` and `actions/upload-artifact` v7 (Node.js 24), as Node.js 20 is deprecated on the runners.
 
 ### Changed
 
 - D-04 and D-14: `linux-lts` is installed during installation when a connection is available instead of shipping on the ISO, and the ISO leaves out package documentation; this brings it down from 2.12 to 1.75 GiB. Size measured and broken down in D-14.
-- GitHub Actions workflow `iso.yml` with the build, a QEMU UEFI boot test (`tests/boot-test.sh`) and a weekly build.
 
 ## [0.1.7] - 2026-11-20
 

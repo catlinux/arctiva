@@ -12,7 +12,7 @@ Arctiva es un proyecto independiente, sin relación oficial con Arch Linux ni re
 
 ## Estado
 
-**Fase inicial de diseño.** Todavía no hay ISO para descargar. La arquitectura está aprobada (decisiones D-01…D-16).
+**Fase 1 terminada (0.2.0):** una ISO live con KDE Plasma que arranca hasta el escritorio. Aún no hay instalador (fase 2) ni ISO para descargar: se puede construir desde el código (ver la guía de desarrollo). La arquitectura está aprobada (decisiones D-01…D-16).
 
 - [Arquitectura y decisiones](docs/es/arquitectura.md)
 - [Hoja de ruta](docs/es/hoja-de-ruta.md)
@@ -28,7 +28,7 @@ Arctiva es un proyecto independiente, sin relación oficial con Arch Linux ni re
 
 ## Instalación y uso
 
-Aún no disponible. Las instrucciones se publicarán con la primera ISO live (versión 0.2.0).
+Todavía no hay ISO publicada. Para construir y probar la ISO live, sigue [Construir la ISO de Arctiva](docs/es/desarrollo.md#construir-la-iso-de-arctiva) en la guía de desarrollo.
 
 ## Créditos y licencia
 

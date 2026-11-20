@@ -8,10 +8,9 @@ Pending work grouped by priority. Phases and decisions: [roadmap](docs/en/roadma
 
 - [ ] Decide when the repository becomes public.
 
-## Medium — phase 1 (minimal live ISO)
+## Medium — phase 1 follow-up
 
-- [ ] First run of the `iso.yml` GitHub Actions workflow (needs a push): build and QEMU boot test with `tests/boot-test.sh`, which has not run yet. It is the last item before closing phase 1 (0.2.0).
-- [ ] Test the ISO on real hardware from a USB stick (the host's RTX 4060) and the "safe graphics" entry.
+- [ ] Test the live ISO on real hardware from a USB stick (the PC's RTX 4060; laptop with Windows and Manjaro). The "safe graphics" entry already works in VirtualBox.
 
 ## Medium — studies
 
@@ -23,6 +22,7 @@ Pending work grouped by priority. Phases and decisions: [roadmap](docs/en/roadma
 - Phases 2 to 7 as described in the roadmap.
 - Convert the tagline in `branding/logo/arctiva-logo.svg`, currently live text, to paths once the corporate typeface is chosen (D-13).
 - Hibernation: an `@swap` subvolume with a swap file alongside zram (D-04). Out of scope for 1.0, which only has suspend.
+- Bit-for-bit reproducible ISO: two builds with the same Arch Linux Archive date have the same packages and size but different checksums (D-02).
 - LUKS2 encryption with TPM2 or FIDO2 unlocking, once Calamares lets us choose the key derivation function (D-04).
 - Encryption passphrase typed with the user's keyboard layout in GRUB (`grub-kbdcomp`) instead of the US one (D-04).
 

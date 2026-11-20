@@ -5,11 +5,11 @@
 # para poder añadir la consola serie; el menú de systemd-boot se prueba a mano.
 set -euo pipefail
 
-iso="${1:?Uso: sudo tests/boot-test.sh <archivo.iso> [registro]}"
+iso="${1:?Uso: tests/boot-test.sh <archivo.iso> [registro]}"
 log="${2:-boot-test.log}"
 ovmf="${OVMF:-/usr/share/ovmf/OVMF.fd}"
+PATH="${PATH}:/usr/sbin:/sbin"
 
-[[ $EUID -eq 0 ]] || { echo "boot-test.sh: hay que ejecutarlo como root." >&2; exit 1; }
 [[ -f "$ovmf" ]] || { echo "boot-test.sh: no se encuentra OVMF en ${ovmf} (variable OVMF)." >&2; exit 1; }
 
 if [[ -w /dev/kvm ]]; then
@@ -24,15 +24,22 @@ fi
 tmp="$(mktemp -d)"
 cleanup() {
     [[ -z "${qemu_pid:-}" ]] || kill "$qemu_pid" 2>/dev/null || true
-    if mountpoint -q "${tmp}/iso"; then umount "${tmp}/iso"; fi
+    if [[ -d "${tmp}/iso" ]] && mountpoint -q "${tmp}/iso"; then umount "${tmp}/iso"; fi
     rm -rf -- "$tmp"
 }
 trap cleanup EXIT
 
-mkdir "${tmp}/iso"
-mount -o loop,ro -- "$iso" "${tmp}/iso"
-cp -- "${tmp}/iso/arctiva/boot/x86_64/vmlinuz-linux" "${tmp}/iso/arctiva/boot/x86_64/initramfs-linux.img" "$tmp/"
-umount "${tmp}/iso"
+# Con 7z no hace falta root; sin él, se monta la ISO (solo como root).
+boot_files=(arctiva/boot/x86_64/vmlinuz-linux arctiva/boot/x86_64/initramfs-linux.img)
+if command -v 7z >/dev/null; then
+    7z e -y -o"$tmp" -- "$iso" "${boot_files[@]}" >/dev/null
+else
+    [[ $EUID -eq 0 ]] || { echo "boot-test.sh: sin 7z hay que ejecutarlo como root." >&2; exit 1; }
+    mkdir "${tmp}/iso"
+    mount -o loop,ro -- "$iso" "${tmp}/iso"
+    cp -- "${boot_files[@]/#/${tmp}/iso/}" "$tmp/"
+    umount "${tmp}/iso"
+fi
 uuid="$(blkid -s UUID -o value -- "$iso")"
 
 : >"$log"

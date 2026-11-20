@@ -16,6 +16,92 @@ Cada fase tiene un objetivo verificable y cierra con una versión. Las decisione
 | 7. Beta | 0.8.0–0.9.x | Calidad y publicación | Matriz de pruebas en hardware real; documentación de usuario; flujo de publicación con firma y réplica; beta pública |
 | Estable | 1.0.0 | Primera versión estable | Sin errores bloqueantes abiertos; proceso de publicación mensual documentado |
 
+## Plan detallado
+
+Estado de cada trabajo: `[x]` hecho (con la versión en que se cerró) y `[ ]` pendiente. Lo pendiente más inmediato, por prioridad, está en [TODO.es.md](../../TODO.es.md).
+
+### Fase 0: fundamentos (0.1.x) — terminada
+
+- [x] Análisis de viabilidad, arquitectura (D-01…D-16) y documentación inicial bilingüe (0.1.0)
+- [x] Licencia GPL-3.0-or-later y política de marca en `TRADEMARKS` (0.1.2)
+- [x] Nombre Arctiva y logotipo vectorial a color, monocromo e icono (0.1.1–0.1.3)
+- [x] VM de construcción con Arch y `archiso`; la ISO `releng` oficial se construye y arranca (0.1.4)
+- [x] Aprobación de todas las decisiones de arquitectura (0.1.5–0.1.6)
+- [ ] Decidir cuándo se hace público el repositorio
+
+### Estudios previos
+
+- [x] E1: tienda y fuentes de aplicaciones; tienda propia en Arctiva Center (D-07) (0.1.6)
+- [x] E2: diseño del instalador, cifrado y avisos de Windows (D-03, D-04) (0.1.7)
+- [ ] Prueba de concepto de la tienda en la VM (antes de la fase 5)
+- [ ] Comprobaciones del instalador en la VM (antes de la fase 2): módulos QML de Calamares, lectura del resultado del lanzador, cifrado con una contraseña, instantánea con raíz cifrada, `os-prober`, alcance de `stylesheet.qss`
+
+### Fase 1: ISO live mínima (0.2.0) — terminada
+
+- [x] Perfil archiso `iso/` derivado de `releng`, arranque solo UEFI (0.2.0)
+- [x] Plasma con sesión automática del usuario `live` y entrada «safe graphics» (0.2.0)
+- [x] `build.sh` reproducible con fecha del Arch Linux Archive (0.2.0)
+- [x] Tamaño medido: 1,75 GiB, por debajo del límite de 1,9 GiB (D-14) (0.2.0)
+- [x] Flujo de CI con construcción y prueba de arranque en QEMU (0.2.0)
+- [x] Construcción con Docker en cualquier Linux (0.2.0)
+- [x] `tests/run-live.sh`: arrancar y ver la ISO en el navegador desde otro equipo (0.2.0)
+- [ ] Prueba en hardware real con un USB (NVIDIA RTX 4060)
+
+### Fase 2: instalador (0.3.0)
+
+- [ ] Paquetes `calamares` 3.4.3 y `ckbcomp`, y repositorio local para la ISO
+- [ ] Configuración base: particionado automático y manual, Btrfs con subvolúmenes, LUKS1 opcional con una sola contraseña, GRUB, Snapper con instantáneas arrancables
+- [ ] Copia del kernel al sistema instalado, limpieza de lo exclusivo de la live y `linux-lts` si hay red
+- [ ] Lanzador y página «Comprobación» (BitLocker, inicio rápido de Windows)
+- [ ] Interfaz QML con la identidad de Arctiva y aprobación de las maquetas
+- [ ] Perfiles Básico, Juegos y Oficina
+- [ ] Pruebas: instalación sin terminal, junto a Windows, cifrada, particionado manual
+- [ ] Prueba real en un portátil con Windows y Manjaro: sustituir Manjaro por Arctiva desde un USB, conservando Windows y su partición EFI
+
+### Fase 3: repositorio propio y hardware (0.4.0)
+
+- [ ] Clave de firma (maestra fuera de línea, subclave en el CI) y paquete `arctiva-keyring`
+- [ ] Repositorio `[arctiva]` firmado y publicado, con compilación de paquetes en el CI
+- [ ] `arctiva-settings` (valores por defecto, zram, multilib, reflector) y `arctiva-branding` provisional
+- [ ] Detección de gráficas (D-10) en el instalador, compartida con Arctiva Center
+- [ ] Perfil «Juegos» completo con multilib (D-11)
+
+### Fase 4: Arctiva Center (0.5.0)
+
+- [ ] Aplicación base PySide6 y ayudante polkit con operaciones cerradas
+- [ ] Bienvenida en el primer arranque
+- [ ] Controladores
+- [ ] Actualizaciones (D-08): noticias que bloquean, paquetes delicados, `.pacnew`, errores traducidos
+- [ ] Evaluación de arch-update documentada
+- [ ] Catálogo de extras
+
+### Fase 5: aplicaciones y Windows (0.6.0)
+
+- [ ] Tienda «Aplicaciones» con repositorios, Flathub y AUR diferenciados (D-07)
+- [ ] Bottles y diálogo para abrir `.exe` y `.msi` (D-12)
+- [ ] Steam, Proton y Heroic probados en hardware real con NVIDIA y con AMD o Intel
+- [ ] Quitar Discover de la ISO live
+
+### Fase 6: identidad (0.7.0)
+
+- [x] Logotipo vectorial aprobado (0.1.6)
+- [ ] Tipografía corporativa y lema del logotipo en trazos
+- [ ] Plymouth, pantalla de inicio de sesión, tema global y fondos
+- [ ] Branding de Calamares y de Arctiva Center
+
+### Fase 7: beta (0.8.0–0.9.x)
+
+- [ ] Matriz de pruebas en hardware real
+- [ ] Documentación de usuario
+- [ ] Publicación firmada (ISO, `sha256`, firma GPG) con réplica externa
+- [ ] Beta pública y canales de ayuda propios
+
+### Estable (1.0.0)
+
+- [ ] Sin errores bloqueantes abiertos
+- [ ] Proceso de publicación mensual documentado
+- [ ] Revisión de la marca «Arctiva» antes de publicar
+
 ## Principios de trabajo
 
 - Una fase no empieza hasta que la anterior cumple su criterio de terminado.

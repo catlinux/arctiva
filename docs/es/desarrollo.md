@@ -27,7 +27,7 @@ Comprobado el 2026-11-20 con VirtualBox en Windows 11.
 
 ## Construir la ISO de Arctiva
 
-> Comprobado el 2026-11-20 en la VM (4 vCPU, 4 GB): la construcción tarda unos 12 minutos y la ISO arranca en VirtualBox hasta el escritorio en unos 2 minutos y medio. La prueba automática `tests/boot-test.sh` y el CI aún no se han ejecutado.
+> Comprobado el 2026-11-20 en la VM (4 vCPU, 4 GB): la construcción tarda unos 12 minutos y la ISO arranca en VirtualBox hasta el escritorio en unos 2 minutos y medio. El primer run del CI (construcción y prueba de arranque en QEMU) pasa.
 
 El perfil está en `iso/` (derivado de `releng`) y se construye con `build.sh`, dentro de la VM:
 
@@ -43,8 +43,32 @@ sudo ./build.sh -o ~/out -d latest  # paquetes del día, sin fecha fijada
 - Pruebas en VirtualBox: la VM de pruebas tiene 4 GB y la de construcción otros 4; con 16 GB en el anfitrión no caben las dos encendidas a la vez si hay otros programas abiertos (falla con `VERR_UNRESOLVED_ERROR`).
 - Para fijar otra fecha de paquetes, cambia `iso/archive-date` (formato `AAAA/MM/DD`).
 - La ISO solo arranca en UEFI. La entrada «safe graphics» arranca con `nomodeset`.
-- Prueba de arranque automática, como en el CI: `sudo tests/boot-test.sh ~/out/arctiva-*.iso` (necesita `qemu-system-x86_64` y `OVMF`; ruta del firmware en la variable `OVMF`).
+- Prueba de arranque automática, como en el CI: `tests/boot-test.sh ~/out/arctiva-*.iso` (necesita `qemu-system-x86_64`, `OVMF` y `7z`; sin `7z` hay que ejecutarlo con `sudo`). Ruta del firmware en la variable `OVMF`; con acceso a `/dev/kvm` (grupo `kvm`) tarda unos minutos.
 - Los servicios del live se activan con `Wants=` en `iso/airootfs/etc/systemd/system/*.target.d/`: el repositorio no guarda enlaces simbólicos porque se edita desde Windows.
+
+### En cualquier Linux con Docker
+
+Sin VM de Arch: un contenedor `archlinux` con privilegios, igual que el CI. Comprobado en Debian 13.
+
+```sh
+docker run --rm --privileged --cpus=2 -v arctiva-pkgcache:/var/cache/pacman/pkg -v "$PWD:/repo" -w /repo archlinux:latest   bash -c 'pacman -Syu --noconfirm --needed archiso && ./build.sh -o /repo/out -w /var/tmp/arctiva-work; rc=$?; chown -R 1000:1000 /repo/out; exit $rc'
+```
+
+- El volumen `arctiva-pkgcache` guarda los paquetes descargados entre construcciones.
+- `--cpus=2` limita la carga si el equipo hace otras cosas; quítalo para ir más rápido.
+- `chown` devuelve la ISO a tu usuario (el contenedor escribe como root; cambia `1000:1000` si tu UID es otro).
+
+### Ver y probar la ISO desde otro equipo
+
+`tests/run-live.sh` arranca la ISO en QEMU/KVM con UEFI y un disco virtual de 40 GB, y la muestra en el navegador con noVNC. Sirve para trabajar en un Linux al que se entra por SSH (por ejemplo, con VS Code Remote-SSH).
+
+1. Una vez: `sudo apt install novnc qemu-system-x86 ovmf qemu-utils` y el usuario en el grupo `kvm` (`sudo usermod -aG kvm $USER`).
+2. `tests/run-live.sh` arranca la ISO más reciente de `out/`.
+3. Abre `http://localhost:6080/vnc.html` en el navegador y pulsa «Connect». VS Code reenvía el puerto solo; sin VS Code: `ssh -L 6080:localhost:6080 <equipo>`.
+
+- `-d` arranca desde el disco virtual (el sistema instalado, desde la fase 2); `-r` borra el disco y la NVRAM y empieza de cero.
+- El disco y la NVRAM se guardan en `~/arctiva-vm` (variable `VM_DIR`), fuera del repositorio.
+- Sin aceleración 3D ni sonido: el escritorio funciona, pero los juegos y la gráfica real se prueban en hardware con un USB.
 
 ## Finales de línea
 
