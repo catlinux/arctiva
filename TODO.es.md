@@ -20,7 +20,7 @@ Trabajo pendiente agrupado por prioridad. Fases y decisiones: [hoja de ruta](doc
 - [ ] Avisar en la página de resumen si la raíz no es Btrfs (modo manual): no habrá instantáneas (paso 2.4).
 - [ ] Las páginas QML del instalador llevan sus textos en castellano, catalán e inglés dentro del propio QML; pasarlos a traducciones del branding (`.ts`) para poder añadir más idiomas.
 - [ ] Mapa sin conexión en la página «Idioma y zona»: el de Calamares descarga los mosaicos de Internet, así que de momento la página usa solo listas.
-- [ ] Perfiles Básico, Juegos y Oficina: `packagechooserq` solo admite una opción, así que hay que elegir entre `packagechooser` de widgets (`optionalmultiple`) y `netinstall`, y definir los paquetes de cada perfil (Juegos necesita `multilib`).
+- [ ] Perfiles Básico, Juegos y Oficina con `packagechooser` de widgets (`optionalmultiple`; `packagechooserq` solo admite una opción y `netinstall` deja elegir paquetes sueltos) y `multilib` activo en el sistema instalado. Heroic, ProtonPlus y Bottles (Flatpak) quedan para Arctiva Center; los controladores NVIDIA, para la detección de gráficas (fase 3).
 - [ ] Tras cambiar de idioma en la bienvenida, los textos de los requisitos siguen en el idioma en que se comprobaron (Calamares los genera antes de elegir): repetir la comprobación o traducirlos en la página.
 - [ ] Pasar `zram-generator.conf` de `iso/airootfs/` al paquete `arctiva-settings` cuando exista.
 

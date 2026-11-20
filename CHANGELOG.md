@@ -8,6 +8,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 
 ## [Unreleased]
 
+### Changed
+
+- Phase 2, step 4 closed: the user approves the installer interface with screenshots (sidebar, navigation, own QML pages and slideshow from 0.2.4–0.2.6).
+
 ## [0.2.6] - 2026-11-20
 
 Phase 2, step 4 (second part): Arctiva's own installer QML pages. Awaiting the user's approval with screenshots. Profiles are postponed: `packagechooserq` only allows one choice.

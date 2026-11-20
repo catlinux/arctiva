@@ -52,7 +52,7 @@ Status of each work item: `[x]` done (with the version that closed it) and `[ ]`
 - [x] Base configuration: automatic and manual partitioning, Btrfs with subvolumes, optional LUKS1 with a single passphrase, GRUB, Snapper with bootable snapshots (0.2.2)
 - [x] Kernel copied to the installed system, live-only bits removed and `linux-lts` when online (0.2.2)
 - [x] Launcher and "Check" page (BitLocker, Windows Fast Startup) (0.2.3)
-- [ ] QML interface with the Arctiva identity and approved mock-ups
+- [x] QML interface with the Arctiva identity and approved mock-ups (0.2.4–0.2.6)
 - [ ] Basic, Gaming and Office profiles
 - [ ] Tests in virtual machines: installation without a terminal, alongside Windows, encrypted, manual partitioning
 

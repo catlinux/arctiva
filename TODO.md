@@ -20,7 +20,7 @@ Pending work grouped by priority. Phases and decisions: [roadmap](docs/en/roadma
 - [ ] Warn on the summary page when the root is not Btrfs (manual mode): there will be no snapshots (step 2.4).
 - [ ] The installer's QML pages carry their texts in Spanish, Catalan and English inside the QML itself; move them to branding translations (`.ts`) so more languages can be added.
 - [ ] Offline map on the "Language and region" page: Calamares' map downloads tiles from the Internet, so the page currently uses lists only.
-- [ ] Basic, Gaming and Office profiles: `packagechooserq` only allows one choice, so decide between the widget `packagechooser` (`optionalmultiple`) and `netinstall`, and define each profile's packages (Gaming needs `multilib`).
+- [ ] Basic, Gaming and Office profiles with the widget `packagechooser` (`optionalmultiple`; `packagechooserq` only allows one choice and `netinstall` lets users pick single packages) and `multilib` enabled on the installed system. Heroic, ProtonPlus and Bottles (Flatpak) are left to Arctiva Center; NVIDIA drivers, to GPU detection (phase 3).
 - [ ] After switching language on the welcome page, the requirement texts stay in the language they were checked in (Calamares builds them before the choice): re-run the check or translate them in the page.
 - [ ] Move `zram-generator.conf` from `iso/airootfs/` to the `arctiva-settings` package when it exists.
 

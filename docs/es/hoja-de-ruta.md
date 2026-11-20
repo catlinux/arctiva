@@ -52,7 +52,7 @@ Estado de cada trabajo: `[x]` hecho (con la versión en que se cerró) y `[ ]` p
 - [x] Configuración base: particionado automático y manual, Btrfs con subvolúmenes, LUKS1 opcional con una sola contraseña, GRUB, Snapper con instantáneas arrancables (0.2.2)
 - [x] Copia del kernel al sistema instalado, limpieza de lo exclusivo de la live y `linux-lts` si hay red (0.2.2)
 - [x] Lanzador y página «Comprobación» (BitLocker, inicio rápido de Windows) (0.2.3)
-- [ ] Interfaz QML con la identidad de Arctiva y aprobación de las maquetas
+- [x] Interfaz QML con la identidad de Arctiva y aprobación de las maquetas (0.2.4–0.2.6)
 - [ ] Perfiles Básico, Juegos y Oficina
 - [ ] Pruebas en máquinas virtuales: instalación sin terminal, junto a Windows, cifrada, particionado manual
 
