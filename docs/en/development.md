@@ -9,7 +9,19 @@
 - **Test VM:** recreated for every ISO (EFI, 2–4 vCPU, 4 GB, 40 GB, VMSVGA with 128 MB).
 - **CI:** GitHub Actions builds and tests from a clean state (see D-15 in [architecture.md](architecture.md)).
 
-Detailed VM setup steps will be documented when phase 0 is complete, once they have been verified.
+## Setting up the build VM
+
+Verified on 2026-11-20 with VirtualBox on Windows 11.
+
+1. **Create the VM** "Arctiva" (Linux, Arch Linux 64-bit) with EFI, 4 vCPU, 8 GB RAM, 128 MB VRAM and an 80 GB disk. To adjust an existing (powered-off) VM from PowerShell: `VBoxManage modifyvm Arctiva --cpus 4 --memory 8192 --vram 128` and `VBoxManage modifymedium disk <path.vdi> --resize 81920`.
+2. **Install Arch** with the official ISO (https://archlinux.org/download/) and `archinstall`: whole disk with ext4, GRUB or systemd-boot, `Minimal` profile, a sudo user and extra packages `archiso git openssh base-devel`. If the VM drops to the "EFI Shell", type `fs0:\EFI\BOOT\BOOTX64.EFI`.
+3. **SSH access from Windows** (the VirtualBox console has no copy and paste): with the VM powered off, `VBoxManage modifyvm Arctiva --natpf1 "ssh,tcp,127.0.0.1,2222,,22"`. Inside the VM, `sudo systemctl enable --now sshd`. From Windows: `ssh -p 2222 user@127.0.0.1`.
+4. **Clone the repository** inside the VM, on its ext4 disk (not in a Windows shared folder, which breaks permissions and symlinks): `ssh-keygen -t ed25519 -f ~/.ssh/id_ed25519 -N ""`, add the public key as a read-only deploy key on `catlinux/arctiva`, then `git clone git@github.com:catlinux/arctiva.git ~/arctiva`.
+5. **Build the ISO** (use a working directory on disk, not `/tmp`, which lives in RAM): `mkdir -p ~/out ~/work && sudo mkarchiso -v -w ~/work -o ~/out /usr/share/archiso/configs/releng`. The unmodified `releng` profile produces an ISO of about 1.3 GB.
+6. **Copy the ISO to Windows**, from Windows PowerShell: `scp -P 2222 user@127.0.0.1:out/<iso> C:\path\Arctiva-out\`. The output folder must be outside the repository.
+7. **Test it** in a new VM ("Arctiva-test", EFI, 4 GB, no disk) with the ISO in the optical drive: it boots to the `archiso` live console.
+
+> VirtualBox shared folders are not used: with kernel 7.3 the automount fails with `vboxsf: Unknown parameter 'tag'`.
 
 > Hyper-V is active on the host, so VirtualBox runs on top of it: slower, and no nested virtualisation. QEMU/KVM tests run in CI, or inside the build VM if performance allows.
 

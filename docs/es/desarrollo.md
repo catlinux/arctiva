@@ -9,7 +9,19 @@
 - **VM de pruebas:** se crea de nuevo para cada ISO (EFI, 2–4 vCPU, 4 GB, 40 GB, VMSVGA con 128 MB).
 - **CI:** GitHub Actions construye y prueba en limpio (ver D-15 en [arquitectura.md](arquitectura.md)).
 
-Los pasos detallados para preparar las VM se documentarán al completar la fase 0, una vez comprobados.
+## Preparar la VM de construcción
+
+Comprobado el 2026-11-20 con VirtualBox en Windows 11.
+
+1. **Crear la VM** «Arctiva» (Linux, Arch Linux 64 bits) con EFI, 4 vCPU, 8 GB de RAM, 128 MB de VRAM y un disco de 80 GB. Desde PowerShell, para ajustar una VM existente (apagada): `VBoxManage modifyvm Arctiva --cpus 4 --memory 8192 --vram 128` y `VBoxManage modifymedium disk <ruta.vdi> --resize 81920`.
+2. **Instalar Arch** con la ISO oficial (https://archlinux.org/download/) y `archinstall`: disco completo con ext4, GRUB o systemd-boot, perfil `Minimal`, usuario con sudo y paquetes adicionales `archiso git openssh base-devel`. Si la VM cae a la «EFI Shell», escribir `fs0:\EFI\BOOT\BOOTX64.EFI`.
+3. **Acceso por SSH desde Windows** (la consola de VirtualBox no permite copiar y pegar): con la VM apagada, `VBoxManage modifyvm Arctiva --natpf1 "ssh,tcp,127.0.0.1,2222,,22"`. Dentro de la VM, `sudo systemctl enable --now sshd`. Desde Windows: `ssh -p 2222 usuario@127.0.0.1`.
+4. **Clonar el repositorio** dentro de la VM, sobre su disco ext4 (no en una carpeta compartida de Windows, que rompe permisos y enlaces simbólicos): `ssh-keygen -t ed25519 -f ~/.ssh/id_ed25519 -N ""`, añadir la clave pública como *deploy key* de solo lectura en `catlinux/arctiva` y `git clone git@github.com:catlinux/arctiva.git ~/arctiva`.
+5. **Construir la ISO** (usar un directorio de trabajo en disco, no `/tmp`, que está en RAM): `mkdir -p ~/out ~/work && sudo mkarchiso -v -w ~/work -o ~/out /usr/share/archiso/configs/releng`. Con el perfil `releng` sin cambios genera una ISO de unos 1,3 GB.
+6. **Traer la ISO a Windows**, desde PowerShell de Windows: `scp -P 2222 usuario@127.0.0.1:out/<iso> C:\ruta\Arctiva-out\`. La carpeta de salida debe estar fuera del repositorio.
+7. **Probarla** en una VM nueva («Arctiva-test», EFI, 4 GB, sin disco) con la ISO en la unidad óptica: arranca hasta la consola live de `archiso`.
+
+> Las carpetas compartidas de VirtualBox no se usan: con el kernel 7.3 el montaje automático falla con `vboxsf: Unknown parameter 'tag'`.
 
 > Hyper-V está activo en el equipo anfitrión, así que VirtualBox funciona sobre él: es más lento y sin virtualización anidada. Las pruebas con QEMU/KVM se hacen en el CI o dentro de la VM de construcción si el rendimiento lo permite.
 

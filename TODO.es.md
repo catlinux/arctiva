@@ -8,9 +8,6 @@ Trabajo pendiente agrupado por prioridad. Fases y decisiones: [hoja de ruta](doc
 
 - [ ] Revisar y aprobar las decisiones de arquitectura restantes (D-14 ya está aprobada).
 - [ ] Aprobar el logo nuevo de `branding/logo/` (D-13). El lema de `arctiva-logo.svg` es texto: convertirlo en trazos cuando se elija la tipografía corporativa.
-- [ ] Renombrar el repositorio de GitHub a `arctiva` y actualizar el remoto local.
-- [ ] Ampliar la VM de construcción (4–6 vCPU, 8 GB de RAM, 80 GB de disco) e instalar Arch Linux con `archiso`.
-- [ ] Construir en la VM la ISO `releng` oficial y documentar los pasos comprobados en la guía de desarrollo.
 - [ ] Decidir cuándo se hace público el repositorio.
 
 ## Media: fase 1 (ISO live mínima)

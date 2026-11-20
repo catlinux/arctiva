@@ -8,6 +8,13 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 
 ## [Unreleased]
 
+## [0.1.4] - 2026-11-20
+
+### Changed
+
+- The development guide documents the verified build VM setup and the stock `releng` ISO build, which boots in a test VM.
+- The GitHub repository and the local remote now use the name `arctiva`.
+
 ## [0.1.3] - 2026-11-20
 
 ### Added
