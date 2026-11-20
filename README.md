@@ -28,10 +28,17 @@ Arctiva is an independent project. It is not affiliated with or endorsed by Arch
 
 Not available yet. Instructions will be published with the first live ISO (version 0.2.0).
 
-## License
+## Credits and license
 
-Not decided yet. Until a licence is published, all rights are reserved.
+**Arctiva** is developed and maintained by **CatLinux**.
+Copyright (C) 2026 CatLinux.
 
-## Author
+Licensed under [GPL-3.0-or-later](LICENSE): free software that you can use for any purpose, including commercial use, and study, modify and share. If you distribute it, modified or not, you must keep the same licence and provide the source code.
 
-CatLinux — creator and maintainer.
+The Arctiva name and logo are not covered by this licence: see [TRADEMARKS.md](TRADEMARKS.md).
+
+Copies and forks must keep this attribution and link to https://github.com/catlinux/arctiva.
+
+### Third-party material
+
+This project contains no third-party material.

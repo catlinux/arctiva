@@ -8,6 +8,14 @@ El formato se basa en [Keep a Changelog](https://keepachangelog.com/es-ES/1.1.0/
 
 ## [Sin publicar]
 
+## [0.1.2] - 2026-11-20
+
+### Añadido
+
+- Licencia GPL-3.0-or-later (`LICENSE`), con CatLinux como titular.
+- Política del nombre y el logo (`TRADEMARKS.es.md`): la marca no está cubierta por la licencia del código.
+- Sección de créditos y licencia en los dos README.
+
 ## [0.1.1] - 2026-11-20
 
 ### Cambiado
