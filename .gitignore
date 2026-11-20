@@ -1,0 +1,16 @@
+# Build output
+/work/
+/out/
+*.iso
+*.pkg.tar.zst
+*.pkg.tar.zst.sig
+
+# Secrets
+*.key
+*secret*
+.env
+
+# Editor and OS
+.vscode/
+Thumbs.db
+.DS_Store
