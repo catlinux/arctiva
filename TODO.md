@@ -7,7 +7,7 @@ Pending work grouped by priority. Phases and decisions: [roadmap](docs/en/roadma
 ## High — phase 0 (foundations)
 
 - [ ] Review and approve the remaining architecture decisions (D-14 already approved).
-- [ ] Approve the new logo in `branding/logo/` (D-13).
+- [ ] Approve the new logo in `branding/logo/` (D-13). The tagline in `arctiva-logo.svg` is live text: convert it to paths once the corporate typeface is chosen.
 - [ ] Rename the GitHub repository to `arctiva` and update the local remote.
 - [ ] Enlarge the build VM (4–6 vCPU, 8 GB RAM, 80 GB disk) and install Arch Linux with `archiso`.
 - [ ] Build the stock `releng` ISO in the VM and document the verified steps in the development guide.

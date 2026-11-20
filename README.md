@@ -1,5 +1,7 @@
 # Arctiva
 
+<p align="center"><img src="branding/logo/arctiva-logo.svg" width="360" alt="Arctiva"></p>
+
 **Linux, without the barriers.**
 
 > Versión en castellano: [README.es.md](README.es.md)

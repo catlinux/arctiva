@@ -8,6 +8,13 @@ El formato se basa en [Keep a Changelog](https://keepachangelog.com/es-ES/1.1.0/
 
 ## [Sin publicar]
 
+## [0.1.3] - 2026-11-20
+
+### Añadido
+
+- Logo de Arctiva en `branding/logo/`: logotipo completo, símbolo a color, símbolo monocromo e icono de aplicación (SVG).
+- Logo en la cabecera de los dos README.
+
 ## [0.1.2] - 2026-11-20
 
 ### Añadido
