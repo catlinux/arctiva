@@ -45,7 +45,7 @@ Lo que **no** es realista y no se promete:
 - **Calamares** es el motor: maduro, en Qt (encaja con KDE), modular, usado por EndeavourOS, Manjaro, KaOS, Debian live y otras. Cubre idioma, teclado, zona horaria, usuarios, particionado manual y automático, instalación junto a Windows, UEFI y cifrado LUKS.
 - **Su aspecto básico es la configuración por defecto, no un límite.** La interfaz se rehace con QML para que tenga la identidad de Arctiva:
   - Barra lateral y navegación propias en QML (`sidebar: qml` y `navigation: qml` en el branding).
-  - Versiones QML de las páginas que trae Calamares (`welcomeq`, `localeq`, `keyboardq`, `usersq`, `summaryq`, `finishedq`) con diseño propio. El perfil (Básico, Juegos, Oficina; los dos últimos se descargan si hay conexión) se elige con `packagechooserq`, y la página «Comprobación» (ver arranque dual) usa `notesqml`.
+  - Versiones QML de las páginas que trae Calamares (`welcomeq`, `localeq`, `keyboardq`, `usersq`, `summaryq`, `finishedq`) con diseño propio. El perfil (Básico, Juegos, Oficina; los dos últimos se descargan si hay conexión) se elige con `packagechooser` de widgets en modo `optionalmultiple` (`packagechooserq` solo admite una opción y `netinstall` deja elegir paquetes sueltos); Básico es lo que lleva la ISO y siempre se instala, y la página «Comprobación» (ver arranque dual) usa `notesqml`.
   - Orden de las páginas: bienvenida, idioma y zona, teclado, perfil, comprobación, disco, usuarios, resumen, instalación y fin.
   - La página de particionado no tiene versión QML: se integra con una hoja de estilo Qt (`stylesheet.qss`) para que siga el mismo diseño. Si alguna parte dibujada en C++ (la barra de particiones) no la acepta, se deja como está.
   - Identidad: barra lateral con el degradado azul noche del logo, contenido claro con acento azul y avisos con icono y texto, no solo color. Tipografía provisional Noto Sans hasta elegir la corporativa.
@@ -138,10 +138,10 @@ Detección con `lspci` y un archivo de correspondencias (familia → paquetes), 
 
 ### D-11 Juegos (**Aprobada**)
 
-- `multilib` activado de serie.
+- `multilib` activado de serie, también en el sistema instalado (lo activa `prepare-target`).
 - Steam nativo (`steam`, de multilib), `gamemode`, `mangohud`, `gamescope`; Proton se gestiona desde Steam.
 - Heroic (Epic/GOG) y ProtonPlus o ProtonUp-Qt como Flatpak; Lutris desde `extra`.
-- Se instalan como perfil «Juegos» durante la instalación o desde Arctiva Center.
+- Se instalan como perfil «Juegos» durante la instalación (Steam, Lutris, GameMode, MangoHud, Gamescope y las bibliotecas de 32 bits de Mesa y Vulkan) o desde Arctiva Center. Heroic, ProtonPlus y Bottles los ofrecerá Arctiva Center (fase 5); los controladores NVIDIA, la detección de gráficas (fase 3).
 
 ### D-12 Programas de Windows (**Aprobada**)
 

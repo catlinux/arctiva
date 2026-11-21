@@ -45,7 +45,7 @@ What is **not** realistic and will not be promised:
 - **Calamares** is the engine: mature, Qt-based (a good fit with KDE), modular, used by EndeavourOS, Manjaro, KaOS, Debian live and others. It covers language, keyboard, time zone, users, manual and automatic partitioning, installing alongside Windows, UEFI and LUKS encryption.
 - **Its plain look is the default configuration, not a limitation.** The interface is rebuilt in QML so that it carries the Arctiva identity:
   - Custom QML sidebar and navigation (`sidebar: qml` and `navigation: qml` in the branding).
-  - QML versions of the pages Calamares ships (`welcomeq`, `localeq`, `keyboardq`, `usersq`, `summaryq`, `finishedq`) with our own design. The profile (Basic, Gaming, Office; the last two are downloaded when a connection is available) is chosen with `packagechooserq`, and the "Check" page (see dual boot) uses `notesqml`.
+  - QML versions of the pages Calamares ships (`welcomeq`, `localeq`, `keyboardq`, `usersq`, `summaryq`, `finishedq`) with our own design. The profile (Basic, Gaming, Office; the last two are downloaded when a connection is available) is chosen with the widget `packagechooser` in `optionalmultiple` mode (`packagechooserq` only allows one choice and `netinstall` lets users pick single packages); Basic is what the ISO carries and is always installed, and the "Check" page (see dual boot) uses `notesqml`.
   - Page order: welcome, language and region, keyboard, profile, check, disk, users, summary, installation and finish.
   - The partitioning page has no QML version: it is integrated through a Qt stylesheet (`stylesheet.qss`) so it follows the same design. If some part drawn in C++ (the partition bar) ignores it, it is left as is.
   - Identity: sidebar with the logo's night-blue gradient, light content with a blue accent, and warnings shown with an icon and text, never colour alone. Noto Sans as a provisional typeface until the corporate one is chosen.
@@ -138,10 +138,10 @@ Detection with `lspci` and a mapping file (family → packages), shared by the i
 
 ### D-11 Gaming (**Approved**)
 
-- `multilib` enabled by default.
+- `multilib` enabled by default, also on the installed system (`prepare-target` enables it).
 - Native Steam (`steam`, from multilib), `gamemode`, `mangohud`, `gamescope`; Proton is managed from Steam.
 - Heroic (Epic/GOG) and ProtonPlus or ProtonUp-Qt as Flatpaks; Lutris from `extra`.
-- Installed as a "Gaming" profile during installation or from Arctiva Center.
+- Installed as a "Gaming" profile during installation (Steam, Lutris, GameMode, MangoHud, Gamescope and the 32-bit Mesa and Vulkan libraries) or from Arctiva Center. Heroic, ProtonPlus and Bottles will be offered by Arctiva Center (phase 5); NVIDIA drivers, by GPU detection (phase 3).
 
 ### D-12 Windows software (**Approved**)
 

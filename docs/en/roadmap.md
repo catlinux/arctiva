@@ -53,7 +53,7 @@ Status of each work item: `[x]` done (with the version that closed it) and `[ ]`
 - [x] Kernel copied to the installed system, live-only bits removed and `linux-lts` when online (0.2.2)
 - [x] Launcher and "Check" page (BitLocker, Windows Fast Startup) (0.2.3)
 - [x] QML interface with the Arctiva identity and approved mock-ups (0.2.4–0.2.6)
-- [ ] Basic, Gaming and Office profiles
+- [x] Basic, Gaming and Office profiles (0.2.7–0.2.8)
 - [ ] Tests in virtual machines: installation without a terminal, alongside Windows, encrypted, manual partitioning
 
 ### Phase 3: own repository and hardware (0.4.0)

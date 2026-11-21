@@ -19,12 +19,46 @@ Item {
         intro: { es: "Revisa antes de instalar. Hasta pulsar «Instalar» no se cambia nada.",
                  ca: "Revisa-ho abans d'instal·lar. Fins que no premis «Instal·la» no es canvia res.",
                  en: "Review before installing. Nothing changes until you press \"Install\"." },
+        perfilesT: { es: "Perfiles", ca: "Perfils", en: "Profiles" },
+        basico: { es: "Básico", ca: "Bàsic", en: "Basic" },
+        juegos: { es: "Juegos", ca: "Jocs", en: "Gaming" },
+        oficina: { es: "Oficina", ca: "Oficina", en: "Office" },
+        perfilesNota: { es: "Se descargan al instalar; sin conexión se instala solo Básico y se pueden añadir después.",
+                        ca: "Es baixen en instal·lar; sense connexió s'instal·la només Bàsic i es poden afegir després.",
+                        en: "Downloaded during installation; offline, only Basic is installed and you can add the rest later." },
         copiaT: { es: "Haz una copia de lo importante", ca: "Fes una còpia del que és important", en: "Back up what matters" },
         copia: { es: "Cambiar las particiones es seguro casi siempre, pero un corte de luz a mitad podría dañarlas.",
                  ca: "Canviar les particions és segur gairebé sempre, però un tall de llum a mitges les podria malmetre.",
                  en: "Changing partitions is almost always safe, but a power cut halfway through could damage them." }
     })
     function t(clave) { return A.t(textos, clave, idioma); }
+
+    // packagechooser no aporta línea al resumen: se deduce de las operaciones de paquetes que
+    // deja en GlobalStorage (steam identifica Juegos; libreoffice-fresh, Oficina).
+    property var extras: []
+    function leerPerfiles() {
+        var ops = Global.value("packageOperations");
+        var paquetes = [];
+        if (ops) {
+            for (var i = 0; i < ops.length; i++) {
+                var lista = ops[i]["install"] || [];
+                for (var j = 0; j < lista.length; j++)
+                    paquetes.push(lista[j]);
+            }
+        }
+        var r = [];
+        if (paquetes.indexOf("steam") >= 0) r.push(t("juegos"));
+        if (paquetes.indexOf("libreoffice-fresh") >= 0) r.push(t("oficina"));
+        extras = r;
+    }
+    // La página se crea al arrancar y no recibe aviso al activarse: se relee mientras exista.
+    Timer {
+        interval: 500
+        running: true
+        repeat: true
+        triggeredOnStart: true
+        onTriggered: page.leerPerfiles()
+    }
 
     Rectangle { anchors.fill: parent; color: A.fondo }
 
@@ -58,6 +92,28 @@ Item {
                         wrapMode: Text.WordWrap
                         color: A.texto
                     }
+                }
+            }
+
+            Tarjeta {
+                Label {
+                    Layout.fillWidth: true
+                    text: page.t("perfilesT")
+                    font.bold: true
+                    color: A.acento
+                }
+                Label {
+                    Layout.fillWidth: true
+                    text: [page.t("basico")].concat(page.extras).join(" · ")
+                    wrapMode: Text.WordWrap
+                    color: A.texto
+                }
+                Label {
+                    Layout.fillWidth: true
+                    visible: page.extras.length > 0
+                    text: page.t("perfilesNota")
+                    wrapMode: Text.WordWrap
+                    color: A.secundario
                 }
             }
 

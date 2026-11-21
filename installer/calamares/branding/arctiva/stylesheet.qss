@@ -122,5 +122,29 @@ QScrollBar:vertical { background: transparent; width: 10px; }
 QScrollBar::handle:vertical { background: #c7d2ea; border-radius: 5px; min-height: 30px; }
 QScrollBar::add-line, QScrollBar::sub-line { height: 0; }
 
+/* Página de perfiles (packagechooser): lista a la izquierda, imagen, nombre y descripción */
+QListView#products {
+    background: transparent;
+    border: none;
+    outline: 0;
+}
+QListView#products::item {
+    background: #ffffff;
+    border: 1px solid #dbe3f4;
+    border-radius: 9px;
+    padding: 12px 14px;
+    margin: 4px 6px 4px 2px;
+    color: #0d1730;
+}
+QListView#products::item:hover { border-color: #3d86ff; }
+QListView#products::item:selected {
+    background: #e9efff;
+    border: 2px solid #1d4ed8;
+    color: #0d1730;
+}
+QLabel#productName { font-size: 15pt; font-weight: 700; color: #0d1730; }
+QLabel#productDescription { color: #4a5878; }
+QLabel#productScreenshot { background: transparent; border: none; }
+
 /* La barra de colores de las particiones se dibuja en C++ con los colores de KPMcore:
  * esta hoja no la cambia. Si desentona, se acepta tal cual (sin parches en C++). */

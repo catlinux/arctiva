@@ -36,6 +36,19 @@ if [[ ! -e "${root}/etc/resolv.conf.arctiva-orig" ]]; then
 fi
 cp --remove-destination -L -- /etc/resolv.conf "${root}/etc/resolv.conf"
 
+# multilib de serie (D-11): lo necesita el perfil Juegos y packages hace -Syu antes de instalar.
+# Idempotente: descomenta el bloque si está comentado y lo añade si falta.
+pacman_conf="${root}/etc/pacman.conf"
+if ! grep -q '^\[multilib\]' "$pacman_conf"; then
+    if grep -q '^#\[multilib\]' "$pacman_conf"; then
+        sed -i '/^#\[multilib\]/{s/^#//;n;s/^#Include/Include/}' "$pacman_conf"
+    else
+        printf '%s\n' '' '[multilib]' 'Include = /etc/pacman.d/mirrorlist' >>"$pacman_conf"
+    fi
+fi
+repos=$(in_target pacman-conf --repo-list)
+grep -qx multilib <<<"$repos" || { echo "prepare-target: multilib no quedó activo en pacman.conf." >&2; exit 1; }
+
 # En la live el llavero de pacman vive en un tmpfs: la imagen lo trae vacío.
 in_target pacman-key --init
 in_target pacman-key --populate

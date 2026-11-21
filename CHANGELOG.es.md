@@ -8,6 +8,36 @@ El formato se basa en [Keep a Changelog](https://keepachangelog.com/es-ES/1.1.0/
 
 ## [Sin publicar]
 
+## [0.2.8] - 2026-11-21
+
+Fase 2, perfiles (segunda parte): aspecto, resumen y tamaños. Pendiente de la aprobación del usuario con capturas.
+
+### Añadido
+
+- Página de perfiles con la paleta del instalador (tarjetas, elemento seleccionado con borde y fondo) y una imagen por perfil (`perfil-juegos.svg`, `perfil-oficina.svg`, `perfil-basico.svg`).
+- Elemento «Básico» en la lista, que explica que se instala siempre y cómo añadir los demás (mantener Ctrl y hacer clic: la lista usa selección extendida).
+- Tarjeta «Perfiles» en el resumen con lo elegido, deducida de las operaciones de paquetes que deja la página.
+
+### Corregido
+
+- `tests/fake-windows-disk.sh` crea también `EFI/Microsoft/Boot/BCD`: sin él `os-prober` no reconoce el Windows simulado y GRUB no recibe entrada para él.
+
+### Cambiado
+
+- Las descripciones de Juegos y Oficina incluyen el tamaño de descarga (unos 0,3 GB cada uno, medido con `pacman -Sp` sobre la base de la ISO).
+
+## [0.2.7] - 2026-11-20
+
+Fase 2, perfiles (primera parte): configuración y multilib. El aspecto, el resumen y los tamaños de descarga siguen en la 0.2.8.
+
+### Añadido
+
+- Página «Perfiles» del instalador (`packagechooser` de widgets, con varias opciones) con Juegos y Oficina. Básico es lo que ya lleva la ISO y se instala siempre. Los paquetes se instalan desde los repositorios si hay conexión; sin ella, solo se instala Básico.
+
+### Cambiado
+
+- `multilib` queda activo en el sistema instalado.
+
 ### Cambiado
 
 - Fase 2, paso 4 cerrado: el usuario aprueba con capturas la interfaz del instalador (barra lateral, navegación, páginas QML propias y presentación de la 0.2.4–0.2.6).

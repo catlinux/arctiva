@@ -4,7 +4,7 @@
 # Windows. Se ejecuta como root dentro de la sesión live, sobre un disco virtual de pruebas.
 # BORRA EL DISCO INDICADO.
 #
-#   limpio     ESP con EFI/Microsoft/Boot/bootmgfw.efi, NTFS (NTFS_SIZE, 8G por defecto) y 1 GiB
+#   limpio     ESP con EFI/Microsoft/Boot/{bootmgfw.efi,BCD} (os-prober pide los dos), NTFS (NTFS_SIZE, 8G por defecto) y 1 GiB
 #              sin formato
 #   hibernado  marca el NTFS como hibernado (hiberfil.sys con cabecera HIBR)
 #   bitlocker  quita la hibernación y pone la firma de BitLocker en la tercera partición
@@ -45,6 +45,7 @@ case "$modo" in
         mount -t vfat "$(part 1)" "$mnt"
         mkdir -p "${mnt}/EFI/Microsoft/Boot"
         echo "simulado" >"${mnt}/EFI/Microsoft/Boot/bootmgfw.efi"
+        echo "simulado" >"${mnt}/EFI/Microsoft/Boot/BCD"
         umount "$mnt"; rmdir "$mnt"
         ;;
     hibernado)

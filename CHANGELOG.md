@@ -8,6 +8,36 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 
 ## [Unreleased]
 
+## [0.2.8] - 2026-11-21
+
+Phase 2, profiles (second part): appearance, summary and sizes. Awaiting the user's approval with screenshots.
+
+### Added
+
+- Profiles page styled with the installer palette (cards, selected item with border and background) and one image per profile (`perfil-juegos.svg`, `perfil-oficina.svg`, `perfil-basico.svg`).
+- "Basic" entry in the list, explaining that it is always installed and how to add the others (hold Ctrl and click: the list uses extended selection).
+- "Profiles" card on the summary page with what was chosen, deduced from the package operations left by the page.
+
+### Fixed
+
+- `tests/fake-windows-disk.sh` also creates `EFI/Microsoft/Boot/BCD`: without it `os-prober` does not recognise the simulated Windows and GRUB gets no entry for it.
+
+### Changed
+
+- Gaming and Office descriptions include the download size (about 0.3 GB each, measured with `pacman -Sp` against the ISO's base).
+
+## [0.2.7] - 2026-11-20
+
+Phase 2, profiles (first part): configuration and multilib. Appearance, summary and download sizes follow in 0.2.8.
+
+### Added
+
+- "Profiles" installer page (widget `packagechooser`, several choices allowed) with Gaming and Office. Basic is what the ISO already carries and is always installed. The packages are installed from the repositories when there is a connection; offline, only Basic is installed.
+
+### Changed
+
+- `multilib` is enabled on the installed system.
+
 ### Changed
 
 - Phase 2, step 4 closed: the user approves the installer interface with screenshots (sidebar, navigation, own QML pages and slideshow from 0.2.4–0.2.6).
