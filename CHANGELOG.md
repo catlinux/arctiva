@@ -8,6 +8,15 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 
 ## [Unreleased]
 
+## [0.3.5] - 2026-11-21
+
+Arctiva Center skeleton (phase 4, step 4.1). Patch release: new package with no functionality yet.
+
+### Added
+
+- `center/`: Arctiva Center window (PySide6, QML and Kirigami) with the Welcome, Updates, Drivers and Extras sidebar, launcher (`--welcome`, `--check`, `--module`), Spanish and Catalan translations, minimal data catalogues and `pytest` tests.
+- `arctiva-center` package, published to `[arctiva]` and included in the ISO; `center/**` triggers the repository and ISO workflows.
+
 ## [0.3.4] - 2026-11-21
 
 Previous checks for Arctiva Center on the live ISO. Patch release: documentation only.

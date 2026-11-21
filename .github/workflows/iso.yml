@@ -7,6 +7,7 @@ on:
       - 'iso/**'
       - 'packages/**'
       - 'installer/**'
+      - 'center/**'
       - 'build.sh'
       - 'tests/boot-test.sh'
       - 'VERSION'

@@ -1,0 +1,49 @@
+# SPDX-License-Identifier: GPL-3.0-or-later
+# Maintainer: CatLinux
+# Arctiva Center: actualizaciones, controladores y extras (D-09). El código está en center/.
+pkgname=arctiva-center
+pkgver=0.1.0
+pkgrel=1
+pkgdesc='Centro de control de Arctiva: actualizaciones, controladores y extras'
+arch=(any)
+url='https://github.com/catlinux/arctiva'
+license=(GPL-3.0-or-later)
+depends=(python pyside6 qt6-declarative kirigami qqc2-desktop-style pacman-contrib fakeroot polkit libnotify
+         flatpak arctiva-branding arctiva-hardware)
+makedepends=(qt6-tools)
+
+prepare() {
+    # build-packages.sh y publish-repo.sh dejan el código en ../center; en el repositorio está en ../../center.
+    local d
+    for d in "$startdir/../center" "$startdir/../../center"; do
+        if [[ -e "$d/arctiva_center/__main__.py" ]]; then
+            cp -a -- "$d" "$srcdir/center"
+            return
+        fi
+    done
+    echo 'arctiva-center: no se encuentra center/' >&2
+    return 1
+}
+
+build() {
+    cd -- "$srcdir/center"
+    # lrelease no está en el PATH: vive en /usr/lib/qt6/bin.
+    local ts
+    for ts in translations/*.ts; do
+        /usr/lib/qt6/bin/lrelease "$ts" -qm "${ts%.ts}.qm"
+    done
+}
+
+package() {
+    cd -- "$srcdir/center"
+    local lib="$pkgdir/usr/lib/arctiva-center" share="$pkgdir/usr/share/arctiva-center"
+    install -d -- "$lib"
+    cp -a -- arctiva_center "$lib/"
+    find "$lib" -name __pycache__ -prune -exec rm -rf -- {} +
+    install -Dm755 bin/arctiva-center "$pkgdir/usr/bin/arctiva-center"
+    install -d -- "$share"
+    cp -a -- qml "$share/qml"
+    install -Dm644 -t "$share" data/*.toml
+    install -Dm644 -t "$share/translations" translations/*.qm
+    install -Dm644 -t "$pkgdir/usr/share/applications" desktop/arctiva-center.desktop
+}

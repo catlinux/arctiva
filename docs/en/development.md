@@ -44,7 +44,7 @@ sudo ./build.sh -o ~/out -d latest  # today's packages, no pinned date
 - To pin another package date, change `iso/archive-date` (format `YYYY/MM/DD`).
 - The ISO only boots in UEFI mode. The "safe graphics" entry boots with `nomodeset`.
 - Automatic boot test, as in CI: `tests/boot-test.sh ~/out/arctiva-*.iso` (needs `qemu-system-x86_64`, `OVMF` and `7z`; without `7z` it must run with `sudo`). Firmware path in the `OVMF` variable; with access to `/dev/kvm` (`kvm` group) it takes a few minutes.
-- `build.sh` first builds the in-house packages in `packages/` (`arctiva-settings`, `arctiva-branding`, Calamares and `ckbcomp`) and `installer/` with `packages/build-packages.sh` into an unsigned local `arctiva-local` repository (only until phase 3). Use `-l <dir>` to reuse a prebuilt one, or `-c <dir>` to keep the repository between builds: only packages whose version changed are rebuilt (the installer configuration always is), so Calamares is not compiled for every ISO. Clear that directory when `iso/archive-date` changes. It adds ~10 minutes and needs network; the PKGBUILDs use current packages, not the Archive date.
+- `build.sh` first builds the in-house packages in `packages/` (`arctiva-settings`, `arctiva-branding`, `arctiva-hardware`, `arctiva-center`, Calamares and `ckbcomp`) and `installer/` with `packages/build-packages.sh` into an unsigned local `arctiva-local` repository (only until phase 3). Use `-l <dir>` to reuse a prebuilt one, or `-c <dir>` to keep the repository between builds: only packages whose version changed are rebuilt (the installer configuration always is), so Calamares is not compiled for every ISO. Clear that directory when `iso/archive-date` changes. It adds ~10 minutes and needs network; the PKGBUILDs use current packages, not the Archive date.
 - Live services are enabled with `Wants=` in `iso/airootfs/etc/systemd/system/*.target.d/`: the repository holds no symbolic links because it is edited from Windows.
 
 ### On any Linux with Docker
@@ -84,6 +84,10 @@ The Calamares configuration lives in `installer/` (package `arctiva-calamares-co
 - Manual partitioning: "New Partition Table" (GPT), a 300 MiB `fat32` ESP mounted at `/boot/efi` with the `boot` flag, and a `btrfs` root at `/` with the rest. The installer creates the `@`, `@home`, `@cache`, `@log` and `@snapshots` subvolumes.
 - The disk and the NVRAM live in `~/arctiva-vm` (`VM_DIR` variable), outside the repository.
 - No 3D acceleration or sound: the desktop works, but games and the real GPU are tested on hardware from a USB stick.
+
+### Arctiva Center
+
+The code of `arctiva-center` lives in `center/` (the PKGBUILD in `packages/arctiva-center/` receives it as `../center`). The logic in `arctiva_center/core/` does not import Qt and is tested without PySide6 or Arch: `cd center && python3 -m pytest` (needs `pytest` and Python 3.11 or later). The window (PySide6 + QML + Kirigami) is tested in the live session or on an installed system: `python3 -m arctiva_center --module updates` from `center/`, or `pacman -U` on the built package. Translations: sources in English, catalogues in `center/translations/*.ts`; `lrelease` (`/usr/lib/qt6/bin/`, package `qt6-tools`) generates the `.qm` files in `build()`.
 
 ## Line endings
 

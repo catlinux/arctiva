@@ -1,0 +1,3 @@
+# SPDX-License-Identifier: GPL-3.0-or-later
+# Errores de pacman reconocidos y su explicación (se rellena en el módulo «Actualizaciones»).
+version = 1

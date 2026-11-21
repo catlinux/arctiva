@@ -114,8 +114,9 @@ noto-fonts-emoji
 arctiva-settings
 arctiva-branding
 arctiva-hardware
+arctiva-center
 
-# Instalador (paquetes propios de packages/ e installer/, repositorio arctiva-local). de packages/ e installer/, repositorio arctiva-local).
+# Instalador (paquetes propios de packages/ e installer/, repositorio arctiva-local).
 # Se quitan del sistema instalado.
 calamares
 arctiva-calamares-config

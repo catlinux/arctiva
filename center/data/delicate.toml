@@ -1,0 +1,7 @@
+# SPDX-License-Identifier: GPL-3.0-or-later
+# Paquetes cuya actualización conviene vigilar: se marcan en la lista de actualizaciones.
+version = 1
+patterns = [
+    "linux*", "nvidia*", "mesa", "lib32-mesa", "systemd", "glibc", "grub", "pacman",
+    "plasma-workspace", "kwin",
+]

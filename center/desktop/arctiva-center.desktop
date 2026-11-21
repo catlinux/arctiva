@@ -1,0 +1,14 @@
+[Desktop Entry]
+Type=Application
+Name=Arctiva Center
+Comment=Updates, drivers and extras for Arctiva
+Comment[es]=Actualizaciones, controladores y extras de Arctiva
+Comment[ca]=Actualitzacions, controladors i extres d'Arctiva
+Exec=arctiva-center
+Icon=arctiva
+Terminal=false
+Categories=System;Settings;
+Keywords=updates;drivers;extras;arctiva;
+Keywords[es]=actualizaciones;controladores;extras;arctiva;
+Keywords[ca]=actualitzacions;controladors;extres;arctiva;
+StartupNotify=true
