@@ -54,7 +54,7 @@ Estado de cada trabajo: `[x]` hecho (con la versión en que se cerró) y `[ ]` p
 - [x] Lanzador y página «Comprobación» (BitLocker, inicio rápido de Windows) (0.2.3)
 - [x] Interfaz QML con la identidad de Arctiva y aprobación de las maquetas (0.2.4–0.2.6)
 - [x] Perfiles Básico, Juegos y Oficina (0.2.7–0.2.8)
-- [ ] Pruebas en máquinas virtuales: instalación sin terminal, junto a Windows, cifrada, particionado manual
+- [x] Pruebas en máquinas virtuales: instalación sin terminal, junto a Windows simulado, cifrada, particionado manual (0.3.0)
 
 ### Fase 3: repositorio propio y hardware (0.4.0)
 

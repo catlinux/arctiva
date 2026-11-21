@@ -80,6 +80,8 @@ The Calamares configuration lives in `installer/` (package `arctiva-calamares-co
 - When online, the installer runs `pacman -Syu` and installs `linux-lts`: the older the `iso/archive-date` date, the longer it takes.
 - If you change the live-only files in `iso/airootfs/`, also change the `exclude` list in `installer/calamares/modules/unpackfs.conf`.
 - To test the "Check" page without Windows, run `sudo tests/fake-windows-disk.sh <limpio|hibernado|bitlocker>` in the live session (copy the script into the VM; **it wipes the virtual disk**) and open the launcher again.
+- To test "Install alongside" you need a large disk: the installer asks for 40 GiB free for Arctiva on top of Windows. Example: `DISK_SIZE=100G tests/run-live.sh -r` and, in the live session, `sudo NTFS_SIZE=60G tests/fake-windows-disk.sh limpio /dev/vda` before opening the installer. The script creates the ESP with `bootmgfw.efi` and `BCD`: `os-prober` needs both to recognise Windows.
+- Manual partitioning: "New Partition Table" (GPT), a 300 MiB `fat32` ESP mounted at `/boot/efi` with the `boot` flag, and a `btrfs` root at `/` with the rest. The installer creates the `@`, `@home`, `@cache`, `@log` and `@snapshots` subvolumes.
 - The disk and the NVRAM live in `~/arctiva-vm` (`VM_DIR` variable), outside the repository.
 - No 3D acceleration or sound: the desktop works, but games and the real GPU are tested on hardware from a USB stick.
 

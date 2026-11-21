@@ -12,7 +12,7 @@ Arctiva is an independent project. It is not affiliated with or endorsed by Arch
 
 ## Status
 
-**Phase 1 completed (0.2.0):** a live ISO with KDE Plasma that boots to the desktop. There is no installer yet (phase 2) and no ISO to download: it can be built from the source (see the development guide). The architecture is approved (decisions D-01…D-16).
+**Phase 2 completed (0.3.0):** a live ISO with KDE Plasma and a graphical installer (Calamares) with Basic, Gaming and Office profiles, Btrfs with bootable snapshots, optional encryption and installation alongside Windows, tested in virtual machines. There is no ISO to download yet: it can be built from the source (see the development guide). The architecture is approved (decisions D-01…D-16).
 
 - [Architecture and decisions](docs/en/architecture.md)
 - [Roadmap](docs/en/roadmap.md)

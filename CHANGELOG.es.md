@@ -8,6 +8,14 @@ El formato se basa en [Keep a Changelog](https://keepachangelog.com/es-ES/1.1.0/
 
 ## [Sin publicar]
 
+## [0.3.0] - 2026-11-21
+
+Fase 2 cerrada: el instalador está completo y probado en máquinas virtuales (UEFI, QEMU/KVM). Probado: borrar disco, con y sin cifrado; particionado manual (ESP propia y raíz Btrfs); «Instalar junto a» un Windows simulado (NTFS reducido, ESP reutilizada, `os-prober` añade Windows a GRUB); perfiles con y sin conexión. Las pruebas con Windows y hardware reales quedan para la fase 7.
+
+### Añadido
+
+- Guía de desarrollo: cómo probar la instalación junto a otro sistema y el particionado manual, y el tamaño de disco que necesitan.
+
 ## [0.2.8] - 2026-11-21
 
 Fase 2, perfiles (segunda parte): aspecto, resumen y tamaños. Pendiente de la aprobación del usuario con capturas.
