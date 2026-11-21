@@ -59,7 +59,7 @@ Estado de cada trabajo: `[x]` hecho (con la versión en que se cerró) y `[ ]` p
 ### Fase 3: repositorio propio y hardware (0.4.0)
 
 - [x] Clave de firma (maestra fuera de línea, subclave en el CI) y paquete `arctiva-keyring` (0.3.6)
-- [ ] Repositorio `[arctiva]` firmado y publicado, con compilación de paquetes en el CI
+- [x] Repositorio `[arctiva]` firmado y publicado, con compilación de paquetes en el CI (0.3.9)
 - [x] `arctiva-settings` (valores por defecto, zram, multilib, reflector) y `arctiva-branding` provisional
 - [x] Detección de gráficas (D-10) en el instalador (0.3.2); la compartida con Arctiva Center llega en la fase 4
 - [x] Perfil «Juegos» completo con multilib (D-11) (0.3.2: `lib32-nvidia-utils` con Steam)

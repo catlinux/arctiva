@@ -8,6 +8,14 @@ El formato se basa en [Keep a Changelog](https://keepachangelog.com/es-ES/1.1.0/
 
 ## [Sin publicar]
 
+## [0.3.10] - 2026-11-21
+
+Versión de parche: solo documentación.
+
+### Cambiado
+
+- Hoja de ruta: repositorio `[arctiva]` firmado marcado como hecho. La primera publicación (cinco paquetes) y la comprobación desde un sistema limpio con `SigLevel = Required` pasaron en el CI.
+
 ## [0.3.9] - 2026-11-21
 
 ### Corregido

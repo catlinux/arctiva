@@ -8,6 +8,14 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 
 ## [Unreleased]
 
+## [0.3.10] - 2026-11-21
+
+Patch release: documentation only.
+
+### Changed
+
+- Roadmap: signed `[arctiva]` repository marked as done. The first publication (five packages) and the check from a clean system with `SigLevel = Required` passed in CI.
+
 ## [0.3.9] - 2026-11-21
 
 ### Fixed
