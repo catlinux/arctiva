@@ -17,6 +17,8 @@ Uso: sudo ./build.sh [-d AAAA/MM/DD|latest] [-o salida] [-w trabajo]
 
   -d  Fecha del Arch Linux Archive (por defecto, la de iso/archive-date).
       «latest» usa los mirrors del equipo, sin fecha fijada.
+      Espejos extra del Archive (misma estructura repos/AAAA/MM/DD/), por si
+      archive.archlinux.org falla: variable ARCHIVE_MIRRORS, bases separadas por espacios.
   -o  Directorio de salida de la ISO (por defecto: ./out).
   -w  Directorio de trabajo de mkarchiso; no debe existir
       (por defecto: ${work_dir}). No uses /tmp: está en RAM.
@@ -62,8 +64,22 @@ if [[ "$archive_date" == latest ]]; then
     echo "Paquetes: mirrors actuales del equipo (sin fecha fijada)."
 else
     [[ "$archive_date" =~ ^[0-9]{4}/[0-9]{2}/[0-9]{2}$ ]] || die "fecha no válida: ${archive_date} (formato AAAA/MM/DD)."
-    sed -i "s|^Include = /etc/pacman.d/mirrorlist$|Server = https://archive.archlinux.org/repos/${archive_date}/\$repo/os/\$arch|" \
-        "${stage}/profile/pacman.conf"
+    # Mismo día en todos los servidores: pacman pasa al siguiente si uno falla, sin mezclar épocas.
+    bases=(https://archive.archlinux.org ${ARCHIVE_MIRRORS:-})
+    servers=""
+    for base in "${bases[@]}"; do
+        servers+="Server = ${base%/}/repos/${archive_date}/\$repo/os/\$arch\\n"
+    done
+    # Falla pronto y con un mensaje útil si ningún servidor responde, en vez de a mitad de mkarchiso.
+    ok=0
+    for base in "${bases[@]}"; do
+        for _ in 1 2 3; do
+            if curl -fsI -m 20 -o /dev/null "${base%/}/repos/${archive_date}/core/os/x86_64/core.db"; then ok=1; break 2; fi
+            sleep 10
+        done
+    done
+    (( ok )) || die "ningún servidor del Arch Linux Archive responde. Reintenta más tarde, define ARCHIVE_MIRRORS o usa -d latest (ISO no reproducible)."
+    sed -i "s|^Include = /etc/pacman.d/mirrorlist$|${servers%'\n'}|" "${stage}/profile/pacman.conf"
     SOURCE_DATE_EPOCH="$(date -u -d "${archive_date//\//-}" +%s)"
     export SOURCE_DATE_EPOCH
     echo "Paquetes: Arch Linux Archive del ${archive_date}."

@@ -15,7 +15,7 @@ Pending work grouped by priority. Phases and decisions: [roadmap](docs/en/roadma
 - [ ] Warn on the summary page when the root is not Btrfs (manual mode): there will be no snapshots.
 - [ ] The installer's QML pages carry their texts in Spanish, Catalan and English inside the QML itself; move them to branding translations (`.ts`) so more languages can be added.
 - [ ] Offline map on the "Language and region" page: Calamares' map downloads tiles from the Internet, so the page currently uses lists only.
-- [ ] Offer Heroic, ProtonPlus and Bottles (Flatpak) from Arctiva Center (phase 5).
+- [ ] Offer Heroic, ProtonPlus and Bottles (Flatpak) from Arctiva Center (phase 6).
 - [ ] If the connection drops after the welcome page, the installer still thinks it is online and `packages` fails at `pacman -Sy` with an obscure message. Re-check before installing or show a clearer error.
 - [ ] The profiles list needs Ctrl+click to pick several (Calamares uses extended selection; the hint is in the "Basic" text). A custom QML page would allow plain clicks.
 - [ ] Re-test "Install alongside" with the new 25 GiB requirement (0.3.13) on a 60 GB disk with Windows.
@@ -25,12 +25,12 @@ Pending work grouped by priority. Phases and decisions: [roadmap](docs/en/roadma
 
 ## Medium — phase 4 closing (0.5.0)
 
-- [ ] Tests on an installed system: a real update with news from Arctiva Center, installing an extra, drivers with a simulated `lspci`, the `.pacnew` notice, and the GRUB hook on a LUKS-encrypted install.
+- [ ] Close the phase (0.5.0). All closing tests passed on 2026-11-21: update from Arctiva Center, an extra, drivers with a simulated `lspci`, `.pacnew`, GRUB hook with LUKS, and a fresh encrypted install with the 0.4.1 ISO that boots the default entry and the initial snapshot.
 - [ ] On the installer's "Profiles" page, the profile image touches the right edge of the window.
 
 ## Medium — studies
 
-- [ ] Store proof of concept (D-07) in the VM: AppStream catalogue, `pyalpm` on a temporary database, installation with `pacman -Syu --needed` through a polkit helper, Flatpak with progress and `flatpak-kcm`, and the AUR flow with PKGBUILD, diff and `paru`. Before phase 5.
+- [ ] Store proof of concept (D-07) in the VM: AppStream catalogue, `pyalpm` on a temporary database, installation with `pacman -Syu --needed` through a polkit helper, Flatpak with progress and `flatpak-kcm`, and the AUR flow with PKGBUILD, diff and `paru`. Before phase 6.
 - [ ] Installer checks in the VM, before phase 2 (D-03, D-04): what Calamares 3.4.3's `localeq`, `packagechooserq` and `notesqml` do and need; `os-prober` with Windows, BitLocker and Fast Startup; how far `stylesheet.qss` reaches on the disk page.
 
 ## Later

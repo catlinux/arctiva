@@ -11,8 +11,8 @@ Cada fase tiene un objetivo verificable y cierra con una versión. Las decisione
 | 2. Instalador | 0.3.0 | Calamares a medida con instalación offline (D-03) | Interfaz QML propia aprobada; instalación completa sin terminal en una VM: idioma, teclado, zona horaria, usuario, particionado automático y manual, Btrfs + Snapper + GRUB con instantáneas arrancables, `linux` y `linux-lts`; instalación junto a Windows probada |
 | 3. Repositorio propio y hardware | 0.4.0 | `[arctiva]` firmado y detección de gráficas | Repositorio publicado y firmado con `arctiva-keyring`; `arctiva-settings` y `arctiva-branding` provisional; detección de gráficas en el instalador; perfil «Juegos» con multilib |
 | 4. Arctiva Center | 0.5.0 | Bienvenida, controladores, actualizaciones y extras | Flujo de actualización completo (D-08) probado con un caso de noticia que exige intervención; catálogo de extras; evaluación de arch-update documentada |
-| 5. Aplicaciones y Windows | 0.6.0 | Tienda y compatibilidad | Tienda propia en Arctiva Center (D-07), con repositorios, Flathub y AUR diferenciados; Bottles y diálogo para `.exe`; Steam, Proton y Heroic funcionando en hardware real con NVIDIA y AMD o Intel |
-| 6. Identidad | 0.7.0 | Imagen propia y coherente | Logo vectorial aprobado; tema gráfico de GRUB, pantalla de arranque Plymouth, inicio de sesión, tema global, fondos y branding de Calamares |
+| 5. Identidad y escritorio | 0.6.0 | Imagen propia y escritorio sencillo, parecido a Windows | Logo vectorial aprobado; tema gráfico de GRUB (siempre visible), pantalla de arranque Plymouth, inicio de sesión, tema global con disposición tipo Windows, fondos y branding de Calamares; módulo «Personalización» con los ajustes básicos y «Restaurar el aspecto de Arctiva»; límites de las instantáneas |
+| 6. Aplicaciones y Windows | 0.7.0 | Tienda y compatibilidad | Tienda propia en Arctiva Center (D-07), con repositorios, Flathub y AUR diferenciados; Bottles y diálogo para `.exe`; probado en máquinas virtuales |
 | 7. Beta | 0.8.0–0.9.x | Calidad y publicación | Matriz de pruebas en hardware real; documentación de usuario; flujo de publicación con firma y réplica; beta pública |
 | Estable | 1.0.0 | Primera versión estable | Sin errores bloqueantes abiertos; proceso de publicación mensual documentado |
 
@@ -33,7 +33,7 @@ Estado de cada trabajo: `[x]` hecho (con la versión en que se cerró) y `[ ]` p
 
 - [x] E1: tienda y fuentes de aplicaciones; tienda propia en Arctiva Center (D-07) (0.1.6)
 - [x] E2: diseño del instalador, cifrado y avisos de Windows (D-03, D-04) (0.1.7)
-- [ ] Prueba de concepto de la tienda en la VM (antes de la fase 5)
+- [ ] Prueba de concepto de la tienda en la VM (antes de la fase 6)
 - [ ] Comprobaciones del instalador en la VM (antes de la fase 2): módulos QML de Calamares, lectura del resultado del lanzador, cifrado con una contraseña, instantánea con raíz cifrada, `os-prober`, alcance de `stylesheet.qss`
 
 ### Fase 1: ISO live mínima (0.2.0) — terminada
@@ -75,22 +75,25 @@ Estado de cada trabajo: `[x]` hecho (con la versión en que se cerró) y `[ ]` p
 - [x] Catálogo de extras (0.3.15)
 - [x] GRUB reinstalado en la partición EFI al actualizar el paquete `grub` (0.3.17)
 
-### Fase 5: aplicaciones y Windows (0.6.0)
-
-- [ ] Tienda «Aplicaciones» con repositorios, Flathub y AUR diferenciados (D-07)
-- [ ] Bottles y diálogo para abrir `.exe` y `.msi` (D-12)
-- [ ] Steam, Proton y Heroic probados en hardware real con NVIDIA y con AMD o Intel
-- [ ] Quitar Discover de la ISO live
-
-### Fase 6: identidad (0.7.0)
+### Fase 5: identidad y escritorio (0.6.0)
 
 - [x] Logotipo vectorial aprobado (0.1.6)
 - [ ] Tipografía corporativa y lema del logotipo en trazos
-- [ ] Tema gráfico de GRUB (menú, submenú de instantáneas y ISO live), Plymouth, pantalla de inicio de sesión, tema global y fondos
+- [ ] Tema gráfico de GRUB, siempre visible (menú, submenú de instantáneas e ISO live), Plymouth, pantalla de inicio de sesión, tema global y fondos
+- [ ] Escritorio tipo Windows: barra abajo con iconos centrados, menú de inicio con buscador, panel y widgets bloqueados por defecto
+- [ ] Módulo «Personalización» en Arctiva Center (claro/oscuro, acento, fondo, alineación de la barra, escala, luz nocturna) y «Restaurar el aspecto de Arctiva»
+- [ ] Límites de las instantáneas y su espacio visible en Arctiva Center
 - [ ] Branding de Calamares y de Arctiva Center
+
+### Fase 6: aplicaciones y Windows (0.7.0)
+
+- [ ] Tienda «Aplicaciones» con repositorios, Flathub y AUR diferenciados (D-07)
+- [ ] Bottles y diálogo para abrir `.exe` y `.msi` (D-12)
+- [ ] Quitar Discover de la ISO live
 
 ### Fase 7: beta (0.8.0–0.9.x)
 
+- [ ] Steam, Proton y Heroic probados en hardware real con NVIDIA y con AMD o Intel
 - [ ] Matriz de pruebas en hardware real, cuando todo esté implementado: USB en el PC (NVIDIA RTX 4060) y portátil con Windows y Manjaro (sustituir Manjaro por Arctiva conservando Windows y su partición EFI)
 - [ ] Documentación de usuario
 - [ ] Publicación firmada (ISO, `sha256`, firma GPG) con réplica externa

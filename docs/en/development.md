@@ -41,6 +41,7 @@ sudo ./build.sh -o ~/out -d latest  # today's packages, no pinned date
 - The working directory (by default `/var/tmp/arctiva-work`) must not exist; mkarchiso deletes it when done. With `-k` it is kept, to measure what takes space (`du`, `pacman --root <work>/x86_64/airootfs -Qi`); delete it afterwards with `sudo rm -rf`.
 - The ISO does not include package documentation (`NoExtract` in `iso/pacman.conf`) to stay under the limit.
 - VirtualBox tests: the test VM has 4 GB and the build VM another 4; with 16 GB on the host both cannot run at once while other programs are open (it fails with `VERR_UNRESOLVED_ERROR`).
+- If `archive.archlinux.org` is down, the script retries and then fails with a hint. Set `ARCHIVE_MIRRORS="https://mirror1 https://mirror2"` (same `repos/YYYY/MM/DD/` layout) to add fallback mirrors for the same date; `-d latest` is a last resort and the ISO is not reproducible.
 - To pin another package date, change `iso/archive-date` (format `YYYY/MM/DD`).
 - The ISO only boots in UEFI mode. The "safe graphics" entry boots with `nomodeset`.
 - Automatic boot test, as in CI: `tests/boot-test.sh ~/out/arctiva-*.iso` (needs `qemu-system-x86_64`, `OVMF` and `7z`; without `7z` it must run with `sudo`). Firmware path in the `OVMF` variable; with access to `/dev/kvm` (`kvm` group) it takes a few minutes.

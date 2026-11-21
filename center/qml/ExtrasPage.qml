@@ -157,14 +157,11 @@ Kirigami.ScrollablePage {
             }
         }
 
-        QQC2.TextArea {
+        LogView {
             id: log
             Layout.fillWidth: true
             Layout.preferredHeight: Kirigami.Units.gridUnit * 14
             visible: text !== ""
-            readOnly: true
-            wrapMode: TextEdit.WrapAnywhere
-            font.family: "monospace"
         }
     }
 }

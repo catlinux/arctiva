@@ -98,7 +98,7 @@ Requirements:
 - **pacman integrity:** no operation refreshes the databases without upgrading the whole system. Installing a repository package on an outdated system requires upgrading first.
 - Flatpak permissions visible and adjustable. Understandable errors, with the original text available.
 
-Decision: **an in-house store as the "Applications" module of Arctiva Center** (D-09). The installed system does not ship Discover, to avoid two stores and PackageKit's periodic refresh. The live ISO uses Discover with Flathub only until phase 5.
+Decision: **an in-house store as the "Applications" module of Arctiva Center** (D-09). The installed system does not ship Discover, to avoid two stores and PackageKit's periodic refresh. The live ISO uses Discover with Flathub only until phase 6.
 
 - **Catalogue:** AppStream data from the repositories (`archlinux-appstream-data`) and from Flathub, read with libappstream. An application available from several sources is shown once, with one option per source. The AUR only appears when enabled, as a list of packages searched through its RPC API.
 - **Recommended source:** the official repositories before Flathub, except for the exceptions set in `arctiva-settings` (for example Bottles, D-12). The AUR is never the recommended one.
@@ -107,7 +107,7 @@ Decision: **an in-house store as the "Applications" module of Arctiva Center** (
 - **AUR:** before installing, the full PKGBUILD and `.install`, votes, popularity, last update and maintainer are shown, with a stronger warning if the package is orphaned, has changed maintainer or is recent. On every update, a diff of the PKGBUILD and `.install` against the installed version, with confirmation: in June 2026 Arch warned of a wave of malicious AUR packages and advised reviewing all changes. Packages are built as the user with `paru`; only installing the built package goes through the helper. AUR updates run after `pacman -Syu`.
 - **Errors:** the same message translator as D-08.
 - Rejected: Discover's PackageKit back-end, because of the risk of partial upgrades (section 2); Discover with a custom back-end for pacman and the AUR (none exists and Discover's back-end interface is not stable, so C++ code would have to keep pace with Plasma); Pamac (AUR only, tied to Manjaro and GTK); Bauh (no development since 2024, Qt5); and Octopi (a package manager without Flatpak or AppStream).
-- Before phase 5, a proof of concept in the VM validates the catalogue, the temporary-database queries, installation through the helper, Flatpak and the AUR flow. The decision will be reconsidered if KDE adds a pacman back-end to Discover.
+- Before phase 6, a proof of concept in the VM validates the catalogue, the temporary-database queries, installation through the helper, Flatpak and the AUR flow. The decision will be reconsidered if KDE adds a pacman back-end to Discover.
 
 ### D-08 Updates (**Approved**)
 
@@ -148,7 +148,7 @@ Detection with `lspci` and a mapping file (family → packages), shared by the i
 - `multilib` enabled by default, also on the installed system (`prepare-target` enables it).
 - Native Steam (`steam`, from multilib), `gamemode`, `mangohud`, `gamescope`; Proton is managed from Steam.
 - Heroic (Epic/GOG) and ProtonPlus or ProtonUp-Qt as Flatpaks; Lutris from `extra`.
-- Installed as a "Gaming" profile during installation (Steam, Lutris, GameMode, MangoHud, Gamescope and the 32-bit Mesa and Vulkan libraries) or from Arctiva Center. Heroic, ProtonPlus and Bottles will be offered by Arctiva Center (phase 5); NVIDIA drivers, by GPU detection (phase 3).
+- Installed as a "Gaming" profile during installation (Steam, Lutris, GameMode, MangoHud, Gamescope and the 32-bit Mesa and Vulkan libraries) or from Arctiva Center. Heroic, ProtonPlus and Bottles will be offered by Arctiva Center (phase 6); NVIDIA drivers, by GPU detection (phase 3).
 
 ### D-12 Windows software (**Approved**)
 
@@ -222,7 +222,7 @@ To stay under 2 GiB: a selection of Plasma packages instead of every meta-packag
 | ISO over 2 GiB | Medium | Package selection and an external mirror |
 | Name and logo versus other trademarks | Low | Name without "Arch", own logo, review before 1.0 |
 | AUR security | Medium | Disabled by default, kept separate, with warnings and a PKGBUILD diff on every update |
-| Cost of building the in-house store | Medium | Shares the helper, the error translator and the D-08 flow; proof of concept before phase 5 |
+| Cost of building the in-house store | Medium | Shares the helper, the error translator and the D-08 flow; proof of concept before phase 6 |
 | Repository signing keys | High | Offline primary key; signing subkey in Actions secrets ([guide](signing.md)) |
 | VirtualBox tests not representative (3D, Wayland) | Medium | Live-USB tests on real hardware before every release |
 

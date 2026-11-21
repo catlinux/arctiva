@@ -8,6 +8,20 @@ El formato se basa en [Keep a Changelog](https://keepachangelog.com/es-ES/1.1.0/
 
 ## [Sin publicar]
 
+## [0.4.1] - 2026-11-21
+
+Corrección del arranque tras instalar, encontrada en las pruebas de cierre de la fase 4. Versión de parche.
+
+### Corregido
+
+- El sistema instalado podía no arrancar la entrada por defecto de GRUB (`error: premature end of file /@/boot/vmlinuz-linux`, y después `you need to load the kernel first`): la copia del sistema con `rsync -S` dejaba la cola de ceros del kernel como un hueco en Btrfs, y GRUB lo leía como el final del archivo. El kernel se copia ahora sin huecos, también en `/usr/lib/modules`, de donde lo vuelve a copiar mkinitcpio al actualizarse. Se vio en una instalación cifrada, pero podía pasar también sin cifrado. El kernel LTS no estaba afectado.
+- Arctiva Center 0.6.2: el registro de pacman en Actualizaciones, Extras y Controladores, y el diff de los `.pacnew`, se cortaban a la altura del recuadro y no se podían desplazar. Ahora tienen barra de desplazamiento y el registro baja solo hasta la última línea mientras corre.
+
+### Cambiado
+
+- Hoja de ruta: la identidad y un escritorio sencillo parecido a Windows pasan a ser la fase 5 (0.6.0), antes que la tienda, que pasa a la fase 6 (0.7.0). La fase 5 suma un módulo «Personalización» en Arctiva Center con los ajustes básicos y «Restaurar el aspecto de Arctiva», el menú de GRUB siempre visible con tema propio y límites para las instantáneas. Las pruebas de Steam, Proton y Heroic en hardware real pasan a la fase 7.
+- `build.sh` admite espejos extra del Arch Linux Archive para la misma fecha fijada (variable `ARCHIVE_MIRRORS`, sin mezclar nunca con mirrors actuales) y comprueba con reintentos que alguno responde antes de construir, fallando pronto con un mensaje claro.
+
 ## [0.4.0] - 2026-11-21
 
 Fase 3 cerrada: el sistema instalado usa el repositorio firmado `[arctiva]`. Probado con una instalación completa de la ISO 0.3.17 en QEMU (UEFI, con red y el perfil Juegos): `pacman -Sy` descarga y valida `arctiva.db`, los cinco paquetes propios vienen de `[arctiva]`, la clave de firma tiene confianza total, y `os-release`, zram, `reflector.timer`, multilib, los paquetes de Juegos, el kernel LTS en GRUB y la instantánea inicial están en su sitio. El instalador ejecuta `/usr/lib/arctiva/install-drivers`. En reposo, tras iniciar sesión, el sistema usa unos 1,2 GB de RAM. Versión menor (fase terminada, D-16).

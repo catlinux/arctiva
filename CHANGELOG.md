@@ -8,6 +8,20 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 
 ## [Unreleased]
 
+## [0.4.1] - 2026-11-21
+
+Boot fix after installing, found during the phase 4 closing tests. Patch version.
+
+### Fixed
+
+- The installed system could fail to boot GRUB's default entry (`error: premature end of file /@/boot/vmlinuz-linux`, then `you need to load the kernel first`): copying the system with `rsync -S` left the kernel's trailing zeros as a hole in Btrfs, and GRUB read it as the end of the file. The kernel is now copied without holes, also in `/usr/lib/modules`, from where mkinitcpio copies it again when it is upgraded. It showed up in an encrypted install, but it could also happen without encryption. The LTS kernel was not affected.
+- Arctiva Center 0.6.2: the pacman log in Updates, Extras and Drivers, and the `.pacnew` diff, were cut at the height of their box and could not be scrolled. They now have a scroll bar, and the log follows the last line while it runs.
+
+### Changed
+
+- Roadmap: the visual identity and a simple, Windows-like desktop become phase 5 (0.6.0), ahead of the store, which moves to phase 6 (0.7.0). Phase 5 adds a "Personalisation" module in Arctiva Center with the basic settings and "Restore Arctiva's look", an always-visible themed GRUB menu, and snapshot limits. Steam, Proton and Heroic testing on real hardware moves to phase 7.
+- `build.sh` accepts extra Arch Linux Archive mirrors for the same pinned date (`ARCHIVE_MIRRORS` variable, never mixed with current mirrors) and checks, with retries, that one responds before building, failing early with a clear message.
+
 ## [0.4.0] - 2026-11-21
 
 Phase 3 closed: the installed system uses the signed `[arctiva]` repository. Tested with a full install of the 0.3.17 ISO in QEMU (UEFI, online, Gaming profile): `pacman -Sy` downloads and validates `arctiva.db`, the five in-house packages come from `[arctiva]`, the signing key has full trust, and `os-release`, zram, `reflector.timer`, multilib, the Gaming packages, the LTS kernel in GRUB and the initial snapshot are in place. The installer runs `/usr/lib/arctiva/install-drivers`. Idle after login, the system uses about 1.2 GB of RAM. Minor version (phase completed, D-16).

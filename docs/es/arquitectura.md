@@ -98,7 +98,7 @@ Requisitos:
 - **Integridad de pacman:** ninguna operación refresca las bases de datos sin actualizar todo el sistema. Para instalar un paquete de los repositorios con el sistema desactualizado, primero hay que actualizar.
 - Permisos de Flatpak visibles y modificables. Errores comprensibles, con el texto original disponible.
 
-Decisión: **tienda propia como módulo «Aplicaciones» de Arctiva Center** (D-09). El sistema instalado no lleva Discover, para no tener dos tiendas ni el refresco periódico de PackageKit. La ISO live usa Discover solo con Flathub hasta la fase 5.
+Decisión: **tienda propia como módulo «Aplicaciones» de Arctiva Center** (D-09). El sistema instalado no lleva Discover, para no tener dos tiendas ni el refresco periódico de PackageKit. La ISO live usa Discover solo con Flathub hasta la fase 6.
 
 - **Catálogo:** datos AppStream de los repositorios (`archlinux-appstream-data`) y de Flathub, leídos con libappstream. Una aplicación disponible en varias fuentes se muestra una sola vez, con una opción por fuente. El AUR solo aparece si está activado, como lista de paquetes buscada en su API RPC.
 - **Fuente recomendada:** los repositorios oficiales antes que Flathub, salvo las excepciones que fija `arctiva-settings` (por ejemplo Bottles, D-12). El AUR nunca es la recomendada.
@@ -107,7 +107,7 @@ Decisión: **tienda propia como módulo «Aplicaciones» de Arctiva Center** (D-
 - **AUR:** antes de instalar se muestran el PKGBUILD y el `.install` completos, los votos, la popularidad, la última actualización y el mantenedor, con un aviso reforzado si el paquete es huérfano, ha cambiado de mantenedor o es reciente. En cada actualización, diff del PKGBUILD y del `.install` respecto a lo instalado, con confirmación: en junio de 2026 Arch avisó de una oleada de paquetes maliciosos en el AUR y recomendó revisar todos los cambios. Se compila como usuario con `paru`; solo la instalación del paquete construido pasa por el ayudante. Las actualizaciones del AUR van después de `pacman -Syu`.
 - **Errores:** el mismo traductor de mensajes que D-08.
 - Descartados: el motor PackageKit de Discover, por el riesgo de actualizaciones parciales (sección 2); Discover con un motor propio para pacman y AUR (no existe ninguno y la interfaz de motores de Discover no es estable, así que habría que mantener código C++ al ritmo de Plasma); Pamac (solo en el AUR, ligado a Manjaro y en GTK); Bauh (sin desarrollo desde 2024 y en Qt5), y Octopi (gestor de paquetes sin Flatpak ni AppStream).
-- Antes de la fase 5, una prueba de concepto en la VM valida el catálogo, las consultas con base temporal, la instalación a través del ayudante, Flatpak y el flujo del AUR. La decisión se reconsiderará si KDE incorpora a Discover un motor para pacman.
+- Antes de la fase 6, una prueba de concepto en la VM valida el catálogo, las consultas con base temporal, la instalación a través del ayudante, Flatpak y el flujo del AUR. La decisión se reconsiderará si KDE incorpora a Discover un motor para pacman.
 
 ### D-08 Actualizaciones (**Aprobada**)
 
@@ -148,7 +148,7 @@ Detección con `lspci` y un archivo de correspondencias (familia → paquetes), 
 - `multilib` activado de serie, también en el sistema instalado (lo activa `prepare-target`).
 - Steam nativo (`steam`, de multilib), `gamemode`, `mangohud`, `gamescope`; Proton se gestiona desde Steam.
 - Heroic (Epic/GOG) y ProtonPlus o ProtonUp-Qt como Flatpak; Lutris desde `extra`.
-- Se instalan como perfil «Juegos» durante la instalación (Steam, Lutris, GameMode, MangoHud, Gamescope y las bibliotecas de 32 bits de Mesa y Vulkan) o desde Arctiva Center. Heroic, ProtonPlus y Bottles los ofrecerá Arctiva Center (fase 5); los controladores NVIDIA, la detección de gráficas (fase 3).
+- Se instalan como perfil «Juegos» durante la instalación (Steam, Lutris, GameMode, MangoHud, Gamescope y las bibliotecas de 32 bits de Mesa y Vulkan) o desde Arctiva Center. Heroic, ProtonPlus y Bottles los ofrecerá Arctiva Center (fase 6); los controladores NVIDIA, la detección de gráficas (fase 3).
 
 ### D-12 Programas de Windows (**Aprobada**)
 
@@ -222,7 +222,7 @@ Para mantenerla por debajo de 2 GiB: Plasma con una selección de paquetes en lu
 | ISO de más de 2 GiB | Medio | Selección de paquetes y réplica externa |
 | Nombre y logo frente a otras marcas | Bajo | Nombre sin «Arch», logo propio, revisión antes de la 1.0 |
 | Seguridad del AUR | Medio | Desactivado por defecto, separado, con avisos y con diff del PKGBUILD en cada actualización |
-| Coste de construir la tienda propia | Medio | Comparte el ayudante, el traductor de errores y el flujo de D-08; prueba de concepto antes de la fase 5 |
+| Coste de construir la tienda propia | Medio | Comparte el ayudante, el traductor de errores y el flujo de D-08; prueba de concepto antes de la fase 6 |
 | Claves de firma del repositorio | Alto | Clave maestra fuera de línea; subclave de firma en secretos de Actions ([guía](firma.md)) |
 | Pruebas en VirtualBox poco representativas (3D, Wayland) | Medio | Pruebas en hardware real con USB live antes de cada versión |
 

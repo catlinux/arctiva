@@ -15,7 +15,7 @@ Trabajo pendiente agrupado por prioridad. Fases y decisiones: [hoja de ruta](doc
 - [ ] Avisar en la página de resumen si la raíz no es Btrfs (modo manual): no habrá instantáneas.
 - [ ] Las páginas QML del instalador llevan sus textos en castellano, catalán e inglés dentro del propio QML; pasarlos a traducciones del branding (`.ts`) para poder añadir más idiomas.
 - [ ] Mapa sin conexión en la página «Idioma y zona»: el de Calamares descarga los mosaicos de Internet, así que de momento la página usa solo listas.
-- [ ] Ofrecer Heroic, ProtonPlus y Bottles (Flatpak) desde Arctiva Center (fase 5).
+- [ ] Ofrecer Heroic, ProtonPlus y Bottles (Flatpak) desde Arctiva Center (fase 6).
 - [ ] Si se cae la conexión después de la bienvenida, el instalador sigue creyendo que hay internet y `packages` falla en `pacman -Sy` con un mensaje poco claro. Comprobarlo otra vez antes de instalar o mostrar un error más claro.
 - [ ] La lista de perfiles necesita Ctrl+clic para elegir varios (Calamares usa selección extendida; la pista va en el texto de «Básico»). Una página QML propia permitiría el clic simple.
 - [ ] Volver a probar «Instalar junto a» con el nuevo requisito de 25 GiB (0.3.13) en un disco de 60 GB con Windows.
@@ -25,12 +25,12 @@ Trabajo pendiente agrupado por prioridad. Fases y decisiones: [hoja de ruta](doc
 
 ## Media: cierre de la fase 4 (0.5.0)
 
-- [ ] Pruebas en un sistema instalado: una actualización real con noticias desde Arctiva Center, instalar un extra, controladores con un `lspci` simulado, el aviso de `.pacnew`, y el hook de GRUB en una instalación cifrada con LUKS.
+- [ ] Cerrar la fase (0.5.0). Todas las pruebas de cierre pasaron el 2026-11-21: actualización desde Arctiva Center, un extra, controladores con un `lspci` simulado, `.pacnew`, hook de GRUB con LUKS, y una instalación nueva cifrada con la ISO 0.4.1 que arranca la entrada por defecto y la instantánea inicial.
 - [ ] En la página «Perfiles» del instalador, la imagen del perfil toca el borde derecho de la ventana.
 
 ## Media: estudios
 
-- [ ] Prueba de concepto de la tienda (D-07) en la VM: catálogo AppStream, `pyalpm` sobre una base temporal, instalación con `pacman -Syu --needed` a través de un ayudante polkit, Flatpak con progreso y `flatpak-kcm`, y flujo del AUR con PKGBUILD, diff y `paru`. Antes de la fase 5.
+- [ ] Prueba de concepto de la tienda (D-07) en la VM: catálogo AppStream, `pyalpm` sobre una base temporal, instalación con `pacman -Syu --needed` a través de un ayudante polkit, Flatpak con progreso y `flatpak-kcm`, y flujo del AUR con PKGBUILD, diff y `paru`. Antes de la fase 6.
 - [ ] Comprobaciones del instalador en la VM, antes de la fase 2 (D-03, D-04): qué hacen y qué necesitan `localeq`, `packagechooserq` y `notesqml` de Calamares 3.4.3; `os-prober` con Windows, BitLocker e inicio rápido; alcance de `stylesheet.qss` en la página de disco.
 
 ## Más adelante

@@ -11,11 +11,24 @@ in_target() { chroot "$root" "$@"; }
 
 # mkarchiso vacía /boot y el kernel va aparte en la ISO. Se copia igual que lo hace el hook de
 # pacman de mkinitcpio, desde /usr/lib/modules/<versión>/vmlinuz.
+# Sin huecos: unpackfs copia con rsync -S y la cola de ceros del kernel queda como hueco implícito
+# (Btrfs con NO_HOLES); GRUB lo toma por el final del archivo y falla con «premature end of file».
+# También se reescribe el origen, porque el hook de mkinitcpio lo vuelve a copiar a /boot.
+dense_copy() {
+    local tmp
+    tmp="$(dirname -- "$2")/.$(basename -- "$2").arctiva-tmp"
+    cp --sparse=never --preserve=mode,timestamps -- "$1" "$tmp"
+    mv -f -- "$tmp" "$2"
+}
 found=0
 for pkgbase_file in "${root}"/usr/lib/modules/*/pkgbase; do
     [[ -e "$pkgbase_file" ]] || continue
     read -r pkgbase <"$pkgbase_file"
-    install -Dm644 -- "${pkgbase_file%/pkgbase}/vmlinuz" "${root}/boot/vmlinuz-${pkgbase}"
+    src="${pkgbase_file%/pkgbase}/vmlinuz"
+    dense_copy "$src" "$src"
+    install -d -m755 -- "${root}/boot"
+    dense_copy "$src" "${root}/boot/vmlinuz-${pkgbase}"
+    chmod 644 -- "${root}/boot/vmlinuz-${pkgbase}"
     echo "Kernel copiado: /boot/vmlinuz-${pkgbase}"
     found=1
 done

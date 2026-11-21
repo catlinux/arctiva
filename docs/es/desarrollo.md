@@ -41,6 +41,7 @@ sudo ./build.sh -o ~/out -d latest  # paquetes del día, sin fecha fijada
 - El directorio de trabajo (por defecto `/var/tmp/arctiva-work`) no debe existir; mkarchiso lo borra al acabar. Con `-k` se conserva, para medir qué ocupa espacio (`du`, `pacman --root <trabajo>/x86_64/airootfs -Qi`); después hay que borrarlo con `sudo rm -rf`.
 - La ISO no lleva la documentación de los paquetes (`NoExtract` en `iso/pacman.conf`) para no pasar del límite.
 - Pruebas en VirtualBox: la VM de pruebas tiene 4 GB y la de construcción otros 4; con 16 GB en el anfitrión no caben las dos encendidas a la vez si hay otros programas abiertos (falla con `VERR_UNRESOLVED_ERROR`).
+- Si `archive.archlinux.org` está caído, el script reintenta y después falla con una pista. Define `ARCHIVE_MIRRORS="https://espejo1 https://espejo2"` (misma estructura `repos/AAAA/MM/DD/`) para añadir espejos de reserva de la misma fecha; `-d latest` es el último recurso y la ISO no es reproducible.
 - Para fijar otra fecha de paquetes, cambia `iso/archive-date` (formato `AAAA/MM/DD`).
 - La ISO solo arranca en UEFI. La entrada «safe graphics» arranca con `nomodeset`.
 - Prueba de arranque automática, como en el CI: `tests/boot-test.sh ~/out/arctiva-*.iso` (necesita `qemu-system-x86_64`, `OVMF` y `7z`; sin `7z` hay que ejecutarlo con `sudo`). Ruta del firmware en la variable `OVMF`; con acceso a `/dev/kvm` (grupo `kvm`) tarda unos minutos.

@@ -263,12 +263,9 @@ Kirigami.ScrollablePage {
                     font.bold: true
                     text: modelData.path
                 }
-                QQC2.TextArea {
+                LogView {
                     Layout.fillWidth: true
-                    Layout.maximumHeight: Kirigami.Units.gridUnit * 12
-                    readOnly: true
-                    wrapMode: TextEdit.WrapAnywhere
-                    font.family: "monospace"
+                    Layout.preferredHeight: Math.min(implicitHeight, Kirigami.Units.gridUnit * 12)
                     text: modelData.diff !== "" ? modelData.diff
                         : qsTr("The differences cannot be shown (the file cannot be read without administrator rights or is not text).")
                 }
@@ -295,14 +292,11 @@ Kirigami.ScrollablePage {
             onClicked: page.showLog = !page.showLog
         }
 
-        QQC2.TextArea {
+        LogView {
             id: log
             Layout.fillWidth: true
             Layout.preferredHeight: Kirigami.Units.gridUnit * 16
             visible: page.showLog
-            readOnly: true
-            wrapMode: TextEdit.WrapAnywhere
-            font.family: "monospace"
         }
     }
 }

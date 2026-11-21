@@ -11,8 +11,8 @@ Each phase has a verifiable goal and ends with a release. The decisions referenc
 | 2. Installer | 0.3.0 | Tailored Calamares with offline installation (D-03) | Own QML interface approved; full installation without a terminal in a VM: language, keyboard, time zone, user, automatic and manual partitioning, Btrfs + Snapper + GRUB with bootable snapshots, `linux` and `linux-lts`; installing alongside Windows tested |
 | 3. Own repository and hardware | 0.4.0 | Signed `[arctiva]` and GPU detection | Repository published and signed with `arctiva-keyring`; `arctiva-settings` and provisional `arctiva-branding`; GPU detection in the installer; "Gaming" profile with multilib |
 | 4. Arctiva Center | 0.5.0 | Welcome, drivers, updates and extras | Complete update flow (D-08) tested with a news item that requires manual intervention; extras catalogue; arch-update evaluation documented |
-| 5. Applications and Windows | 0.6.0 | Store and compatibility | In-house store in Arctiva Center (D-07), with repositories, Flathub and AUR kept apart; Bottles and the `.exe` dialog; Steam, Proton and Heroic working on real hardware with NVIDIA and AMD or Intel |
-| 6. Identity | 0.7.0 | A consistent visual identity | Approved vector logo; graphical GRUB theme, Plymouth boot splash, login, global theme, wallpapers and Calamares branding |
+| 5. Identity and desktop | 0.6.0 | A consistent visual identity and a simple, Windows-like desktop | Approved vector logo; graphical GRUB theme (always visible), Plymouth boot splash, login, global theme with a Windows-like layout, wallpapers and Calamares branding; "Personalisation" module with basic settings and "Restore Arctiva's look"; snapshot limits |
+| 6. Applications and Windows | 0.7.0 | Store and compatibility | In-house store in Arctiva Center (D-07), with repositories, Flathub and AUR kept apart; Bottles and the `.exe` dialog; tested in virtual machines |
 | 7. Beta | 0.8.0–0.9.x | Quality and release | Real-hardware test matrix; user documentation; signed release pipeline with a mirror; public beta |
 | Stable | 1.0.0 | First stable release | No open blocking bugs; monthly release process documented |
 
@@ -33,7 +33,7 @@ Status of each work item: `[x]` done (with the version that closed it) and `[ ]`
 
 - [x] E1: store and application sources; in-house store in Arctiva Center (D-07) (0.1.6)
 - [x] E2: installer design, encryption and Windows warnings (D-03, D-04) (0.1.7)
-- [ ] Store proof of concept in the VM (before phase 5)
+- [ ] Store proof of concept in the VM (before phase 6)
 - [ ] Installer checks in the VM (before phase 2): Calamares QML modules, reading the launcher's result, encryption with a single passphrase, snapshot with an encrypted root, `os-prober`, reach of `stylesheet.qss`
 
 ### Phase 1: minimal live ISO (0.2.0) — done
@@ -75,22 +75,25 @@ Status of each work item: `[x]` done (with the version that closed it) and `[ ]`
 - [x] Extras catalogue (0.3.15)
 - [x] GRUB reinstalled on the EFI partition when the `grub` package is upgraded (0.3.17)
 
-### Phase 5: applications and Windows (0.6.0)
-
-- [ ] "Applications" store with repositories, Flathub and AUR kept apart (D-07)
-- [ ] Bottles and a dialog to open `.exe` and `.msi` files (D-12)
-- [ ] Steam, Proton and Heroic tested on real hardware with NVIDIA and with AMD or Intel
-- [ ] Remove Discover from the live ISO
-
-### Phase 6: identity (0.7.0)
+### Phase 5: identity and desktop (0.6.0)
 
 - [x] Approved vector logo (0.1.6)
 - [ ] Corporate typeface and the logo tagline as paths
-- [ ] Graphical GRUB theme (menu, snapshots submenu, live ISO), Plymouth, login screen, global theme and wallpapers
+- [ ] Graphical GRUB theme, always visible (menu, snapshots submenu, live ISO), Plymouth, login screen, global theme and wallpapers
+- [ ] Windows-like desktop: bottom taskbar with centred icons, start menu with search, panel and widgets locked by default
+- [ ] "Personalisation" module in Arctiva Center (light/dark, accent, wallpaper, taskbar alignment, scaling, night light) and "Restore Arctiva's look"
+- [ ] Snapshot limits and the space they use shown in Arctiva Center
 - [ ] Calamares and Arctiva Center branding
+
+### Phase 6: applications and Windows (0.7.0)
+
+- [ ] "Applications" store with repositories, Flathub and AUR kept apart (D-07)
+- [ ] Bottles and a dialog to open `.exe` and `.msi` files (D-12)
+- [ ] Remove Discover from the live ISO
 
 ### Phase 7: beta (0.8.0–0.9.x)
 
+- [ ] Steam, Proton and Heroic tested on real hardware with NVIDIA and with AMD or Intel
 - [ ] Real-hardware test matrix, once everything is implemented: USB stick on the PC (NVIDIA RTX 4060) and a laptop with Windows and Manjaro (replace Manjaro with Arctiva, keeping Windows and its EFI partition)
 - [ ] User documentation
 - [ ] Signed release (ISO, `sha256`, GPG signature) with an external mirror
