@@ -1,0 +1,231 @@
+#!/usr/bin/python3 -I
+# SPDX-License-Identifier: GPL-3.0-or-later
+"""Ayudante privilegiado de Arctiva Center, lanzado con pkexec (acción org.arctiva.center.helper).
+
+Solo acepta un conjunto cerrado de operaciones y nunca nombres de paquetes ni órdenes: los
+paquetes y servicios salen de su propio catálogo, que es de root. Solo usa la biblioteca
+estándar y no importa arctiva_center (-I deja fuera del sys.path el directorio del script).
+
+Códigos de salida: el de pacman cuando es él quien falla; 64 uso o argumento no válido (no se
+ejecuta nada); 69 herramienta no disponible; 70 catálogo ilegible; 75 base de pacman bloqueada;
+77 sin permisos de root.
+"""
+import os
+import re
+import stat
+import subprocess
+import sys
+import tomllib
+
+EX_USAGE, EX_UNAVAILABLE, EX_SOFTWARE, EX_TEMPFAIL, EX_NOPERM = 64, 69, 70, 75, 77
+
+# Solo sin root, para las pruebas: todas las rutas cuelgan de este directorio. Con root (pkexec
+# limpia además el entorno) se ignora siempre.
+_test_root = os.environ.get("ARCTIVA_HELPER_TEST_ROOT", "") if os.geteuid() != 0 else ""
+ROOT = os.path.realpath(_test_root) if _test_root else ""
+
+BIN = ROOT + "/usr/bin"
+ETC = ROOT + "/etc"
+CATALOG = ROOT + "/usr/share/arctiva-center/extras.toml"
+DB_LOCK = ROOT + "/var/lib/pacman/db.lck"
+INSTALL_DRIVERS = ROOT + "/usr/lib/arctiva/install-drivers"
+# stdbuf hace que pacman escriba línea a línea aunque su salida sea una tubería.
+STDBUF = "" if ROOT else "/usr/bin/stdbuf"
+
+ID_RE = re.compile(r"[a-z0-9-]{1,40}")
+PKG_RE = re.compile(r"[a-z0-9@_+][a-z0-9@._+-]*")
+UNIT_RE = re.compile(r"[A-Za-z0-9@_][A-Za-z0-9@._:-]*\.(service|socket|timer|path)")
+
+USAGE = """uso: arctiva-helper <operación>
+  update [--keyring-first]
+  extra-install <id>
+  extra-remove <id>
+  drivers-apply
+  pacnew-keep <ruta>
+  pacnew-use <ruta>"""
+
+
+class Refused(Exception):
+    """Petición no válida: se sale con 64 sin haber ejecutado nada."""
+
+
+def say(msg):
+    print(f"arctiva-helper: {msg}", flush=True)
+
+
+def run(*cmd):
+    argv = [STDBUF, "-oL", "-eL", *cmd] if STDBUF and os.path.exists(STDBUF) else list(cmd)
+    say("$ " + " ".join(cmd))
+    return subprocess.run(argv, stdin=subprocess.DEVNULL).returncode
+
+
+def pacman(*args):
+    return run(BIN + "/pacman", *args)
+
+
+def systemctl(*args):
+    return run(BIN + "/systemctl", *args)
+
+
+def load_extra(extra_id):
+    if not ID_RE.fullmatch(extra_id):
+        raise Refused(f"identificador no válido: {extra_id!r}")
+    try:
+        with open(CATALOG, "rb") as f:
+            catalog = tomllib.load(f)
+    except (OSError, tomllib.TOMLDecodeError) as e:
+        say(f"no se puede leer el catálogo: {e}")
+        sys.exit(EX_SOFTWARE)
+    extras = catalog.get("extra", [])
+    if not isinstance(extras, list):
+        extras = []
+    for extra in extras:
+        if isinstance(extra, dict) and extra.get("id") == extra_id:
+            break
+    else:
+        raise Refused(f"el extra {extra_id!r} no está en el catálogo")
+    packages = extra.get("packages", [])
+    services = extra.get("services", [])
+    # El catálogo es de root, pero se valida igual: nada que pueda leerse como una opción.
+    if (not isinstance(packages, list) or not packages
+            or not all(isinstance(p, str) and PKG_RE.fullmatch(p) for p in packages)):
+        raise Refused(f"paquetes no válidos en el extra {extra_id!r}")
+    if not isinstance(services, list) or not all(
+            isinstance(s, str) and UNIT_RE.fullmatch(s) for s in services):
+        raise Refused(f"servicios no válidos en el extra {extra_id!r}")
+    return packages, services, extra.get("with_drivers") is True
+
+
+def pacnew_paths(path):
+    """Devuelve (pacnew, original) ya resueltos, o rechaza la ruta."""
+    if not path.startswith("/") or not path.endswith(".pacnew") or "\0" in path:
+        raise Refused(f"ruta no válida: {path!r}")
+    real = os.path.realpath(path)
+    # Con enlaces o «..» en cualquier punto, la ruta resuelta no coincide con la pedida.
+    if real != path or not real.startswith(ETC + "/"):
+        raise Refused(f"la ruta debe ser un .pacnew dentro de /etc, sin enlaces: {path!r}")
+    st = os.lstat(real) if os.path.lexists(real) else None
+    if st is None or not stat.S_ISREG(st.st_mode):
+        raise Refused(f"no es un archivo normal: {path!r}")
+    original = real[: -len(".pacnew")]
+    st = os.lstat(original) if os.path.lexists(original) else None
+    if st is None or not stat.S_ISREG(st.st_mode):
+        raise Refused(f"no existe el archivo original de {path!r}")
+    return real, original
+
+
+def drivers_apply():
+    if not os.access(INSTALL_DRIVERS, os.X_OK):
+        say("install-drivers no está disponible en este sistema")
+        return EX_UNAVAILABLE
+    return run(INSTALL_DRIVERS, "--upgrade", ROOT or "/")
+
+
+def op_update(args):
+    if args not in ([], ["--keyring-first"]):
+        raise Refused("update solo admite --keyring-first")
+    check_lock()
+    if args:
+        # Nunca un -Sy suelto: le sigue siempre -Su.
+        rc = pacman("-Sy", "--needed", "--noconfirm", "archlinux-keyring")
+        return rc or pacman("-Su", "--noconfirm")
+    return pacman("-Syu", "--noconfirm")
+
+
+def op_extra_install(args):
+    packages, services, with_drivers = load_extra(one_arg(args))
+    check_lock()
+    rc = pacman("-Syu", "--needed", "--noconfirm", "--", *packages)
+    for unit in services:
+        rc = rc or systemctl("enable", "--now", "--", unit)
+    if not rc and with_drivers:
+        rc = drivers_apply()
+    return rc
+
+
+def op_extra_remove(args):
+    packages, services, _ = load_extra(one_arg(args))
+    check_lock()
+    # Primero se comprueba que se puede quitar (otro paquete puede depender de él): si no, no
+    # se ha tocado ningún servicio.
+    rc = run(BIN + "/pacman", "-Rns", "--print", "--", *packages)
+    if rc:
+        return rc
+    for unit in services:
+        systemctl("disable", "--now", "--", unit)
+    return pacman("-Rns", "--noconfirm", "--", *packages)
+
+
+def op_drivers_apply(args):
+    if args:
+        raise Refused("drivers-apply no admite argumentos")
+    check_lock()
+    return drivers_apply()
+
+
+def op_pacnew_keep(args):
+    pacnew, _ = pacnew_paths(one_arg(args))
+    check_lock()
+    os.unlink(pacnew)
+    say(f"borrado {pacnew}; se conserva la versión actual")
+    return 0
+
+
+def op_pacnew_use(args):
+    pacnew, original = pacnew_paths(one_arg(args))
+    pacsave = original + ".pacsave"
+    if os.path.lexists(pacsave):
+        if not stat.S_ISREG(os.lstat(pacsave).st_mode):
+            raise Refused(f"{pacsave} existe y no es un archivo normal")
+    check_lock()
+    # La copia de la versión actual es un enlace duro y la sustitución, un rename atómico: si
+    # algo falla a medias, el original sigue en su sitio.
+    if os.path.lexists(pacsave):
+        os.unlink(pacsave)
+    os.link(original, pacsave)
+    os.replace(pacnew, original)
+    say(f"{original} sustituido por la versión nueva; la anterior queda en {original}.pacsave")
+    return 0
+
+
+def one_arg(args):
+    if len(args) != 1:
+        raise Refused("se esperaba un argumento")
+    return args[0]
+
+
+def check_lock():
+    if os.path.lexists(DB_LOCK):
+        say("pacman está en uso (existe /var/lib/pacman/db.lck); inténtalo más tarde")
+        sys.exit(EX_TEMPFAIL)
+
+
+OPERATIONS = {
+    "update": op_update,
+    "extra-install": op_extra_install,
+    "extra-remove": op_extra_remove,
+    "drivers-apply": op_drivers_apply,
+    "pacnew-keep": op_pacnew_keep,
+    "pacnew-use": op_pacnew_use,
+}
+
+
+def main(argv):
+    if os.geteuid() != 0 and not ROOT:
+        say("necesita permisos de root (se lanza con pkexec)")
+        return EX_NOPERM
+    if len(argv) < 2 or argv[1] not in OPERATIONS:
+        print(USAGE, file=sys.stderr)
+        return EX_USAGE
+    try:
+        return OPERATIONS[argv[1]](argv[2:])
+    except Refused as e:
+        say(str(e))
+        return EX_USAGE
+    except OSError as e:
+        say(f"error del sistema: {e}")
+        return 1
+
+
+if __name__ == "__main__":
+    sys.exit(main(sys.argv))

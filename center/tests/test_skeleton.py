@@ -58,19 +58,22 @@ def test_delicate_patterns():
     assert "linux*" in data["patterns"] and "grub" in data["patterns"]
 
 
-def test_translations_cover_qml():
-    qml = (CENTER / "qml" / "Main.qml").read_text(encoding="utf-8")
-    sources = set(re.findall(r'qsTr\("([^"]+)"\)', qml))
-    assert sources
-    for lang in ("es", "ca"):
-        root = ET.parse(CENTER / "translations" / f"{lang}.ts").getroot()
-        assert root.get("language") == lang
-        context = next(c for c in root.findall("context") if c.findtext("name") == "Main")
+@pytest.mark.parametrize("lang", ["es", "ca"])
+def test_translations_cover_qml(lang):
+    root = ET.parse(CENTER / "translations" / f"{lang}.ts").getroot()
+    assert root.get("language") == lang
+    contexts = {c.findtext("name"): c for c in root.findall("context")}
+    # En QML, el contexto de qsTr es el nombre del archivo.
+    for qml in sorted((CENTER / "qml").glob("*.qml")):
+        sources = set(re.findall(r'qsTr\("([^"]+)"\)', qml.read_text(encoding="utf-8")))
+        if not sources:
+            continue
+        context = contexts[qml.stem]
         translated = {
             m.findtext("source"): m.findtext("translation") for m in context.findall("message")
         }
-        assert set(translated) == sources
-        assert all(translated.values())
+        assert set(translated) == sources, qml.name
+        assert all(translated.values()), qml.name
 
 
 def test_desktop_file():

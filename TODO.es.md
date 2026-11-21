@@ -4,10 +4,6 @@
 
 Trabajo pendiente agrupado por prioridad. Fases y decisiones: [hoja de ruta](docs/es/hoja-de-ruta.md) · [arquitectura](docs/es/arquitectura.md).
 
-## Alta: fase 0 (fundamentos)
-
-- [ ] Decidir cuándo se hace público el repositorio.
-
 ## Media: seguimiento de la fase 1
 
 - [ ] Compilar los paquetes propios (`packages/`) con la misma fecha del Arch Linux Archive que la ISO, para que Calamares no se compile con bibliotecas más nuevas que las incluidas.

@@ -27,7 +27,7 @@ Status of each work item: `[x]` done (with the version that closed it) and `[ ]`
 - [x] The Arctiva name and a vector logo in colour, monochrome and icon versions (0.1.1–0.1.3)
 - [x] Build VM with Arch and `archiso`; the official `releng` ISO builds and boots (0.1.4)
 - [x] All architecture decisions approved (0.1.5–0.1.6)
-- [ ] Decide when the repository becomes public
+- [x] Make the repository public (0.3.11)
 
 ### Preliminary studies
 
@@ -66,7 +66,7 @@ Status of each work item: `[x]` done (with the version that closed it) and `[ ]`
 
 ### Phase 4: Arctiva Center (0.5.0)
 
-- [ ] Base PySide6 application and polkit helper with a closed set of operations
+- [x] Base PySide6 application and polkit helper with a closed set of operations (0.3.11)
 - [ ] First-boot welcome
 - [ ] Drivers
 - [ ] Updates (D-08): blocking news, sensitive packages, `.pacnew`, translated errors

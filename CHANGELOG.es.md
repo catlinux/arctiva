@@ -8,6 +8,21 @@ El formato se basa en [Keep a Changelog](https://keepachangelog.com/es-ES/1.1.0/
 
 ## [Sin publicar]
 
+## [0.3.11] - 2026-11-21
+
+Ayudante privilegiado de Arctiva Center (fase 4, paso 4.2). Versión de parche.
+
+### Añadido
+
+- `arctiva-helper`, lanzado con `pkexec` y la acción polkit `org.arctiva.center.helper` (`auth_admin_keep`, solo sesiones activas). Acepta un conjunto cerrado de operaciones (`update`, `extra-install`, `extra-remove`, `drivers-apply`, `pacnew-keep`, `pacnew-use`) y nunca nombres de paquetes ni órdenes: los paquetes y servicios salen de su propio catálogo, las rutas `.pacnew` deben ser archivos normales dentro de `/etc` sin enlaces, y cualquier otra cosa sale con el código 64 sin ejecutar nada. No actúa mientras la base de pacman está bloqueada.
+- Arctiva Center lanza el ayudante sin shell y muestra su salida línea a línea; la ventana no se puede cerrar mientras trabaja. La página Actualizaciones tiene un botón provisional «Actualizar el sistema».
+- Pruebas del ayudante con `pacman` y `systemctl` falsos, incluidas rutas trampa e identificadores no válidos.
+- `arctiva-center` 0.2.0.
+
+### Cambiado
+
+- El repositorio ya es público; arquitectura (D-01) y hoja de ruta actualizadas.
+
 ## [0.3.10] - 2026-11-21
 
 Versión de parche: solo documentación.

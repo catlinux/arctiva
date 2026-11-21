@@ -31,7 +31,7 @@ Lo que **no** es realista y no se promete:
 ### D-01 Base: Arch sin modificar y repositorio propio mínimo (**Aprobada**)
 
 - Repositorios oficiales `core`, `extra` y `multilib` sin cambios ni retrasos. Pacman sigue siendo el único gestor de paquetes del sistema.
-- Repositorio `[arctiva]` firmado con GPG, con solo lo que usa el sistema instalado: `arctiva-keyring`, `arctiva-settings`, `arctiva-branding`, `arctiva-hardware` y, más adelante, `arctiva-center`. Se aloja en un repositorio público aparte (`catlinux/arctiva-repo`), como archivos de una release fija: el repositorio principal es privado y un sistema instalado no puede leer de él. Cómo se firma: [firma.md](firma.md).
+- Repositorio `[arctiva]` firmado con GPG, con solo lo que usa el sistema instalado: `arctiva-keyring`, `arctiva-settings`, `arctiva-branding`, `arctiva-hardware` y, más adelante, `arctiva-center`. Se aloja en un repositorio público aparte (`catlinux/arctiva-repo`), como archivos de una release fija: así el sistema instalado descarga solo los paquetes, sin el código fuente. Cómo se firma: [firma.md](firma.md).
 - `calamares`, `ckbcomp` y la configuración del instalador solo sirven en la ISO: se compilan en local en cada construcción (contra la fecha del Archive de la ISO) y se quitan del sistema instalado.
 - `/etc/os-release` es del paquete `filesystem`, que no se reempaqueta: `arctiva-settings` lleva un hook de pacman que lo reescribe tras cada actualización de `filesystem`.
 - Prohibido: reempaquetar o retener paquetes oficiales. Si un paquete oficial se rompe, se mitiga con avisos e instantáneas, no con un fork.

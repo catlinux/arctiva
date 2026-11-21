@@ -24,8 +24,17 @@ Kirigami.ApplicationWindow {
         if (index === current)
             return
         current = index
-        pageStack.replace(modulePage, { title: modules[index].title })
+        const page = index === 1 ? Qt.resolvedUrl("UpdatesPage.qml") : modulePage
+        const props = { title: modules[index].title }
+        if (pageStack.depth === 0)
+            pageStack.push(page, props)
+        else
+            pageStack.replace(page, props)
     }
+
+    // Mientras el ayudante trabaja, la ventana no se cierra: cortar pacman a medias es peor
+    // que un fallo.
+    onClosing: (close) => { if (helper.running) close.accepted = false }
 
     Component {
         id: modulePage

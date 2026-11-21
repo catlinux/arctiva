@@ -2,7 +2,7 @@
 # Maintainer: CatLinux
 # Arctiva Center: actualizaciones, controladores y extras (D-09). El código está en center/.
 pkgname=arctiva-center
-pkgver=0.1.0
+pkgver=0.2.0
 pkgrel=1
 pkgdesc='Centro de control de Arctiva: actualizaciones, controladores y extras'
 arch=(any)
@@ -41,6 +41,10 @@ package() {
     cp -a -- arctiva_center "$lib/"
     find "$lib" -name __pycache__ -prune -exec rm -rf -- {} +
     install -Dm755 bin/arctiva-center "$pkgdir/usr/bin/arctiva-center"
+    # La ruta del ayudante es la de exec.path en la política polkit: no cambiar una sin la otra.
+    install -Dm755 helper/arctiva-helper "$lib/arctiva-helper"
+    install -Dm644 polkit/org.arctiva.center.policy \
+        "$pkgdir/usr/share/polkit-1/actions/org.arctiva.center.policy"
     install -d -- "$share"
     cp -a -- qml "$share/qml"
     install -Dm644 -t "$share" data/*.toml

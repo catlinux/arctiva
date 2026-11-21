@@ -24,4 +24,27 @@
         <translation>Extres</translation>
     </message>
 </context>
+<context>
+    <name>UpdatesPage</name>
+    <message>
+        <source>Update the system</source>
+        <translation>Actualitza el sistema</translation>
+    </message>
+    <message>
+        <source>Updating…</source>
+        <translation>S&apos;està actualitzant…</translation>
+    </message>
+    <message>
+        <source>Finished successfully</source>
+        <translation>Acabat correctament</translation>
+    </message>
+    <message>
+        <source>Authorization cancelled</source>
+        <translation>Autorització cancel·lada</translation>
+    </message>
+    <message>
+        <source>Finished with error code %1</source>
+        <translation>Acabat amb el codi d&apos;error %1</translation>
+    </message>
+</context>
 </TS>

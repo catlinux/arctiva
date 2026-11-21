@@ -31,7 +31,7 @@ What is **not** realistic and will not be promised:
 ### D-01 Base: unmodified Arch plus a minimal own repository (**Approved**)
 
 - Official `core`, `extra` and `multilib` repositories, unchanged and without delays. Pacman remains the only system package manager.
-- A GPG-signed `[arctiva]` repository with only what the installed system uses: `arctiva-keyring`, `arctiva-settings`, `arctiva-branding`, `arctiva-hardware` and, later, `arctiva-center`. It is hosted in a separate public repository (`catlinux/arctiva-repo`) as the files of a fixed release: the main repository is private and an installed system cannot read from it. How it is signed: [signing.md](signing.md).
+- A GPG-signed `[arctiva]` repository with only what the installed system uses: `arctiva-keyring`, `arctiva-settings`, `arctiva-branding`, `arctiva-hardware` and, later, `arctiva-center`. It is hosted in a separate public repository (`catlinux/arctiva-repo`) as the files of a fixed release, so an installed system downloads only the packages, not the source code. How it is signed: [signing.md](signing.md).
 - `calamares`, `ckbcomp` and the installer configuration are only useful on the ISO: they are built locally for every build (against the ISO's Archive date) and removed from the installed system.
 - `/etc/os-release` belongs to the `filesystem` package, which is not repackaged: `arctiva-settings` ships a pacman hook that rewrites it after every `filesystem` update.
 - Forbidden: repackaging or holding back official packages. If an official package breaks, the response is warnings and snapshots, not a fork.

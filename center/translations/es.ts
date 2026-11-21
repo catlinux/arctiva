@@ -24,4 +24,27 @@
         <translation>Extras</translation>
     </message>
 </context>
+<context>
+    <name>UpdatesPage</name>
+    <message>
+        <source>Update the system</source>
+        <translation>Actualizar el sistema</translation>
+    </message>
+    <message>
+        <source>Updating…</source>
+        <translation>Actualizando…</translation>
+    </message>
+    <message>
+        <source>Finished successfully</source>
+        <translation>Terminado correctamente</translation>
+    </message>
+    <message>
+        <source>Authorization cancelled</source>
+        <translation>Autorización cancelada</translation>
+    </message>
+    <message>
+        <source>Finished with error code %1</source>
+        <translation>Terminado con el código de error %1</translation>
+    </message>
+</context>
 </TS>

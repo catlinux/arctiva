@@ -29,8 +29,12 @@ def run(module):
             app.installTranslator(translator)
             break
 
+    from .helper_process import HelperProcess
+
+    helper = HelperProcess(app)
     engine = QQmlApplicationEngine()
     engine.rootContext().setContextProperty("initialModule", MODULES.index(module))
+    engine.rootContext().setContextProperty("helper", helper)
     engine.load(QUrl.fromLocalFile(str(where.qml / "Main.qml")))
     if not engine.rootObjects():
         return 1

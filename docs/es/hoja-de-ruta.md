@@ -27,7 +27,7 @@ Estado de cada trabajo: `[x]` hecho (con la versión en que se cerró) y `[ ]` p
 - [x] Nombre Arctiva y logotipo vectorial a color, monocromo e icono (0.1.1–0.1.3)
 - [x] VM de construcción con Arch y `archiso`; la ISO `releng` oficial se construye y arranca (0.1.4)
 - [x] Aprobación de todas las decisiones de arquitectura (0.1.5–0.1.6)
-- [ ] Decidir cuándo se hace público el repositorio
+- [x] Hacer público el repositorio (0.3.11)
 
 ### Estudios previos
 
@@ -66,7 +66,7 @@ Estado de cada trabajo: `[x]` hecho (con la versión en que se cerró) y `[ ]` p
 
 ### Fase 4: Arctiva Center (0.5.0)
 
-- [ ] Aplicación base PySide6 y ayudante polkit con operaciones cerradas
+- [x] Aplicación base PySide6 y ayudante polkit con operaciones cerradas (0.3.11)
 - [ ] Bienvenida en el primer arranque
 - [ ] Controladores
 - [ ] Actualizaciones (D-08): noticias que bloquean, paquetes delicados, `.pacnew`, errores traducidos

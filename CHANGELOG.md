@@ -8,6 +8,21 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 
 ## [Unreleased]
 
+## [0.3.11] - 2026-11-21
+
+Arctiva Center privileged helper (phase 4, step 4.2). Patch release.
+
+### Added
+
+- `arctiva-helper`, run through `pkexec` with the polkit action `org.arctiva.center.helper` (`auth_admin_keep`, active sessions only). It accepts a closed set of operations (`update`, `extra-install`, `extra-remove`, `drivers-apply`, `pacnew-keep`, `pacnew-use`) and never package names or commands: packages and services come from its own catalogue, `.pacnew` paths must be regular files under `/etc` without links, and anything else exits with code 64 without running anything. It refuses to run while the pacman database is locked.
+- Arctiva Center launches the helper without a shell and shows its output line by line; the window cannot be closed while it runs. The Updates page gets a provisional "Update the system" button.
+- Tests for the helper with fake `pacman` and `systemctl`, including trap paths and invalid identifiers.
+- `arctiva-center` 0.2.0.
+
+### Changed
+
+- The repository is now public; architecture (D-01) and roadmap updated.
+
 ## [0.3.10] - 2026-11-21
 
 Patch release: documentation only.

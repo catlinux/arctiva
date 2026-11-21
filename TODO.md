@@ -4,10 +4,6 @@
 
 Pending work grouped by priority. Phases and decisions: [roadmap](docs/en/roadmap.md) · [architecture](docs/en/architecture.md).
 
-## High — phase 0 (foundations)
-
-- [ ] Decide when the repository becomes public.
-
 ## Medium — phase 1 follow-up
 
 - [ ] Build the in-house packages (`packages/`) against the same Arch Linux Archive date as the ISO, so Calamares is never built with newer libraries than the ones shipped.
