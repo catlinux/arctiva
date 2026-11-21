@@ -70,7 +70,7 @@ Status of each work item: `[x]` done (with the version that closed it) and `[ ]`
 - [ ] First-boot welcome
 - [ ] Drivers
 - [ ] Updates (D-08): blocking news, sensitive packages, `.pacnew`, translated errors
-- [ ] arch-update evaluation documented
+- [x] arch-update evaluation documented
 - [ ] Extras catalogue
 - [ ] GRUB reinstalled on the EFI partition when the `grub` package is upgraded
 

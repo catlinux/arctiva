@@ -70,7 +70,7 @@ Estado de cada trabajo: `[x]` hecho (con la versión en que se cerró) y `[ ]` p
 - [ ] Bienvenida en el primer arranque
 - [ ] Controladores
 - [ ] Actualizaciones (D-08): noticias que bloquean, paquetes delicados, `.pacnew`, errores traducidos
-- [ ] Evaluación de arch-update documentada
+- [x] Evaluación de arch-update documentada
 - [ ] Catálogo de extras
 - [ ] GRUB reinstalado en la partición EFI al actualizar el paquete `grub`
 

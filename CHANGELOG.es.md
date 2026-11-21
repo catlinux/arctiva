@@ -8,6 +8,15 @@ El formato se basa en [Keep a Changelog](https://keepachangelog.com/es-ES/1.1.0/
 
 ## [Sin publicar]
 
+## [0.3.4] - 2026-11-21
+
+Comprobaciones previas de Arctiva Center en la ISO live. Versión de parche: solo documentación.
+
+### Cambiado
+
+- Arquitectura (D-08): arch-update evaluado y descartado como dependencia (solo en el AUR, herramienta de terminal y bandeja); se usan directamente `checkupdates`, el RSS y `pacdiff`. `arctiva-center` dependerá de `fakeroot`, que `checkupdates` necesita y `pacman-contrib` no declara.
+- Hoja de ruta: evaluación de arch-update marcada como hecha.
+
 ## [0.3.3] - 2026-11-21
 
 Diseño de Arctiva Center y cambios en la hoja de ruta. Versión de parche: solo documentación.

@@ -120,7 +120,7 @@ In the Arctiva Center update module:
 6. Report `.pacnew` files and recommend a reboot if the kernel or drivers changed.
 7. Translate common errors (conflicts, PGP keys, disk space) into understandable messages without hiding the original text.
 
-Before writing this logic, reusing **arch-update** will be evaluated (an AUR tool that already handles news, `.pacnew` files and Flatpak, maintained by an Arch packager). Only what is missing gets written.
+**arch-update evaluation (2026-11-21):** it is not used as a dependency. It is AUR-only (4.4.7), a terminal and tray tool built with `cargo` and `scdoc` that depends on `htmlq`, `archlinux-contrib` and `fakeroot`, and its interface does not fit Arctiva Center. What it provides (`checkupdates`, the archlinux.org RSS news and `pacdiff`) is used directly, and only what is missing gets written. `checkupdates` needs `fakeroot`, which `pacman-contrib` does not declare: `arctiva-center` depends on it explicitly.
 
 ### D-09 In-house tools: a single application (**Approved**)
 
@@ -205,7 +205,7 @@ To stay under 2 GiB: a selection of Plasma packages instead of every meta-packag
 | `arctiva-branding` (logo, wallpapers, Plymouth, global theme) | Mesa, NVIDIA open, Vulkan, firmware, fwupd |
 | `arctiva-keyring` and the `[arctiva]` repository | Steam, Proton, Lutris, Heroic, Bottles, gamemode, MangoHud |
 | Arctiva Center (welcome, drivers, updates, extras) | reflector, pacman-contrib, CUPS, ufw + plasma-firewall |
-| GitHub Actions workflows and tests | arch-update (if the evaluation confirms it) |
+| GitHub Actions workflows and tests | `checkupdates`, RSS and `pacdiff` (arch-update evaluated and rejected as a dependency) |
 
 ## 5. Main risks
 

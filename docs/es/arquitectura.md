@@ -120,7 +120,7 @@ En el módulo de actualizaciones de Arctiva Center:
 6. Avisa de archivos `.pacnew` y recomienda reiniciar si cambió el kernel o los controladores.
 7. Traduce los errores habituales (conflictos, claves PGP, espacio en disco) a mensajes comprensibles, sin ocultar el texto original.
 
-Antes de escribir esta lógica se evaluará reutilizar **arch-update** (herramienta del AUR que ya hace noticias, `.pacnew` y Flatpak, mantenida por un empaquetador de Arch). Solo se programa lo que falte.
+**Evaluación de arch-update (2026-11-21):** no se usa como dependencia. Está solo en el AUR (4.4.7), es una herramienta de terminal y bandeja que se compila con `cargo` y `scdoc` y depende de `htmlq`, `archlinux-contrib` y `fakeroot`, y su interfaz no encaja con la de Arctiva Center. Lo que aporta (`checkupdates`, las noticias RSS de archlinux.org y `pacdiff`) se usa directamente, y solo se programa lo que falta. `checkupdates` necesita `fakeroot`, que `pacman-contrib` no declara: `arctiva-center` lo depende explícitamente.
 
 ### D-09 Herramientas propias: una sola aplicación (**Aprobada**)
 
@@ -205,7 +205,7 @@ Para mantenerla por debajo de 2 GiB: Plasma con una selección de paquetes en lu
 | `arctiva-branding` (logo, fondos, Plymouth, tema global) | Mesa, NVIDIA open, Vulkan, firmware, fwupd |
 | `arctiva-keyring` y el repositorio `[arctiva]` | Steam, Proton, Lutris, Heroic, Bottles, gamemode, MangoHud |
 | Arctiva Center (bienvenida, controladores, actualizaciones, extras) | reflector, pacman-contrib, CUPS, ufw + plasma-firewall |
-| Flujos de GitHub Actions y pruebas | arch-update (si la evaluación lo confirma) |
+| Flujos de GitHub Actions y pruebas | `checkupdates`, RSS y `pacdiff` (arch-update evaluado y descartado como dependencia) |
 
 ## 5. Riesgos principales
 

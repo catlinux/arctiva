@@ -8,6 +8,15 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 
 ## [Unreleased]
 
+## [0.3.4] - 2026-11-21
+
+Previous checks for Arctiva Center on the live ISO. Patch release: documentation only.
+
+### Changed
+
+- Architecture (D-08): arch-update evaluated and rejected as a dependency (AUR-only, terminal and tray tool); `checkupdates`, the RSS feed and `pacdiff` are used directly. `arctiva-center` will depend on `fakeroot`, which `checkupdates` needs and `pacman-contrib` does not declare.
+- Roadmap: arch-update evaluation marked as done.
+
 ## [0.3.3] - 2026-11-21
 
 Arctiva Center design and roadmap updates. Patch release: documentation only.
