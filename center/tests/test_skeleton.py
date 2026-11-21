@@ -65,13 +65,14 @@ def test_translations_cover_qml(lang):
     contexts = {c.findtext("name"): c for c in root.findall("context")}
     # En QML, el contexto de qsTr es el nombre del archivo.
     for qml in sorted((CENTER / "qml").glob("*.qml")):
-        sources = set(re.findall(r'qsTr\("([^"]+)"\)', qml.read_text(encoding="utf-8")))
+        sources = set(re.findall(r'qsTr\("([^"]+)"', qml.read_text(encoding="utf-8")))
         if not sources:
             continue
         context = contexts[qml.stem]
-        translated = {
-            m.findtext("source"): m.findtext("translation") for m in context.findall("message")
-        }
+        translated = {}
+        for m in context.findall("message"):
+            forms = [f.text for f in m.iter("numerusform")]
+            translated[m.findtext("source")] = all(forms) if forms else m.findtext("translation")
         assert set(translated) == sources, qml.name
         assert all(translated.values()), qml.name
 

@@ -1,0 +1,7 @@
+:: Proceed with installation? [Y/n]
+(45/45) checking keys in keyring
+(45/45) checking available disk space
+error: Partition / too full: 56214 blocks needed, 31872 blocks free
+error: not enough free disk space
+error: failed to commit transaction (not enough free disk space)
+Errors occurred, no packages were upgraded.

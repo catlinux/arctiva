@@ -1,0 +1,5 @@
+(1/1) checking keys in keyring
+downloading required keys...
+error: key "0123456789ABCDEF" could not be looked up remotely
+error: required key missing from keyring
+error: failed to commit transaction (unexpected error)

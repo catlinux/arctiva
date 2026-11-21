@@ -30,11 +30,14 @@ def run(module):
             break
 
     from .helper_process import HelperProcess
+    from .updates_backend import UpdatesBackend
 
     helper = HelperProcess(app)
+    updates_backend = UpdatesBackend(where.data, app)
     engine = QQmlApplicationEngine()
     engine.rootContext().setContextProperty("initialModule", MODULES.index(module))
     engine.rootContext().setContextProperty("helper", helper)
+    engine.rootContext().setContextProperty("updatesBackend", updates_backend)
     engine.load(QUrl.fromLocalFile(str(where.qml / "Main.qml")))
     if not engine.rootObjects():
         return 1

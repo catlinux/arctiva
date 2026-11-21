@@ -69,7 +69,7 @@ Status of each work item: `[x]` done (with the version that closed it) and `[ ]`
 - [x] Base PySide6 application and polkit helper with a closed set of operations (0.3.11)
 - [ ] First-boot welcome
 - [ ] Drivers
-- [ ] Updates (D-08): blocking news, sensitive packages, `.pacnew`, translated errors
+- [x] Updates (D-08): blocking news, sensitive packages, `.pacnew`, translated errors (0.3.12)
 - [x] arch-update evaluation documented
 - [ ] Extras catalogue
 - [ ] GRUB reinstalled on the EFI partition when the `grub` package is upgraded

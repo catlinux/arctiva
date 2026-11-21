@@ -1,0 +1,3 @@
+:: Synchronizing package databases...
+error: failed retrieving file 'core.db' from mirror.example.org : Could not resolve host: mirror.example.org
+error: failed to synchronize all databases (failed to retrieve some files)

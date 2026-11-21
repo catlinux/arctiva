@@ -56,7 +56,10 @@ def say(msg):
 def run(*cmd):
     argv = [STDBUF, "-oL", "-eL", *cmd] if STDBUF and os.path.exists(STDBUF) else list(cmd)
     say("$ " + " ".join(cmd))
-    return subprocess.run(argv, stdin=subprocess.DEVNULL).returncode
+    # Mensajes en inglés: Arctiva Center reconoce los errores por su texto y los explica traducidos.
+    env = {k: v for k, v in os.environ.items() if k != "LANGUAGE"}
+    env["LC_ALL"] = "C.UTF-8"
+    return subprocess.run(argv, stdin=subprocess.DEVNULL, env=env).returncode
 
 
 def pacman(*args):

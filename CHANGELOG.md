@@ -8,6 +8,20 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 
 ## [Unreleased]
 
+## [0.3.12] - 2026-11-21
+
+Arctiva Center "Updates" module (phase 4, step 4.3). Patch release.
+
+### Added
+
+- Updates module: list from `checkupdates` with sensitive packages marked (`delicate.toml`); Arch Linux news published since the last completed full upgrade, where a news item requiring manual intervention blocks updating until it is marked as read; update with the real log; translated explanation of common pacman errors (`errors.toml`: locked database, no disk space, PGP signatures, conflicting files, broken dependencies, network) with a "Update the keyring first" or "Try again" action; Flatpak update afterwards; pending `.pacnew` files with their diff and "Keep mine" / "Use the new one"; restart recommended when the kernel, NVIDIA, Mesa, systemd or glibc changed.
+- Update reminder: user timer `arctiva-center-check.timer` (15 minutes after logging in, then every 6 hours) running `arctiva-center --check`, which shows a notification with a button that opens the module, only for updates not in the previous notice. It does not run on the live ISO.
+- `arctiva-center` 0.3.0.
+
+### Changed
+
+- The helper runs pacman with English messages so that errors can be recognised in any language (architecture, D-08).
+
 ## [0.3.11] - 2026-11-21
 
 Arctiva Center privileged helper (phase 4, step 4.2). Patch release.

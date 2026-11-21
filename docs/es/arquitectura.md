@@ -118,7 +118,9 @@ En el módulo de actualizaciones de Arctiva Center:
 4. Actualiza con `pacman -Syu` mediante un ayudante privilegiado (polkit), mostrando el registro real. snap-pac crea la instantánea antes.
 5. Actualiza los Flatpak.
 6. Avisa de archivos `.pacnew` y recomienda reiniciar si cambió el kernel o los controladores.
-7. Traduce los errores habituales (conflictos, claves PGP, espacio en disco) a mensajes comprensibles, sin ocultar el texto original.
+7. Traduce los errores habituales (conflictos, claves PGP, espacio en disco) a mensajes comprensibles, sin ocultar el texto original. El ayudante ejecuta pacman con los mensajes en inglés (`LC_ALL=C.UTF-8`) para reconocer los errores sea cual sea el idioma del usuario; la explicación se muestra traducida y el registro original queda a un clic.
+
+Las noticias se cuentan desde la última actualización completa que terminó una transacción en `/var/log/pacman.log` (pacman también registra el inicio de las que fallan, y esas no deben ocultar noticias). Un temporizador de usuario (`arctiva-center-check.timer`, a los 15 minutos de iniciar sesión y después cada 6 horas) ejecuta `arctiva-center --check`, que solo avisa si hay actualizaciones que no estaban en el aviso anterior.
 
 **Evaluación de arch-update (2026-11-21):** no se usa como dependencia. Está solo en el AUR (4.4.7), es una herramienta de terminal y bandeja que se compila con `cargo` y `scdoc` y depende de `htmlq`, `archlinux-contrib` y `fakeroot`, y su interfaz no encaja con la de Arctiva Center. Lo que aporta (`checkupdates`, las noticias RSS de archlinux.org y `pacdiff`) se usa directamente, y solo se programa lo que falta. `checkupdates` necesita `fakeroot`, que `pacman-contrib` no declara: `arctiva-center` lo depende explícitamente.
 

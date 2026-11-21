@@ -69,7 +69,7 @@ Estado de cada trabajo: `[x]` hecho (con la versión en que se cerró) y `[ ]` p
 - [x] Aplicación base PySide6 y ayudante polkit con operaciones cerradas (0.3.11)
 - [ ] Bienvenida en el primer arranque
 - [ ] Controladores
-- [ ] Actualizaciones (D-08): noticias que bloquean, paquetes delicados, `.pacnew`, errores traducidos
+- [x] Actualizaciones (D-08): noticias que bloquean, paquetes delicados, `.pacnew`, errores traducidos (0.3.12)
 - [x] Evaluación de arch-update documentada
 - [ ] Catálogo de extras
 - [ ] GRUB reinstalado en la partición EFI al actualizar el paquete `grub`

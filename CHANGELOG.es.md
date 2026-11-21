@@ -8,6 +8,20 @@ El formato se basa en [Keep a Changelog](https://keepachangelog.com/es-ES/1.1.0/
 
 ## [Sin publicar]
 
+## [0.3.12] - 2026-11-21
+
+Módulo «Actualizaciones» de Arctiva Center (fase 4, paso 4.3). Versión de parche.
+
+### Añadido
+
+- Módulo Actualizaciones: lista de `checkupdates` con los paquetes delicados marcados (`delicate.toml`); noticias de Arch Linux publicadas desde la última actualización completa terminada, donde una noticia que exige intervención manual bloquea la actualización hasta marcarla como leída; actualización con el registro real; explicación traducida de los errores habituales de pacman (`errors.toml`: base bloqueada, sin espacio, firmas PGP, archivos en conflicto, dependencias rotas, red) con la acción «Actualizar primero el anillo de claves» o «Volver a intentarlo»; actualización de Flatpak después; archivos `.pacnew` pendientes con su diferencia y «Quedarme el mío» / «Usar el nuevo»; reinicio recomendado si cambió el kernel, NVIDIA, Mesa, systemd o glibc.
+- Aviso de actualizaciones: temporizador de usuario `arctiva-center-check.timer` (a los 15 minutos de iniciar sesión y después cada 6 horas) que ejecuta `arctiva-center --check` y muestra una notificación con un botón que abre el módulo, solo si hay actualizaciones que no estaban en el aviso anterior. No funciona en la ISO live.
+- `arctiva-center` 0.3.0.
+
+### Cambiado
+
+- El ayudante ejecuta pacman con los mensajes en inglés para reconocer los errores en cualquier idioma (arquitectura, D-08).
+
 ## [0.3.11] - 2026-11-21
 
 Ayudante privilegiado de Arctiva Center (fase 4, paso 4.2). Versión de parche.

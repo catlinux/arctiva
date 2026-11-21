@@ -1,0 +1,12 @@
+# SPDX-License-Identifier: GPL-3.0-or-later
+[Unit]
+Description=Periodic Arctiva update check
+ConditionPathExists=!/run/archiso
+
+[Timer]
+# OnStartupSec cuenta desde el inicio de la sesión del usuario (no desde el arranque del equipo).
+OnStartupSec=15min
+OnUnitActiveSec=6h
+
+[Install]
+WantedBy=timers.target

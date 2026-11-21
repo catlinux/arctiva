@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<rss version="2.0"><channel><title>Arch Linux: Recent news updates</title><link>https://archlinux.org/news/</link>
+<item><title>foo &gt;= 2.0 update requires manual intervention</title><link>https://archlinux.org/news/foo-20/</link><description>&lt;p&gt;The &lt;code&gt;foo&lt;/code&gt; package moved its &lt;a href="x"&gt;configuration&lt;/a&gt;. Run the migration before upgrading.&lt;/p&gt;</description><pubDate>Sat, 14 Nov 2026 10:00:00 +0000</pubDate><guid isPermaLink="false">tag:archlinux.org,2026-11-14:/news/foo-20/</guid></item>
+<item><title>Bar now defaults to the new backend</title><link>https://archlinux.org/news/bar/</link><description>&lt;p&gt;No action is needed for most users. Those with custom rules need MANUAL INTERVENTION as described below.&lt;/p&gt;</description><pubDate>Tue, 10 Nov 2026 09:30:00 +0000</pubDate><guid isPermaLink="false">tag:archlinux.org,2026-11-10:/news/bar/</guid></item>
+<item><title>Project election results</title><link>https://archlinux.org/news/election/</link><description>&lt;p&gt;Thanks to everyone who voted.&lt;/p&gt;</description><pubDate>Mon, 02 Nov 2026 12:00:00 +0000</pubDate><guid isPermaLink="false">tag:archlinux.org,2026-11-02:/news/election/</guid></item>
+<item><title>Old news</title><link>https://archlinux.org/news/old/</link><description>&lt;p&gt;Long ago.&lt;/p&gt;</description><pubDate>Fri, 01 May 2026 08:00:00 +0000</pubDate><guid isPermaLink="false">tag:archlinux.org,2026-05-01:/news/old/</guid></item>
+<item><title>Broken date</title><link>https://archlinux.org/news/broken/</link><description></description><pubDate>not a date</pubDate><guid>x</guid></item>
+</channel></rss>

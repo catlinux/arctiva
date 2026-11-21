@@ -19,7 +19,8 @@ def build_parser():
 def main(argv=None):
     args = build_parser().parse_args(argv)
     if args.check:
-        return 0  # Se implementa con el módulo de actualizaciones.
+        from .check import main as check
+        return check()
     module = "welcome" if args.welcome else (args.module or "welcome")
     from .app import run  # PySide6 solo se importa si hay ventana.
     return run(module)

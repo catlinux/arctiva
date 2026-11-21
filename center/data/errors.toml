@@ -1,3 +1,60 @@
 # SPDX-License-Identifier: GPL-3.0-or-later
-# Errores de pacman reconocidos y su explicación (se rellena en el módulo «Actualizaciones»).
+# Errores de pacman reconocidos por Arctiva Center. El ayudante ejecuta pacman con los mensajes
+# en inglés, así que los patrones (expresiones regulares, sin distinguir mayúsculas) son en inglés.
+# Se usa la primera entrada que casa, en este orden. action: retry, keyring-first, free-space,
+# check-network o none.
 version = 1
+
+[[error]]
+id = "locked"
+pattern = 'unable to lock database|could not lock database'
+action = "retry"
+[error.message]
+en = "Another program is installing or updating software. Wait for it to finish and try again."
+es = "Otro programa está instalando o actualizando software. Espera a que termine y vuelve a intentarlo."
+ca = "Un altre programa està instal·lant o actualitzant programari. Espera que acabi i torna-ho a provar."
+
+[[error]]
+id = "no-space"
+pattern = 'not enough free disk space|Partition \S+ too full'
+action = "free-space"
+[error.message]
+en = "There is not enough free disk space for the update. Free some space (for example, delete old snapshots or empty the package cache) and try again."
+es = "No hay espacio libre suficiente en el disco para la actualización. Libera espacio (por ejemplo, borra instantáneas antiguas o vacía la caché de paquetes) y vuelve a intentarlo."
+ca = "No hi ha prou espai lliure al disc per a l'actualització. Allibera espai (per exemple, esborra instantànies antigues o buida la memòria cau de paquets) i torna-ho a provar."
+
+[[error]]
+id = "pgp"
+pattern = 'PGP signature|signature from .* is (unknown trust|invalid|marginal trust)|could not be looked up remotely|required key missing from keyring|key .* is disabled'
+action = "keyring-first"
+[error.message]
+en = "A package signature could not be verified, usually because the keyring is out of date. Update the keyring first and then the rest of the system."
+es = "No se ha podido verificar la firma de un paquete, normalmente porque el anillo de claves está desactualizado. Actualiza primero el anillo y después el resto del sistema."
+ca = "No s'ha pogut verificar la signatura d'un paquet, normalment perquè l'anell de claus està desactualitzat. Actualitza primer l'anell i després la resta del sistema."
+
+[[error]]
+id = "conflicting-files"
+pattern = 'conflicting files|exists in filesystem'
+action = "none"
+[error.message]
+en = "Some files from the update already exist on the system and do not belong to any package (often left by software installed by hand). Check the log to see which ones; do not delete them without knowing what they are."
+es = "Algunos archivos de la actualización ya existen en el sistema y no pertenecen a ningún paquete (suelen quedar de software instalado a mano). Mira en el registro cuáles son; no los borres sin saber qué son."
+ca = "Alguns fitxers de l'actualització ja existeixen al sistema i no pertanyen a cap paquet (solen quedar de programari instal·lat a mà). Mira al registre quins són; no els esborris sense saber què són."
+
+[[error]]
+id = "dependencies"
+pattern = 'could not satisfy dependencies|unable to satisfy dependency|breaks dependency'
+action = "none"
+[error.message]
+en = "The update would break a dependency, usually of a package from the AUR or installed by hand. Check the log to see which package it is; it may need to be rebuilt or removed first."
+es = "La actualización rompería una dependencia, normalmente de un paquete del AUR o instalado a mano. Mira en el registro de qué paquete se trata; puede que haya que recompilarlo o quitarlo antes."
+ca = "L'actualització trencaria una dependència, normalment d'un paquet de l'AUR o instal·lat a mà. Mira al registre de quin paquet es tracta; potser cal recompilar-lo o treure'l abans."
+
+[[error]]
+id = "network"
+pattern = 'failed retrieving file|failed to retrieve some files|failed to synchronize all databases|Could not resolve host|Connection timed out|Operation too slow'
+action = "check-network"
+[error.message]
+en = "The packages could not be downloaded. Check your internet connection; if it works, the mirror may be down: try again in a while."
+es = "No se han podido descargar los paquetes. Comprueba la conexión a internet; si funciona, puede que el servidor de réplica esté caído: vuelve a intentarlo dentro de un rato."
+ca = "No s'han pogut baixar els paquets. Comprova la connexió a internet; si funciona, potser el servidor de rèplica està caigut: torna-ho a provar d'aquí a una estona."

@@ -2,7 +2,7 @@
 # Maintainer: CatLinux
 # Arctiva Center: actualizaciones, controladores y extras (D-09). El código está en center/.
 pkgname=arctiva-center
-pkgver=0.2.0
+pkgver=0.3.0
 pkgrel=1
 pkgdesc='Centro de control de Arctiva: actualizaciones, controladores y extras'
 arch=(any)
@@ -50,4 +50,9 @@ package() {
     install -Dm644 -t "$share" data/*.toml
     install -Dm644 -t "$share/translations" translations/*.qm
     install -Dm644 -t "$pkgdir/usr/share/applications" desktop/arctiva-center.desktop
+    # Aviso periódico de actualizaciones, activado para todos los usuarios.
+    install -Dm644 -t "$pkgdir/usr/lib/systemd/user" systemd/arctiva-center-check.{service,timer}
+    install -d -- "$pkgdir/usr/lib/systemd/user/timers.target.wants"
+    ln -s ../arctiva-center-check.timer \
+        "$pkgdir/usr/lib/systemd/user/timers.target.wants/arctiva-center-check.timer"
 }

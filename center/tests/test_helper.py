@@ -41,6 +41,7 @@ services = ["-H root@host"]
 
 FAKE = """#!/bin/sh
 echo "$(basename "$0") $*" >>"$ARCTIVA_FAKE_LOG"
+echo "LC_ALL=$LC_ALL LANGUAGE=$LANGUAGE" >>"$ARCTIVA_FAKE_LOG.env"
 echo "salida de $(basename "$0")"
 exit "${ARCTIVA_FAKE_RC:-0}"
 """
@@ -62,7 +63,7 @@ def root(tmp_path):
 def helper(root, *args, rc=0):
     log = root.parent / "calls.log"
     env = dict(os.environ, ARCTIVA_HELPER_TEST_ROOT=str(root), ARCTIVA_FAKE_LOG=str(log),
-               ARCTIVA_FAKE_RC=str(rc))
+               ARCTIVA_FAKE_RC=str(rc), LANGUAGE="es", LC_ALL="es_ES.UTF-8")
     p = subprocess.run([sys.executable, "-I", str(HELPER), *args], env=env,
                        capture_output=True, text=True)
     calls = log.read_text().splitlines() if log.exists() else []
@@ -91,6 +92,12 @@ def test_update(root):
     assert rc == 0
     assert calls == ["pacman -Syu --noconfirm"]
     assert "salida de pacman" in out
+
+
+def test_pacman_messages_in_english(root):
+    helper(root, "update")
+    env_log = root.parent / "calls.log.env"
+    assert env_log.read_text().splitlines() == ["LC_ALL=C.UTF-8 LANGUAGE="]
 
 
 def test_update_returns_pacman_code(root):

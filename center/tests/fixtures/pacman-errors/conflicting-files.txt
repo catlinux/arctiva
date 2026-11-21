@@ -1,0 +1,4 @@
+(3/3) checking for file conflicts
+error: failed to commit transaction (conflicting files)
+foo: /usr/bin/foo exists in filesystem
+Errors occurred, no packages were upgraded.
