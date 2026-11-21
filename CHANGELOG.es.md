@@ -8,6 +8,12 @@ El formato se basa en [Keep a Changelog](https://keepachangelog.com/es-ES/1.1.0/
 
 ## [Sin publicar]
 
+## [0.3.9] - 2026-11-21
+
+### Corregido
+
+- Comprobación del repositorio: la firma del anillo se guarda con otro nombre para que `pacman -U` no exija una clave que aún no está en el anillo.
+
 ## [0.3.8] - 2026-11-21
 
 ### Corregido

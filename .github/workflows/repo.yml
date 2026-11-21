@@ -51,11 +51,11 @@ jobs:
           base=https://github.com/catlinux/arctiva-repo/releases/download/x86_64
           name="$(curl -fsSL "$base/arctiva.db" | tar -tzf - | sed -n 's#^\(arctiva-keyring-[^/]*\)/$#\1#p' | head -n1)"
           curl -fsSL -o /tmp/k.pkg.tar.zst "$base/${name}-any.pkg.tar.zst"
-          curl -fsSL -o /tmp/k.pkg.tar.zst.sig "$base/${name}-any.pkg.tar.zst.sig"
+          curl -fsSL -o /tmp/k.sig "$base/${name}-any.pkg.tar.zst.sig"
           # El anillo publicado se comprueba con la clave pública de este repositorio antes de instalarlo.
           export GNUPGHOME="$(mktemp -d)"
           gpg --batch --quiet --import packages/arctiva-keyring/arctiva.gpg
-          gpg --batch --verify /tmp/k.pkg.tar.zst.sig /tmp/k.pkg.tar.zst
+          gpg --batch --verify /tmp/k.sig /tmp/k.pkg.tar.zst
           unset GNUPGHOME
           sed 's/^SigLevel.*/SigLevel = Never/' /etc/pacman.conf >/tmp/pacman-nosig.conf
           pacman --config /tmp/pacman-nosig.conf -U --noconfirm /tmp/k.pkg.tar.zst

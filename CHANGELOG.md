@@ -8,6 +8,12 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 
 ## [Unreleased]
 
+## [0.3.9] - 2026-11-21
+
+### Fixed
+
+- Repository check: the keyring signature is saved under another name, so that `pacman -U` does not require a key that is not in the keyring yet.
+
 ## [0.3.8] - 2026-11-21
 
 ### Fixed
