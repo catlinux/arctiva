@@ -22,9 +22,10 @@ Arctiva is an independent project. It is not affiliated with or endorsed by Arch
 ## Planned system requirements
 
 - 64-bit x86 PC with UEFI firmware (Secure Boot disabled)
-- 4 GB RAM (8 GB recommended)
-- 40 GB of disk space (64 GB recommended)
+- 4 GB RAM (8 GB recommended); to be confirmed by measuring an installed system
+- 25 GB of disk space (40 GB recommended, for snapshots); the base system takes about 5 GB
 - A Vulkan-capable GPU for gaming
+- A USB stick of 4 GB or more for the installation media
 
 ## Installation and usage
 

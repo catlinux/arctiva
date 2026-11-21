@@ -8,6 +8,16 @@ El formato se basa en [Keep a Changelog](https://keepachangelog.com/es-ES/1.1.0/
 
 ## [Sin publicar]
 
+## [0.3.13] - 2026-11-21
+
+Requisitos más bajos. Versión de parche.
+
+### Cambiado
+
+- Disco: 25 GB como mínimo (40 GB recomendados); el instalador pide ahora 25 GiB, lo que además permite «Instalar junto a» en discos más pequeños. El sistema base ocupa unos 5 GB.
+- Medio de instalación: basta un USB de 4 GB (la ISO ocupa 1,76 GiB).
+- La RAM sigue en 4 GB (8 GB recomendados) hasta medirla en un sistema instalado.
+
 ## [0.3.12] - 2026-11-21
 
 Módulo «Actualizaciones» de Arctiva Center (fase 4, paso 4.3). Versión de parche.

@@ -233,7 +233,7 @@ To stay under 2 GiB: a selection of Plasma packages instead of every meta-packag
 |---|---|---|---|---|
 | Build VM (Arch Linux) | 4–6 vCPU | 8 GB | 80 GB dynamic | EFI. Builds packages and the ISO. The "Arctiva" VM is already set up with 4 vCPU, 8 GB and 80 GB (see [development.md](development.md)) |
 | ISO test VM | 2–4 vCPU | 4 GB | 40 GB dynamic | EFI, VMSVGA with 128 MB video memory. Recreated for every test |
-| Real hardware | — | — | USB stick of 8 GB or more | The host's RTX 4060 can be used to test NVIDIA from the live USB |
+| Real hardware | — | — | USB stick of 4 GB or more | The host's RTX 4060 can be used to test NVIDIA from the live USB |
 | GitHub Actions | standard runner | 16 GB | ~14 GB free | Enough for an ISO under 2 GiB |
 
-**Arctiva minimum requirements (target):** x86-64 with UEFI, 4 GB RAM (8 GB recommended), 40 GB disk (64 GB recommended because of snapshots), and a Vulkan-capable GPU for gaming.
+**Arctiva minimum requirements (target):** x86-64 with UEFI, 4 GB RAM (8 GB recommended; to be confirmed by measuring an installed system), 25 GB disk (40 GB recommended because of snapshots; the base system takes about 5 GB and the ISO 1.76 GiB), and a Vulkan-capable GPU for gaming. The installer asks for 25 GiB.

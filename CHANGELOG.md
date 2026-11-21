@@ -8,6 +8,16 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 
 ## [Unreleased]
 
+## [0.3.13] - 2026-11-21
+
+Lower requirements. Patch release.
+
+### Changed
+
+- Disk: 25 GB minimum (40 GB recommended); the installer now asks for 25 GiB, which also lets "Install alongside" work on smaller disks. The base system takes about 5 GB.
+- Installation media: a 4 GB USB stick is enough (the ISO takes 1.76 GiB).
+- RAM stays at 4 GB (8 GB recommended) until it is measured on an installed system.
+
 ## [0.3.12] - 2026-11-21
 
 Arctiva Center "Updates" module (phase 4, step 4.3). Patch release.

@@ -22,9 +22,10 @@ Arctiva es un proyecto independiente, sin relación oficial con Arch Linux ni re
 ## Requisitos previstos
 
 - PC x86 de 64 bits con firmware UEFI (Secure Boot desactivado)
-- 4 GB de RAM (8 GB recomendados)
-- 40 GB de disco (64 GB recomendados)
+- 4 GB de RAM (8 GB recomendados); pendiente de confirmar midiendo un sistema instalado
+- 25 GB de disco (40 GB recomendados, por las instantáneas); el sistema base ocupa unos 5 GB
 - Gráfica compatible con Vulkan para jugar
+- Un USB de 4 GB o más para el medio de instalación
 
 ## Instalación y uso
 

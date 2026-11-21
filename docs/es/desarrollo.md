@@ -73,14 +73,14 @@ docker run --rm --privileged --cpus=2 -v arctiva-pkgcache:/var/cache/pacman/pkg 
 
 La configuración de Calamares está en `installer/` (paquete `arctiva-calamares-config`): `calamares/` se instala en `/etc/calamares/` y `scripts/` en `/usr/lib/arctiva-installer/`. Se compila con el resto de `packages/` al construir la ISO.
 
-1. `tests/run-live.sh -r` arranca la ISO con el disco virtual vacío (40 GB, el mínimo que pide el instalador).
+1. `tests/run-live.sh -r` arranca la ISO con el disco virtual vacío (40 GB; el instalador pide 25 GiB).
 2. En la sesión live, abre «Instalar Arctiva» en el menú, o en Konsole `arctiva-installer -d` (`-d` muestra el registro de Calamares en la terminal). El lanzador revisa antes el equipo y deja el resultado en `/run/arctiva/equipo.json`, que muestra la página «Comprobación».
 3. Al acabar, apaga y arranca el sistema instalado con `tests/run-live.sh -d`.
 
 - Con red, el instalador ejecuta `pacman -Syu` e instala `linux-lts`: tarda más cuanto más antigua sea la fecha de `iso/archive-date`.
 - Si cambias los archivos exclusivos de la live en `iso/airootfs/`, cambia también la lista `exclude` de `installer/calamares/modules/unpackfs.conf`.
 - Para probar la página «Comprobación» sin Windows, `sudo tests/fake-windows-disk.sh <limpio|hibernado|bitlocker>` en la live (copia el script a la VM; **borra el disco virtual**) y vuelve a abrir el lanzador.
-- Para probar «Instalar junto a» hace falta un disco grande: el instalador exige 40 GiB libres para Arctiva además de Windows. Ejemplo: `DISK_SIZE=100G tests/run-live.sh -r` y, en la live, `sudo NTFS_SIZE=60G tests/fake-windows-disk.sh limpio /dev/vda` antes de abrir el instalador. El script crea la ESP con `bootmgfw.efi` y `BCD`: `os-prober` exige los dos para reconocer Windows.
+- Para probar «Instalar junto a» hace falta un disco grande: el instalador exige 25 GiB libres para Arctiva además de Windows. Ejemplo: `DISK_SIZE=100G tests/run-live.sh -r` y, en la live, `sudo NTFS_SIZE=60G tests/fake-windows-disk.sh limpio /dev/vda` antes de abrir el instalador. El script crea la ESP con `bootmgfw.efi` y `BCD`: `os-prober` exige los dos para reconocer Windows.
 - Particionado manual: «Nueva tabla de particiones» (GPT), una ESP `fat32` de 300 MiB con punto de montaje `/boot/efi` y la marca `boot`, y una raíz `btrfs` en `/` con el resto. El instalador crea los subvolúmenes `@`, `@home`, `@cache`, `@log` y `@snapshots`.
 - El disco y la NVRAM se guardan en `~/arctiva-vm` (variable `VM_DIR`), fuera del repositorio.
 - Sin aceleración 3D ni sonido: el escritorio funciona, pero los juegos y la gráfica real se prueban en hardware con un USB.
