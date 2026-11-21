@@ -1,0 +1,64 @@
+name: Repositorio
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'packages/arctiva-*/**'
+      - 'center/**'
+      - 'packages/publish-repo.sh'
+      - '.github/workflows/repo.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: repo
+  cancel-in-progress: false
+
+jobs:
+  publicar:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 60
+    container: archlinux:latest
+    steps:
+      - name: Dependencias del checkout
+        run: pacman -Syu --noconfirm --needed git >/dev/null
+      - uses: actions/checkout@v7
+      - name: Compilar, firmar y publicar
+        env:
+          ARCTIVA_SIGNING_KEY: ${{ secrets.ARCTIVA_SIGNING_KEY }}
+          ARCTIVA_SIGNING_PASSPHRASE: ${{ secrets.ARCTIVA_SIGNING_PASSPHRASE }}
+          GH_TOKEN: ${{ secrets.ARCTIVA_REPO_TOKEN }}
+        run: bash packages/publish-repo.sh
+
+  verificar:
+    needs: publicar
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    container: archlinux:latest
+    steps:
+      - name: Dependencias del checkout
+        run: |
+          pacman-key --init
+          pacman-key --populate archlinux
+          pacman -Syu --noconfirm --needed git curl >/dev/null
+      - uses: actions/checkout@v7
+      - name: Instalar desde el repositorio publicado con SigLevel Required
+        run: |
+          set -euo pipefail
+          base=https://github.com/catlinux/arctiva-repo/releases/download/x86_64
+          name="$(curl -fsSL "$base/arctiva.db" | tar -tzf - | sed -n 's#^\(arctiva-keyring-[^/]*\)/$#\1#p' | head -n1)"
+          curl -fsSL -o /tmp/k.pkg.tar.zst "$base/${name}-any.pkg.tar.zst"
+          curl -fsSL -o /tmp/k.pkg.tar.zst.sig "$base/${name}-any.pkg.tar.zst.sig"
+          # El anillo publicado se comprueba con la clave pública de este repositorio antes de instalarlo.
+          export GNUPGHOME="$(mktemp -d)"
+          gpg --batch --quiet --import packages/arctiva-keyring/arctiva.gpg
+          gpg --batch --verify /tmp/k.pkg.tar.zst.sig /tmp/k.pkg.tar.zst
+          unset GNUPGHOME
+          sed 's/^SigLevel.*/SigLevel = Never/' /etc/pacman.conf >/tmp/pacman-nosig.conf
+          pacman --config /tmp/pacman-nosig.conf -U --noconfirm /tmp/k.pkg.tar.zst
+          printf '\n[arctiva]\nSigLevel = Required\nServer = %s\n' "$base" >>/etc/pacman.conf
+          pacman -Sy --noconfirm
+          pacman -S --noconfirm arctiva-settings

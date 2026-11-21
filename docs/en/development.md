@@ -89,6 +89,10 @@ The Calamares configuration lives in `installer/` (package `arctiva-calamares-co
 
 The code of `arctiva-center` lives in `center/` (the PKGBUILD in `packages/arctiva-center/` receives it as `../center`). The logic in `arctiva_center/core/` does not import Qt and is tested without PySide6 or Arch: `cd center && python3 -m pytest` (needs `pytest` and Python 3.11 or later). The window (PySide6 + QML + Kirigami) is tested in the live session or on an installed system: `python3 -m arctiva_center --module updates` from `center/`, or `pacman -U` on the built package. Translations: sources in English, catalogues in `center/translations/*.ts`; `lrelease` (`/usr/lib/qt6/bin/`, package `qt6-tools`) generates the `.qm` files in `build()`.
 
+### Publishing a package to `[arctiva]`
+
+Packages in `packages/arctiva-*` are built, signed and published by the `Repositorio` workflow (`.github/workflows/repo.yml`) on each push to `main` that touches `packages/arctiva-*/**` or `center/**`. Only packages whose version (`pkgver`-`pkgrel`) is not yet in the published database are built, so to publish a change, **bump `pkgver` (or `pkgrel`)** in its PKGBUILD. The result goes to the `x86_64` release of `catlinux/arctiva-repo`. Signing keys: [signing.md](signing.md).
+
 ## Line endings
 
 The repository enforces LF line endings (`.gitattributes`). Shell scripts and PKGBUILDs with CRLF fail on Linux.

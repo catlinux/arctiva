@@ -15,6 +15,12 @@ if [[ -e "${root}/etc/resolv.conf.arctiva-orig" ]]; then
     mv -f -- "${root}/etc/resolv.conf.arctiva-orig" "${root}/etc/resolv.conf"
 fi
 
+# [arctiva] se añade al final y no antes de instalar paquetes: así la instalación no depende de que
+# GitHub responda. El servidor vive en /etc/pacman.d/arctiva-mirrorlist, que instala arctiva-settings.
+if ! grep -q '^\[arctiva\]' "${root}/etc/pacman.conf"; then
+    printf '\n[arctiva]\nInclude = /etc/pacman.d/arctiva-mirrorlist\n' >>"${root}/etc/pacman.conf"
+fi
+
 # En el modo manual el usuario puede haber elegido otro sistema de archivos: sin Btrfs no hay instantáneas.
 if [[ "$(findmnt -no FSTYPE -- "$root")" != btrfs ]]; then
     echo "La raíz no es Btrfs: no se configura Snapper."

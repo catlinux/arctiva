@@ -1,0 +1,20 @@
+# SPDX-License-Identifier: GPL-3.0-or-later
+# Maintainer: CatLinux
+# Anillo de claves del repositorio [arctiva]. pkgver es la fecha de creación de la clave (AAAAMMDD);
+# al renovar la subclave, se sustituye arctiva.gpg y se sube pkgver.
+pkgname=arctiva-keyring
+pkgver=20261121
+pkgrel=1
+pkgdesc='Anillo de claves del repositorio de Arctiva'
+arch=(any)
+url='https://github.com/catlinux/arctiva'
+license=(GPL-3.0-or-later)
+depends=(pacman)
+install=arctiva-keyring.install
+
+package() {
+    local d="$pkgdir/usr/share/pacman/keyrings"
+    install -Dm644 "$startdir/arctiva.gpg" "$d/arctiva.gpg"
+    install -Dm644 "$startdir/arctiva-trusted" "$d/arctiva-trusted"
+    install -Dm644 "$startdir/arctiva-revoked" "$d/arctiva-revoked"
+}

@@ -1,0 +1,9 @@
+# SPDX-License-Identifier: GPL-3.0-or-later
+# Sin /etc/pacman.d/gnupg (ISO, instalador) no hay nada que poblar: lo hará pacman-key --populate.
+post_install() {
+    if [ -d /etc/pacman.d/gnupg ]; then pacman-key --populate arctiva || true; fi
+}
+
+post_upgrade() {
+    post_install
+}

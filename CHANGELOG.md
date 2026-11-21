@@ -8,6 +8,16 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 
 ## [Unreleased]
 
+## [0.3.6] - 2026-11-21
+
+Signed `[arctiva]` repository (phase 3, steps 3.3 and 3.4). Patch release: nothing is published until the first push.
+
+### Added
+
+- `arctiva-keyring` package with the repository's public key, trusted at full level, in the ISO and the installed system.
+- `Repositorio` workflow and `packages/publish-repo.sh`: build, sign and publish the `arctiva-*` packages to `catlinux/arctiva-repo`, then check that a clean system can install from it with `SigLevel = Required`.
+- The installed system gets the `[arctiva]` section at the end of the installation, with its server in `/etc/pacman.d/arctiva-mirrorlist` (`arctiva-settings` 0.1.1).
+
 ## [0.3.5] - 2026-11-21
 
 Arctiva Center skeleton (phase 4, step 4.1). Patch release: new package with no functionality yet.

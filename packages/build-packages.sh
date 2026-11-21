@@ -29,7 +29,7 @@ cp -a -- "${repo_dir}/branding/logo" "${build_dir}/branding/logo"
 chown -R arctivabuild: "$build_dir" "$dest"
 
 # Orden de dependencias: los paquetes del sistema instalado primero (arctiva-center depende de branding y hardware); calamares necesita ckbcomp, y la configuración, calamares.
-for name in arctiva-settings arctiva-branding arctiva-hardware arctiva-center ckbcomp calamares arctiva-calamares-config; do
+for name in arctiva-keyring arctiva-settings arctiva-branding arctiva-hardware arctiva-center ckbcomp calamares arctiva-calamares-config; do
     d="${build_dir}/${name}"
     echo "== Compilando $(basename -- "$d")"
     # makepkg no importa keys/pgp/ por sí solo: se hace aquí para verificar las firmas de las fuentes.
