@@ -65,7 +65,7 @@ Estado de cada trabajo: `[x]` hecho (con la versión en que se cerró) y `[ ]` p
 - [x] Perfil «Juegos» completo con multilib (D-11) (0.3.2: `lib32-nvidia-utils` con Steam)
 - [x] El sistema instalado usa `[arctiva]`; instalación completa probada en QEMU (0.4.0)
 
-### Fase 4: Arctiva Center (0.5.0)
+### Fase 4: Arctiva Center (0.5.0) — terminada
 
 - [x] Aplicación base PySide6 y ayudante polkit con operaciones cerradas (0.3.11)
 - [x] Bienvenida en el primer arranque (0.3.16)

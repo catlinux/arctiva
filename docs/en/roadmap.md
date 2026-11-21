@@ -65,7 +65,7 @@ Status of each work item: `[x]` done (with the version that closed it) and `[ ]`
 - [x] Complete "Gaming" profile with multilib (D-11) (0.3.2: `lib32-nvidia-utils` with Steam)
 - [x] The installed system uses `[arctiva]`; full install tested in QEMU (0.4.0)
 
-### Phase 4: Arctiva Center (0.5.0)
+### Phase 4: Arctiva Center (0.5.0) — done
 
 - [x] Base PySide6 application and polkit helper with a closed set of operations (0.3.11)
 - [x] First-boot welcome (0.3.16)

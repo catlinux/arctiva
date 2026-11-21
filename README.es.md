@@ -12,7 +12,7 @@ Arctiva es un proyecto independiente, sin relación oficial con Arch Linux ni re
 
 ## Estado
 
-**Fase 3 terminada (0.4.0):** una ISO live con KDE Plasma y un instalador gráfico (Calamares) con perfiles Básico, Juegos y Oficina, Btrfs con instantáneas arrancables, cifrado opcional e instalación junto a Windows, probado en máquinas virtuales. El sistema instalado se actualiza desde un repositorio propio firmado (`[arctiva]`) e instala los controladores de la gráfica. Arctiva Center (fase 4) ya tiene bienvenida, actualizaciones, controladores y extras, pendientes de las pruebas de cierre. Aún no hay ISO para descargar: se puede construir desde el código (ver la guía de desarrollo). La arquitectura está aprobada (decisiones D-01…D-16).
+**Fase 4 terminada (0.5.0):** una ISO live con KDE Plasma y un instalador gráfico (Calamares) con perfiles Básico, Juegos y Oficina, Btrfs con instantáneas arrancables, cifrado opcional e instalación junto a Windows, probado en máquinas virtuales. El sistema instalado se actualiza desde un repositorio propio firmado (`[arctiva]`) e instala los controladores de la gráfica. Arctiva Center tiene bienvenida, actualizaciones, controladores y extras, probados con una instalación cifrada completa. Aún no hay ISO para descargar: se puede construir desde el código (ver la guía de desarrollo). La arquitectura está aprobada (decisiones D-01…D-16).
 
 - [Arquitectura y decisiones](docs/es/arquitectura.md)
 - [Hoja de ruta](docs/es/hoja-de-ruta.md)

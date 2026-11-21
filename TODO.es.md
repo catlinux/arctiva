@@ -23,9 +23,8 @@ Trabajo pendiente agrupado por prioridad. Fases y decisiones: [hoja de ruta](doc
 - [ ] Tras cambiar de idioma en la bienvenida, los textos de los requisitos siguen en el idioma en que se comprobaron (Calamares los genera antes de elegir): repetir la comprobación o traducirlos en la página.
 - [ ] Fondos de pantalla: `arctiva-branding` aún no los lleva; falta diseñarlos.
 
-## Media: cierre de la fase 4 (0.5.0)
+## Media: instalador
 
-- [ ] Cerrar la fase (0.5.0). Todas las pruebas de cierre pasaron el 2026-11-21: actualización desde Arctiva Center, un extra, controladores con un `lspci` simulado, `.pacnew`, hook de GRUB con LUKS, y una instalación nueva cifrada con la ISO 0.4.1 que arranca la entrada por defecto y la instantánea inicial.
 - [ ] En la página «Perfiles» del instalador, la imagen del perfil toca el borde derecho de la ventana.
 
 ## Media: estudios

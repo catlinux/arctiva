@@ -8,6 +8,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 
 ## [Unreleased]
 
+## [0.5.0] - 2026-11-21
+
+Phase 4 closed: Arctiva Center (welcome, updates, drivers and extras). Closing tests passed on 2026-11-21: update from Arctiva Center, an extra, drivers with a simulated `lspci`, `.pacnew`, the GRUB hook with LUKS, and a fresh encrypted install with the 0.4.1 ISO that boots the default entry and the initial snapshot. No code changes. Minor version (phase completed, D-16).
+
 ## [0.4.1] - 2026-11-21
 
 Boot fix after installing, found during the phase 4 closing tests. Patch version.

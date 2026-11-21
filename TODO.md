@@ -23,9 +23,8 @@ Pending work grouped by priority. Phases and decisions: [roadmap](docs/en/roadma
 - [ ] After switching language on the welcome page, the requirement texts stay in the language they were checked in (Calamares builds them before the choice): re-run the check or translate them in the page.
 - [ ] Wallpapers: `arctiva-branding` ships no wallpapers yet; they need a design.
 
-## Medium — phase 4 closing (0.5.0)
+## Medium — installer
 
-- [ ] Close the phase (0.5.0). All closing tests passed on 2026-11-21: update from Arctiva Center, an extra, drivers with a simulated `lspci`, `.pacnew`, GRUB hook with LUKS, and a fresh encrypted install with the 0.4.1 ISO that boots the default entry and the initial snapshot.
 - [ ] On the installer's "Profiles" page, the profile image touches the right edge of the window.
 
 ## Medium — studies

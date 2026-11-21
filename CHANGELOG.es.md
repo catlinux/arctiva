@@ -8,6 +8,10 @@ El formato se basa en [Keep a Changelog](https://keepachangelog.com/es-ES/1.1.0/
 
 ## [Sin publicar]
 
+## [0.5.0] - 2026-11-21
+
+Fase 4 terminada: Arctiva Center (bienvenida, actualizaciones, controladores y extras). Pruebas de cierre superadas el 2026-11-21: actualización desde Arctiva Center, un extra, controladores con un `lspci` simulado, `.pacnew`, el hook de GRUB con LUKS y una instalación nueva cifrada con la ISO 0.4.1 que arranca la entrada por defecto y la instantánea inicial. Sin cambios de código. Versión menor (fase terminada, D-16).
+
 ## [0.4.1] - 2026-11-21
 
 Corrección del arranque tras instalar, encontrada en las pruebas de cierre de la fase 4. Versión de parche.
