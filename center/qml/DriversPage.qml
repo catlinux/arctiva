@@ -33,7 +33,7 @@ Kirigami.ScrollablePage {
         Kirigami.Action {
             text: qsTr("Install drivers")
             icon.name: "run-install"
-            enabled: !page.busy && driversBackend.missingCount > 0
+            enabled: !isLive && !page.busy && driversBackend.missingCount > 0
             onTriggered: {
                 log.clear()
                 page.lastCode = -2
@@ -59,6 +59,13 @@ Kirigami.ScrollablePage {
 
     ColumnLayout {
         spacing: Kirigami.Units.largeSpacing
+
+        Kirigami.InlineMessage {
+            Layout.fillWidth: true
+            visible: isLive
+            type: Kirigami.MessageType.Information
+            text: qsTr("This is the live session: installing and updating only work once Arctiva is installed.")
+        }
 
         Kirigami.InlineMessage {
             Layout.fillWidth: true

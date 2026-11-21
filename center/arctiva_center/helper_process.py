@@ -10,8 +10,9 @@ class HelperProcess(QObject):
     finished = Signal(int)
     runningChanged = Signal()
 
-    def __init__(self, parent=None):
+    def __init__(self, live=False, parent=None):
         super().__init__(parent)
+        self._live = live
         self._process = None
         self._splitter = helper_client.LineSplitter()
 
@@ -23,6 +24,10 @@ class HelperProcess(QObject):
     def run(self, operation, args):
         # Nunca dos operaciones a la vez: cortar pacman a medias es peor que un fallo.
         if self._process is not None:
+            return False
+        if self._live:
+            self.line.emit("arctiva-center: no disponible en la sesión live")
+            self.finished.emit(helper_client.EX_UNAVAILABLE)
             return False
         try:
             argv = helper_client.build_argv(operation, [str(a) for a in args])

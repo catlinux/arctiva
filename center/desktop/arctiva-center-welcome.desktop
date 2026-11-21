@@ -1,0 +1,9 @@
+[Desktop Entry]
+Type=Application
+Name=Arctiva welcome
+Name[es]=Bienvenida de Arctiva
+Name[ca]=Benvinguda d'Arctiva
+Exec=arctiva-center --welcome
+Icon=arctiva
+NoDisplay=true
+X-KDE-autostart-phase=2

@@ -8,6 +8,16 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 
 ## [Unreleased]
 
+## [0.3.16] - 2026-11-21
+
+Arctiva Center welcome (phase 4, step 4.6). Patch release.
+
+### Added
+
+- Welcome page: logo and version, the state of the graphics drivers, updates and extras with a button to each module, and how to go back to a snapshot from the GRUB menu. It opens when logging in (`/etc/xdg/autostart/arctiva-center-welcome.desktop`) until "Show this welcome when logging in" is unticked; it never opens by itself on the live ISO.
+- On the live ISO, Arctiva Center shows a notice and its install and update actions are disabled.
+- `arctiva-center` 0.6.0.
+
 ## [0.3.15] - 2026-11-21
 
 Arctiva Center "Extras" module (phase 4, step 4.5). Patch release.

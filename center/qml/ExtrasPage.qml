@@ -42,6 +42,13 @@ Kirigami.ScrollablePage {
 
         Kirigami.InlineMessage {
             Layout.fillWidth: true
+            visible: isLive
+            type: Kirigami.MessageType.Information
+            text: qsTr("This is the live session: installing and updating only work once Arctiva is installed.")
+        }
+
+        Kirigami.InlineMessage {
+            Layout.fillWidth: true
             visible: page.working !== "" || page.lastCode !== -2
             type: page.working !== "" ? Kirigami.MessageType.Information
                 : page.lastCode === 0 ? Kirigami.MessageType.Positive
@@ -93,7 +100,7 @@ Kirigami.ScrollablePage {
                     QQC2.Switch {
                         // Muestra el estado real: no cambia hasta que la operación termina.
                         checked: card.modelData.installed
-                        enabled: !page.busy
+                        enabled: !isLive && !page.busy
                         onToggled: {
                             checked = Qt.binding(() => card.modelData.installed)
                             page.toggle(card.modelData)

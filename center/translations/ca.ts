@@ -27,6 +27,10 @@
 <context>
     <name>UpdatesPage</name>
     <message>
+        <source>This is the live session: installing and updating only work once Arctiva is installed.</source>
+        <translation>Aquesta és la sessió live: instal·lar i actualitzar només funcionen quan Arctiva està instal·lat.</translation>
+    </message>
+    <message>
         <source>Check now</source>
         <translation>Comprova-ho ara</translation>
     </message>
@@ -150,6 +154,10 @@
 <context>
     <name>DriversPage</name>
     <message>
+        <source>This is the live session: installing and updating only work once Arctiva is installed.</source>
+        <translation>Aquesta és la sessió live: instal·lar i actualitzar només funcionen quan Arctiva està instal·lat.</translation>
+    </message>
+    <message>
         <source>NVIDIA (GTX 16, RTX 20 or newer)</source>
         <translation>NVIDIA (GTX 16, RTX 20 o posterior)</translation>
     </message>
@@ -249,6 +257,10 @@
 <context>
     <name>ExtrasPage</name>
     <message>
+        <source>This is the live session: installing and updating only work once Arctiva is installed.</source>
+        <translation>Aquesta és la sessió live: instal·lar i actualitzar només funcionen quan Arctiva està instal·lat.</translation>
+    </message>
+    <message>
         <source>Removing %1…</source>
         <translation>S&apos;està traient %1…</translation>
     </message>
@@ -303,6 +315,81 @@
     <message>
         <source>Firewall settings</source>
         <translation>Configuració del tallafoc</translation>
+    </message>
+</context>
+<context>
+    <name>WelcomePage</name>
+    <message>
+        <source>Welcome to Arctiva</source>
+        <translation>Et donem la benvinguda a Arctiva</translation>
+    </message>
+    <message>
+        <source>These are the first steps to leave your system ready. You can come back to them at any time from Arctiva Center.</source>
+        <translation>Aquests són els primers passos per deixar el sistema a punt. Hi pots tornar quan vulguis des d&apos;Arctiva Center.</translation>
+    </message>
+    <message>
+        <source>Arctiva Center %1</source>
+        <translation>Arctiva Center %1</translation>
+    </message>
+    <message>
+        <source>This is the live session: you can look around, but installing and updating only work once Arctiva is installed.</source>
+        <translation>Aquesta és la sessió live: pots fer un cop d&apos;ull, però instal·lar i actualitzar només funcionen quan Arctiva està instal·lat.</translation>
+    </message>
+    <message>
+        <source>Graphics drivers</source>
+        <translation>Controladors gràfics</translation>
+    </message>
+    <message>
+        <source>Checking your graphics card…</source>
+        <translation>S&apos;està comprovant la targeta gràfica…</translation>
+    </message>
+    <message>
+        <source>Some drivers for your graphics card are missing, probably because Arctiva was installed without an internet connection.</source>
+        <translation>Falten controladors per a la targeta gràfica, segurament perquè Arctiva es va instal·lar sense connexió a internet.</translation>
+    </message>
+    <message>
+        <source>Your graphics card is ready.</source>
+        <translation>La targeta gràfica està a punt.</translation>
+    </message>
+    <message>
+        <source>Open Drivers</source>
+        <translation>Obre Controladors</translation>
+    </message>
+    <message>
+        <source>Updates</source>
+        <translation>Actualitzacions</translation>
+    </message>
+    <message>
+        <source>Keep Arctiva up to date from here. Before updating, Arctiva Center shows the Arch Linux news that need your attention, and it will notify you when there are new updates.</source>
+        <translation>Mantén Arctiva al dia des d&apos;aquí. Abans d&apos;actualitzar, Arctiva Center et mostra les notícies d&apos;Arch Linux que necessiten la teva atenció, i t&apos;avisarà quan hi hagi actualitzacions noves.</translation>
+    </message>
+    <message>
+        <source>Check now</source>
+        <translation>Comprova-ho ara</translation>
+    </message>
+    <message>
+        <source>Extras</source>
+        <translation>Extres</translation>
+    </message>
+    <message>
+        <source>Add Gaming, Office or a second kernel whenever you want, with a switch.</source>
+        <translation>Afegeix Jocs, Oficina o un segon nucli quan vulguis, amb un interruptor.</translation>
+    </message>
+    <message>
+        <source>Open Extras</source>
+        <translation>Obre Extres</translation>
+    </message>
+    <message>
+        <source>Snapshots: going back</source>
+        <translation>Instantànies: tornar enrere</translation>
+    </message>
+    <message>
+        <source>Before and after every installation or update, Arctiva takes a snapshot of the system. If something stops working after an update, restart and choose &apos;Arctiva snapshots&apos; in the start menu (GRUB) to start the computer as it was before. Changes made while started from a snapshot are temporary.</source>
+        <translation>Abans i després de cada instal·lació o actualització, Arctiva fa una instantània del sistema. Si alguna cosa deixa de funcionar després d&apos;una actualització, reinicia i tria «Arctiva snapshots» al menú d&apos;arrencada (GRUB) per arrencar l&apos;ordinador tal com estava abans. Els canvis que facis mentre arrenques des d&apos;una instantània són temporals.</translation>
+    </message>
+    <message>
+        <source>Show this welcome when logging in</source>
+        <translation>Mostra aquesta benvinguda en iniciar la sessió</translation>
     </message>
 </context>
 </TS>

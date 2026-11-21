@@ -67,7 +67,7 @@ Status of each work item: `[x]` done (with the version that closed it) and `[ ]`
 ### Phase 4: Arctiva Center (0.5.0)
 
 - [x] Base PySide6 application and polkit helper with a closed set of operations (0.3.11)
-- [ ] First-boot welcome
+- [x] First-boot welcome (0.3.16)
 - [x] Drivers (0.3.14)
 - [x] Updates (D-08): blocking news, sensitive packages, `.pacnew`, translated errors (0.3.12)
 - [x] arch-update evaluation documented

@@ -41,7 +41,7 @@ Kirigami.ScrollablePage {
         Kirigami.Action {
             text: qsTr("Update")
             icon.name: "system-software-update"
-            enabled: !page.busy && !updatesBackend.blocked && updatesBackend.updates.length > 0
+            enabled: !isLive && !page.busy && !updatesBackend.blocked && updatesBackend.updates.length > 0
             onTriggered: page.runHelper("update", [])
         }
     ]
@@ -73,6 +73,13 @@ Kirigami.ScrollablePage {
 
     ColumnLayout {
         spacing: Kirigami.Units.largeSpacing
+
+        Kirigami.InlineMessage {
+            Layout.fillWidth: true
+            visible: isLive
+            type: Kirigami.MessageType.Information
+            text: qsTr("This is the live session: installing and updating only work once Arctiva is installed.")
+        }
 
         // Resultado de la última actualización y, si falló, qué significa.
         Kirigami.InlineMessage {

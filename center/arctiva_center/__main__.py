@@ -21,6 +21,10 @@ def main(argv=None):
     if args.check:
         from .check import main as check
         return check()
+    if args.welcome:
+        from .core import welcome
+        if not welcome.should_show():
+            return 0
     module = "welcome" if args.welcome else (args.module or "welcome")
     from .app import run  # PySide6 solo se importa si hay ventana.
     return run(module)

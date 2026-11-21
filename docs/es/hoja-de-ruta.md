@@ -67,7 +67,7 @@ Estado de cada trabajo: `[x]` hecho (con la versión en que se cerró) y `[ ]` p
 ### Fase 4: Arctiva Center (0.5.0)
 
 - [x] Aplicación base PySide6 y ayudante polkit con operaciones cerradas (0.3.11)
-- [ ] Bienvenida en el primer arranque
+- [x] Bienvenida en el primer arranque (0.3.16)
 - [x] Controladores (0.3.14)
 - [x] Actualizaciones (D-08): noticias que bloquean, paquetes delicados, `.pacnew`, errores traducidos (0.3.12)
 - [x] Evaluación de arch-update documentada

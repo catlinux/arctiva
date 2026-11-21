@@ -24,7 +24,8 @@ Kirigami.ApplicationWindow {
         if (index === current)
             return
         current = index
-        const page = index === 1 ? Qt.resolvedUrl("UpdatesPage.qml")
+        const page = index === 0 ? Qt.resolvedUrl("WelcomePage.qml")
+            : index === 1 ? Qt.resolvedUrl("UpdatesPage.qml")
             : index === 2 ? Qt.resolvedUrl("DriversPage.qml")
             : index === 3 ? Qt.resolvedUrl("ExtrasPage.qml")
             : modulePage

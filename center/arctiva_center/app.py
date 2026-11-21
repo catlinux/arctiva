@@ -2,7 +2,7 @@
 import os
 import sys
 
-from .core import i18n, paths
+from .core import i18n, paths, welcome
 from .modules import MODULES
 
 
@@ -31,16 +31,22 @@ def run(module):
 
     from .helper_process import HelperProcess
     from .drivers_backend import DriversBackend
+    from .welcome_backend import WelcomeBackend
     from .extras_backend import ExtrasBackend
     from .updates_backend import UpdatesBackend
 
-    helper = HelperProcess(app)
+    # En la live no se instala ni se actualiza nada (ARCTIVA_CENTER_ALLOW_LIVE=1, para pruebas).
+    live = welcome.is_live() and os.environ.get("ARCTIVA_CENTER_ALLOW_LIVE") != "1"
+    helper = HelperProcess(live, app)
+    welcome_backend = WelcomeBackend(app)
     updates_backend = UpdatesBackend(where.data, app)
     drivers_backend = DriversBackend(app)
     extras_backend = ExtrasBackend(where.data, app)
     engine = QQmlApplicationEngine()
     engine.rootContext().setContextProperty("initialModule", MODULES.index(module))
     engine.rootContext().setContextProperty("helper", helper)
+    engine.rootContext().setContextProperty("isLive", live)
+    engine.rootContext().setContextProperty("welcomeBackend", welcome_backend)
     engine.rootContext().setContextProperty("updatesBackend", updates_backend)
     engine.rootContext().setContextProperty("driversBackend", drivers_backend)
     engine.rootContext().setContextProperty("extrasBackend", extras_backend)
