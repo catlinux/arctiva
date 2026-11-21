@@ -8,6 +8,15 @@ El formato se basa en [Keep a Changelog](https://keepachangelog.com/es-ES/1.1.0/
 
 ## [Sin publicar]
 
+## [0.3.3] - 2026-11-21
+
+Diseño de Arctiva Center y cambios en la hoja de ruta. Versión de parche: solo documentación.
+
+### Cambiado
+
+- Arquitectura (D-09): diseño de Arctiva Center para la fase 4 (interfaz en QML y Kirigami, ayudante con `pkexec` y un conjunto cerrado de operaciones, temporizador de aviso de actualizaciones, hook de GRUB).
+- Hoja de ruta: la fase 4 añade reinstalar GRUB en la partición EFI al actualizar el paquete `grub`; la fase 6, un tema gráfico de GRUB.
+
 ## [0.3.2] - 2026-11-21
 
 Detección de gráficas e instalación de controladores (D-10). Versión de parche, según la política de versiones de los pasos de la fase 3.

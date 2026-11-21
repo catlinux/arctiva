@@ -126,6 +126,8 @@ Antes de escribir esta lógica se evaluará reutilizar **arch-update** (herramie
 
 **Arctiva Center**, en Python 3 + PySide6 (Qt 6; ambos en los repos oficiales) y `pyalpm` para consultas de solo lectura. Módulos: bienvenida en el primer arranque, controladores, actualizaciones, extras (catálogo) y aplicaciones (la tienda, D-07). El ayudante, el traductor de errores y el flujo de actualización son comunes a todos los módulos. Las acciones privilegiadas pasan por un ayudante polkit con un **conjunto cerrado de operaciones**, nunca por órdenes arbitrarias. Es una sola aplicación en lugar de varias para reducir mantenimiento.
 
+Diseño (fase 4): interfaz en QML con Kirigami, para que se vea como el resto de Plasma, y la lógica en Python sin Qt, para poder probarla. El ayudante es un único script lanzado con `pkexec` que solo acepta identificadores de su propio catálogo (actualizar, instalar o quitar un extra, aplicar controladores, resolver un `.pacnew`), nunca nombres de paquetes ni órdenes. Un temporizador de usuario avisa de actualizaciones cada 6 horas. Un hook de `arctiva-settings` reinstala GRUB en la partición EFI cuando se actualiza el paquete `grub`.
+
 ### D-10 Gráficas (**Aprobada**)
 
 Detección con `lspci` y un archivo de correspondencias (familia → paquetes), compartido por el instalador y Arctiva Center.

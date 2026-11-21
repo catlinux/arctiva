@@ -12,7 +12,7 @@ Cada fase tiene un objetivo verificable y cierra con una versión. Las decisione
 | 3. Repositorio propio y hardware | 0.4.0 | `[arctiva]` firmado y detección de gráficas | Repositorio publicado y firmado con `arctiva-keyring`; `arctiva-settings` y `arctiva-branding` provisional; detección de gráficas en el instalador; perfil «Juegos» con multilib |
 | 4. Arctiva Center | 0.5.0 | Bienvenida, controladores, actualizaciones y extras | Flujo de actualización completo (D-08) probado con un caso de noticia que exige intervención; catálogo de extras; evaluación de arch-update documentada |
 | 5. Aplicaciones y Windows | 0.6.0 | Tienda y compatibilidad | Tienda propia en Arctiva Center (D-07), con repositorios, Flathub y AUR diferenciados; Bottles y diálogo para `.exe`; Steam, Proton y Heroic funcionando en hardware real con NVIDIA y AMD o Intel |
-| 6. Identidad | 0.7.0 | Imagen propia y coherente | Logo vectorial aprobado; pantalla de arranque Plymouth, inicio de sesión, tema global, fondos y branding de Calamares |
+| 6. Identidad | 0.7.0 | Imagen propia y coherente | Logo vectorial aprobado; tema gráfico de GRUB, pantalla de arranque Plymouth, inicio de sesión, tema global, fondos y branding de Calamares |
 | 7. Beta | 0.8.0–0.9.x | Calidad y publicación | Matriz de pruebas en hardware real; documentación de usuario; flujo de publicación con firma y réplica; beta pública |
 | Estable | 1.0.0 | Primera versión estable | Sin errores bloqueantes abiertos; proceso de publicación mensual documentado |
 
@@ -72,6 +72,7 @@ Estado de cada trabajo: `[x]` hecho (con la versión en que se cerró) y `[ ]` p
 - [ ] Actualizaciones (D-08): noticias que bloquean, paquetes delicados, `.pacnew`, errores traducidos
 - [ ] Evaluación de arch-update documentada
 - [ ] Catálogo de extras
+- [ ] GRUB reinstalado en la partición EFI al actualizar el paquete `grub`
 
 ### Fase 5: aplicaciones y Windows (0.6.0)
 
@@ -84,7 +85,7 @@ Estado de cada trabajo: `[x]` hecho (con la versión en que se cerró) y `[ ]` p
 
 - [x] Logotipo vectorial aprobado (0.1.6)
 - [ ] Tipografía corporativa y lema del logotipo en trazos
-- [ ] Plymouth, pantalla de inicio de sesión, tema global y fondos
+- [ ] Tema gráfico de GRUB (menú, submenú de instantáneas y ISO live), Plymouth, pantalla de inicio de sesión, tema global y fondos
 - [ ] Branding de Calamares y de Arctiva Center
 
 ### Fase 7: beta (0.8.0–0.9.x)

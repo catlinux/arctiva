@@ -12,7 +12,7 @@ Each phase has a verifiable goal and ends with a release. The decisions referenc
 | 3. Own repository and hardware | 0.4.0 | Signed `[arctiva]` and GPU detection | Repository published and signed with `arctiva-keyring`; `arctiva-settings` and provisional `arctiva-branding`; GPU detection in the installer; "Gaming" profile with multilib |
 | 4. Arctiva Center | 0.5.0 | Welcome, drivers, updates and extras | Complete update flow (D-08) tested with a news item that requires manual intervention; extras catalogue; arch-update evaluation documented |
 | 5. Applications and Windows | 0.6.0 | Store and compatibility | In-house store in Arctiva Center (D-07), with repositories, Flathub and AUR kept apart; Bottles and the `.exe` dialog; Steam, Proton and Heroic working on real hardware with NVIDIA and AMD or Intel |
-| 6. Identity | 0.7.0 | A consistent visual identity | Approved vector logo; Plymouth boot splash, login, global theme, wallpapers and Calamares branding |
+| 6. Identity | 0.7.0 | A consistent visual identity | Approved vector logo; graphical GRUB theme, Plymouth boot splash, login, global theme, wallpapers and Calamares branding |
 | 7. Beta | 0.8.0–0.9.x | Quality and release | Real-hardware test matrix; user documentation; signed release pipeline with a mirror; public beta |
 | Stable | 1.0.0 | First stable release | No open blocking bugs; monthly release process documented |
 
@@ -72,6 +72,7 @@ Status of each work item: `[x]` done (with the version that closed it) and `[ ]`
 - [ ] Updates (D-08): blocking news, sensitive packages, `.pacnew`, translated errors
 - [ ] arch-update evaluation documented
 - [ ] Extras catalogue
+- [ ] GRUB reinstalled on the EFI partition when the `grub` package is upgraded
 
 ### Phase 5: applications and Windows (0.6.0)
 
@@ -84,7 +85,7 @@ Status of each work item: `[x]` done (with the version that closed it) and `[ ]`
 
 - [x] Approved vector logo (0.1.6)
 - [ ] Corporate typeface and the logo tagline as paths
-- [ ] Plymouth, login screen, global theme and wallpapers
+- [ ] Graphical GRUB theme (menu, snapshots submenu, live ISO), Plymouth, login screen, global theme and wallpapers
 - [ ] Calamares and Arctiva Center branding
 
 ### Phase 7: beta (0.8.0–0.9.x)

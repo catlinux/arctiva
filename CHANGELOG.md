@@ -8,6 +8,15 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 
 ## [Unreleased]
 
+## [0.3.3] - 2026-11-21
+
+Arctiva Center design and roadmap updates. Patch release: documentation only.
+
+### Changed
+
+- Architecture (D-09): Arctiva Center design for phase 4 (QML and Kirigami interface, `pkexec` helper with a closed set of operations, update reminder timer, GRUB hook).
+- Roadmap: phase 4 adds reinstalling GRUB on the EFI partition when the `grub` package is upgraded; phase 6 adds a graphical GRUB theme.
+
 ## [0.3.2] - 2026-11-21
 
 GPU detection and driver installation (D-10). Patch release, per the project's versioning policy for phase 3 steps.

@@ -126,6 +126,8 @@ Before writing this logic, reusing **arch-update** will be evaluated (an AUR too
 
 **Arctiva Center**, in Python 3 + PySide6 (Qt 6, both in the official repositories), with `pyalpm` for read-only queries. Modules: first-boot welcome, drivers, updates, extras (catalogue) and applications (the store, D-07). The helper, the error translator and the update flow are shared by all modules. Privileged actions go through a polkit helper exposing a **closed set of operations**, never arbitrary commands. One application instead of several keeps maintenance down.
 
+Design (phase 4): the interface in QML with Kirigami, so it looks like the rest of Plasma, and the logic in Python without Qt, so it can be tested. The helper is a single script run through `pkexec` that only accepts identifiers from its own catalogue (update, install or remove an extra, apply drivers, resolve a `.pacnew`), never package names or commands. A user timer reports updates every 6 hours. A hook in `arctiva-settings` reinstalls GRUB on the EFI partition when the `grub` package is upgraded.
+
 ### D-10 Graphics (**Approved**)
 
 Detection with `lspci` and a mapping file (family → packages), shared by the installer and Arctiva Center.
