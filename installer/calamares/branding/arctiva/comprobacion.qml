@@ -54,7 +54,15 @@ Item {
         sinRedT: { es: "Sin conexión a Internet", ca: "Sense connexió a Internet", en: "No Internet connection" },
         sinRed: { es: "Se instalará lo que lleva el USB, sin actualizar y sin el kernel LTS de reserva. Puedes conectarte ahora desde el icono de red.",
                   ca: "S'instal·larà el que porta l'USB, sense actualitzar i sense el nucli LTS de reserva. Pots connectar-te ara des de la icona de xarxa.",
-                  en: "What is on the USB stick will be installed, without updates and without the backup LTS kernel. You can connect now from the network icon." }
+                  en: "What is on the USB stick will be installed, without updates and without the backup LTS kernel. You can connect now from the network icon." },
+        nvidiaT: { es: "Gráfica NVIDIA", ca: "Gràfica NVIDIA", en: "NVIDIA graphics" },
+        nvidia: { es: "Se instalará el controlador de NVIDIA. Necesita conexión: sin ella se usa el controlador libre y podrás instalar el de NVIDIA después.",
+                  ca: "S'instal·larà el controlador de NVIDIA. Necessita connexió: sense ella s'usa el controlador lliure i podràs instal·lar el de NVIDIA després.",
+                  en: "The NVIDIA driver will be installed. It needs a connection: without one the free driver is used and you can install NVIDIA's later." },
+        nvidiaLegacyT: { es: "Gráfica NVIDIA antigua", ca: "Gràfica NVIDIA antiga", en: "Older NVIDIA graphics" },
+        nvidiaLegacy: { es: "Tu NVIDIA (GTX 900/1000 o anterior) usará el controlador libre «nouveau». El controlador propietario 580xx solo está en el AUR.",
+                        ca: "La teva NVIDIA (GTX 900/1000 o anterior) usarà el controlador lliure «nouveau». El controlador propietari 580xx només és a l'AUR.",
+                        en: "Your NVIDIA card (GTX 900/1000 or older) will use the free \"nouveau\" driver. The proprietary 580xx driver is only in the AUR." }
     })
 
     function t(clave) {
@@ -178,6 +186,20 @@ Item {
                 tipo: "aviso"
                 titulo: page.t("bateriaT")
                 texto: page.t("bateria")
+            }
+            Estado {
+                visible: page.equipo !== null && page.equipo.gpu !== undefined
+                         && page.equipo.gpu.familias.indexOf("nvidia") >= 0
+                tipo: "info"
+                titulo: page.t("nvidiaT")
+                texto: page.t("nvidia")
+            }
+            Estado {
+                visible: page.equipo !== null && page.equipo.gpu !== undefined
+                         && page.equipo.gpu.aviso === "nvidia-legacy"
+                tipo: "aviso"
+                titulo: page.t("nvidiaLegacyT")
+                texto: page.t("nvidiaLegacy")
             }
             Estado {
                 visible: page.equipo !== null && !page.equipo.red

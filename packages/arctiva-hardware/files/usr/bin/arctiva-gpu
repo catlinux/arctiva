@@ -1,0 +1,87 @@
+#!/usr/bin/env bash
+# SPDX-License-Identifier: GPL-3.0-or-later
+# Detecta las gráficas del equipo y dice qué controladores hacen falta (D-10).
+# Uso: arctiva-gpu [--root DIR]
+#   --root DIR   mira qué hay instalado en el sistema de DIR (linux-lts, steam) con pacman -r.
+# Entrada: lspci -nn, o el archivo de $ARCTIVA_LSPCI_FILE (pruebas).
+# Salida, una clave por línea: gpus, packages, services, nvidia_kms, warning.
+set -euo pipefail
+
+root=""
+case "${1:-}" in
+    --root) root="${2:?uso: arctiva-gpu [--root DIR]}" ;;
+    "") ;;
+    *) echo "uso: arctiva-gpu [--root DIR]" >&2; exit 2 ;;
+esac
+
+# Ids PCI de NVIDIA que contradicen la regla «>= 0x1E00 → Turing o posterior».
+# Formato: "<id>:moderna" o "<id>:antigua".
+EXCEPCIONES=()
+
+virtuales=" 1af4 1234 15ad 80ee 1b36 "
+
+if [[ -n "${ARCTIVA_LSPCI_FILE:-}" ]]; then
+    lspci_out="$(<"$ARCTIVA_LSPCI_FILE")"
+else
+    lspci_out="$(lspci -nn)"
+fi
+
+instalado() { [[ -n "$root" ]] && pacman -r "$root" -Q -- "$1" >/dev/null 2>&1; }
+
+familias=()
+reales=0
+nvidia_moderna=0
+nvidia_antigua=0
+re='\[(0300|0302|0380)\]: .*\[([0-9a-f]{4}):([0-9a-f]{4})\]'
+while IFS= read -r linea; do
+    [[ $linea =~ $re ]] || continue
+    vendor="${BASH_REMATCH[2]}"
+    device="${BASH_REMATCH[3]}"
+    if [[ "$virtuales" == *" $vendor "* ]]; then
+        familias+=(virtual)
+        continue
+    fi
+    (( ++reales ))
+    case "$vendor" in
+        10de)
+            tipo=""
+            for e in "${EXCEPCIONES[@]}"; do
+                [[ "${e%%:*}" == "$device" ]] && tipo="${e#*:}"
+            done
+            if [[ -z "$tipo" ]]; then
+                (( 16#$device >= 16#1e00 )) && tipo=moderna || tipo=antigua
+            fi
+            if [[ "$tipo" == moderna ]]; then
+                familias+=(nvidia); nvidia_moderna=1
+            else
+                familias+=(nvidia-legacy); nvidia_antigua=1
+            fi
+            ;;
+        1002) familias+=(amd) ;;
+        8086) familias+=(intel) ;;
+        *) familias+=(otra) ;;
+    esac
+done <<<"$lspci_out"
+
+paquetes=()
+servicios=()
+kms=0
+aviso=""
+
+if (( nvidia_moderna )); then
+    paquetes+=(nvidia-open nvidia-utils)
+    instalado linux-lts && paquetes+=(nvidia-open-lts)
+    instalado steam && paquetes+=(lib32-nvidia-utils)
+    kms=1
+fi
+(( nvidia_antigua )) && aviso=nvidia-legacy
+if (( reales >= 2 )); then
+    paquetes+=(switcheroo-control)
+    servicios+=(switcheroo-control)
+fi
+
+printf 'gpus=%s\n' "${familias[*]:-}"
+printf 'packages=%s\n' "${paquetes[*]:-}"
+printf 'services=%s\n' "${servicios[*]:-}"
+printf 'nvidia_kms=%s\n' "$kms"
+printf 'warning=%s\n' "$aviso"

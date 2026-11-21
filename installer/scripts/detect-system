@@ -71,6 +71,14 @@ fi
 red=false
 curl -fsS --max-time 5 -o /dev/null http://ping.archlinux.org/nm-check.txt 2>/dev/null && red=true
 
+# Gráficas (D-10): arctiva-gpu dice qué familias hay y si algo merece un aviso.
+gpu_familias=()
+gpu_aviso=""
+if gpu_out="$(arctiva-gpu 2>/dev/null)"; then
+    read -r -a gpu_familias <<<"$(sed -n 's/^gpus=//p' <<<"$gpu_out")"
+    gpu_aviso="$(sed -n 's/^warning=//p' <<<"$gpu_out")"
+fi
+
 if (( ${#hibernado[@]} )); then
     nivel=bloqueo
 elif (( ${#bitlocker[@]} )); then
@@ -87,7 +95,8 @@ tmp="${out}.tmp"
     printf '  "bitlocker": %s,\n' "$(json_list "${bitlocker[@]}")"
     printf '  "hibernado": %s,\n' "$(json_list "${hibernado[@]}")"
     printf '  "bateria": %s,\n' "$bateria"
-    printf '  "red": %s\n' "$red"
+    printf '  "red": %s,\n' "$red"
+    printf '  "gpu": {"familias": %s, "aviso": "%s"}\n' "$(json_list "${gpu_familias[@]}")" "$gpu_aviso"
     printf '}\n'
 } >"$tmp"
 chmod 644 -- "$tmp"

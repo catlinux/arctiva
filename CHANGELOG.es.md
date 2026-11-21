@@ -8,6 +8,17 @@ El formato se basa en [Keep a Changelog](https://keepachangelog.com/es-ES/1.1.0/
 
 ## [Sin publicar]
 
+## [0.3.2] - 2026-11-21
+
+Detección de gráficas e instalación de controladores (D-10). Versión de parche, según la política de versiones de los pasos de la fase 3.
+
+### Añadido
+
+- Paquete `arctiva-hardware` con `arctiva-gpu`, que lee `lspci -nn` y decide los controladores: NVIDIA Turing o posterior (id PCI `>= 0x1E00`) recibe `nvidia-open` y `nvidia-utils` (más `nvidia-open-lts` con el kernel LTS y `lib32-nvidia-utils` con Steam); la NVIDIA anterior sigue con `nouveau` y un aviso; AMD e Intel no necesitan nada extra; con dos o más GPU reales se activa `switcheroo-control`.
+- Paso del instalador que instala esos controladores tras los paquetes y antes de generar el initramfs, con KMS temprano de NVIDIA. Sin conexión, o si algo falla, la instalación sigue con el controlador libre.
+- Página «Comprobación del equipo»: avisos para NVIDIA moderna (necesita conexión) y NVIDIA antigua (usa `nouveau`).
+- `tests/gpu-detect-test.sh` con muestras de `lspci`.
+
 ## [0.3.1] - 2026-11-21
 
 Fase 3, primer paso: los paquetes de identidad del sistema instalado. Versión de parche: no añade comportamiento al instalador.

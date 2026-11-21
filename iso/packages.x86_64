@@ -113,6 +113,7 @@ noto-fonts-emoji
 # Arctiva (paquetes propios de packages/, repositorio arctiva-local). Se quedan en el sistema instalado.
 arctiva-settings
 arctiva-branding
+arctiva-hardware
 
 # Instalador (paquetes propios de packages/ e installer/, repositorio arctiva-local). de packages/ e installer/, repositorio arctiva-local).
 # Se quitan del sistema instalado.

@@ -8,6 +8,17 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 
 ## [Unreleased]
 
+## [0.3.2] - 2026-11-21
+
+GPU detection and driver installation (D-10). Patch release, per the project's versioning policy for phase 3 steps.
+
+### Added
+
+- Package `arctiva-hardware` with `arctiva-gpu`, which reads `lspci -nn` and decides the drivers: NVIDIA Turing or later (PCI id `>= 0x1E00`) gets `nvidia-open` and `nvidia-utils` (plus `nvidia-open-lts` with the LTS kernel and `lib32-nvidia-utils` with Steam); older NVIDIA keeps `nouveau` with a notice; AMD and Intel need nothing extra; two or more real GPUs enable `switcheroo-control`.
+- Installer step that installs those drivers after the packages and before the initramfs is generated, with early NVIDIA KMS. Without a connection, or if anything fails, the installation continues with the free driver.
+- "Computer check" page: notices for modern NVIDIA (needs a connection) and for older NVIDIA (uses `nouveau`).
+- `tests/gpu-detect-test.sh` with `lspci` fixtures.
+
 ## [0.3.1] - 2026-11-21
 
 Phase 3, first step: the identity packages of the installed system. Patch release: it adds no installer behaviour.

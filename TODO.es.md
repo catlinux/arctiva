@@ -19,7 +19,7 @@ Trabajo pendiente agrupado por prioridad. Fases y decisiones: [hoja de ruta](doc
 - [ ] Avisar en la página de resumen si la raíz no es Btrfs (modo manual): no habrá instantáneas.
 - [ ] Las páginas QML del instalador llevan sus textos en castellano, catalán e inglés dentro del propio QML; pasarlos a traducciones del branding (`.ts`) para poder añadir más idiomas.
 - [ ] Mapa sin conexión en la página «Idioma y zona»: el de Calamares descarga los mosaicos de Internet, así que de momento la página usa solo listas.
-- [ ] Ofrecer Heroic, ProtonPlus y Bottles (Flatpak) desde Arctiva Center (fase 5); los controladores NVIDIA llegan con la detección de gráficas (fase 3).
+- [ ] Ofrecer Heroic, ProtonPlus y Bottles (Flatpak) desde Arctiva Center (fase 5).
 - [ ] Si se cae la conexión después de la bienvenida, el instalador sigue creyendo que hay internet y `packages` falla en `pacman -Sy` con un mensaje poco claro. Comprobarlo otra vez antes de instalar o mostrar un error más claro.
 - [ ] La lista de perfiles necesita Ctrl+clic para elegir varios (Calamares usa selección extendida; la pista va en el texto de «Básico»). Una página QML propia permitiría el clic simple.
 - [ ] «Instalar junto a» solo aparece si el disco puede dar 40 GiB a Arctiva (el requisito de la bienvenida): en un disco de 60 GB con Windows no hay esa opción. Valorar bajar el requisito a lo que el sistema necesita de verdad (unos 25 GiB con perfiles) y volver a probar.

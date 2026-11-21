@@ -61,8 +61,8 @@ Status of each work item: `[x]` done (with the version that closed it) and `[ ]`
 - [ ] Signing key (offline master, subkey in CI) and the `arctiva-keyring` package
 - [ ] Signed and published `[arctiva]` repository, with package builds in CI
 - [ ] `arctiva-settings` (defaults, zram, multilib, reflector) and provisional `arctiva-branding`
-- [ ] GPU detection (D-10) in the installer, shared with Arctiva Center
-- [ ] Complete "Gaming" profile with multilib (D-11)
+- [x] GPU detection (D-10) in the installer (0.3.2); sharing it with Arctiva Center comes in phase 4
+- [x] Complete "Gaming" profile with multilib (D-11) (0.3.2: `lib32-nvidia-utils` with Steam)
 
 ### Phase 4: Arctiva Center (0.5.0)
 

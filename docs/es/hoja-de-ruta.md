@@ -61,8 +61,8 @@ Estado de cada trabajo: `[x]` hecho (con la versión en que se cerró) y `[ ]` p
 - [ ] Clave de firma (maestra fuera de línea, subclave en el CI) y paquete `arctiva-keyring`
 - [ ] Repositorio `[arctiva]` firmado y publicado, con compilación de paquetes en el CI
 - [ ] `arctiva-settings` (valores por defecto, zram, multilib, reflector) y `arctiva-branding` provisional
-- [ ] Detección de gráficas (D-10) en el instalador, compartida con Arctiva Center
-- [ ] Perfil «Juegos» completo con multilib (D-11)
+- [x] Detección de gráficas (D-10) en el instalador (0.3.2); la compartida con Arctiva Center llega en la fase 4
+- [x] Perfil «Juegos» completo con multilib (D-11) (0.3.2: `lib32-nvidia-utils` con Steam)
 
 ### Fase 4: Arctiva Center (0.5.0)
 

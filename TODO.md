@@ -19,7 +19,7 @@ Pending work grouped by priority. Phases and decisions: [roadmap](docs/en/roadma
 - [ ] Warn on the summary page when the root is not Btrfs (manual mode): there will be no snapshots.
 - [ ] The installer's QML pages carry their texts in Spanish, Catalan and English inside the QML itself; move them to branding translations (`.ts`) so more languages can be added.
 - [ ] Offline map on the "Language and region" page: Calamares' map downloads tiles from the Internet, so the page currently uses lists only.
-- [ ] Offer Heroic, ProtonPlus and Bottles (Flatpak) from Arctiva Center (phase 5); NVIDIA drivers come with GPU detection (phase 3).
+- [ ] Offer Heroic, ProtonPlus and Bottles (Flatpak) from Arctiva Center (phase 5).
 - [ ] If the connection drops after the welcome page, the installer still thinks it is online and `packages` fails at `pacman -Sy` with an obscure message. Re-check before installing or show a clearer error.
 - [ ] The profiles list needs Ctrl+click to pick several (Calamares uses extended selection; the hint is in the "Basic" text). A custom QML page would allow plain clicks.
 - [ ] "Install alongside" only appears when the disk can give Arctiva 40 GiB (the welcome page requirement): on a 60 GB disk with Windows there is no such option. Consider lowering the requirement to what the system really needs (about 25 GiB with profiles) and re-test.
