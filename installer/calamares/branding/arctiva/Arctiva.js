@@ -12,6 +12,8 @@ var brillante = "#3d86ff";
 var ok = "#2e7d4f";
 var aviso = "#b7791f";
 var error = "#c62828";
+// Tipografía corporativa (arctiva-branding la instala); sin ella Qt usa la de siempre.
+var marca = "Outfit";
 
 // Idioma de la interfaz («es», «ca» o «en»). Calamares cambia el QLocale por defecto al elegir
 // idioma en la bienvenida, pero las páginas QML no se retraducen solas. «disparador» no se usa:

@@ -78,12 +78,12 @@ Estado de cada trabajo: `[x]` hecho (con la versión en que se cerró) y `[ ]` p
 ### Fase 5: identidad y escritorio (0.6.0)
 
 - [x] Logotipo vectorial aprobado (0.1.6)
-- [ ] Tipografía corporativa y lema del logotipo en trazos
-- [ ] Tema gráfico de GRUB, siempre visible (menú, submenú de instantáneas e ISO live), Plymouth, pantalla de inicio de sesión, tema global y fondos
-- [ ] Escritorio tipo Windows: barra abajo con iconos centrados, menú de inicio con buscador, panel y widgets bloqueados por defecto
-- [ ] Módulo «Personalización» en Arctiva Center (claro/oscuro, acento, fondo, alineación de la barra, escala, luz nocturna) y «Restaurar el aspecto de Arctiva»
-- [ ] Límites de las instantáneas y su espacio visible en Arctiva Center
-- [ ] Branding de Calamares y de Arctiva Center
+- [x] Tipografía corporativa y lema del logotipo en trazos (0.5.3)
+- [x] Tema gráfico de GRUB, siempre visible, Plymouth, pantalla de inicio de sesión, tema global y fondos (0.5.4–0.5.9); la ISO live sigue con systemd-boot (ver el TODO)
+- [x] Escritorio tipo Windows: barra abajo con iconos centrados, menú de inicio con buscador; en Plasma 6 el panel solo se mueve en el modo de edición (0.5.5)
+- [x] Módulo «Personalización» en Arctiva Center (claro/oscuro, acento, fondo, alineación de la barra, escala, luz nocturna) y «Restaurar el aspecto de Arctiva»
+- [x] Límites de las instantáneas y su espacio visible en Arctiva Center
+- [x] Branding de Calamares y de Arctiva Center (tipografía, presentación)
 
 ### Fase 6: aplicaciones y Windows (0.7.0)
 

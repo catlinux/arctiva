@@ -13,6 +13,8 @@ mkinitcpio
 mkinitcpio-archiso
 grub
 grub-btrfs
+# Splash de arranque del sistema instalado (la live no lo activa).
+plymouth
 # grub-btrfsd vigila /.snapshots con inotifywait.
 inotify-tools
 efibootmgr

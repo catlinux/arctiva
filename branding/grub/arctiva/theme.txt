@@ -1,0 +1,58 @@
+# Tema de GRUB de Arctiva. SPDX-License-Identifier: GPL-3.0-or-later
+# Los PNG de fondo, logo e iconos y las fuentes .pf2 (Outfit) los genera build-theme.sh.
+desktop-image: "background.png"
+desktop-image-scale-method: "crop"
+desktop-color: "#04060c"
+title-text: ""
+message-font: "Outfit Regular 20"
+message-color: "#c3cee8"
+message-bg-color: "#0b1a4a"
+terminal-font: "Outfit Regular 20"
+
++ image {
+    file = "logo.png"
+    left = 50%-48
+    top = 7%
+    width = 96
+    height = 96
+}
+
++ label {
+    text = "ARCTIVA"
+    font = "Outfit Regular 32"
+    color = "#ffffff"
+    align = "center"
+    left = 0
+    width = 100%
+    top = 21%
+}
+
++ boot_menu {
+    left = 50%-320
+    top = 33%
+    width = 640
+    height = 48%
+    item_font = "Outfit Regular 20"
+    item_color = "#c3cee8"
+    selected_item_font = "Outfit Regular 20"
+    selected_item_color = "#ffffff"
+    icon_width = 32
+    icon_height = 32
+    item_icon_space = 16
+    item_height = 44
+    item_padding = 10
+    item_spacing = 6
+    selected_item_pixmap_style = "select_*.png"
+    scrollbar = false
+}
+
++ label {
+    id = "__timeout__"
+    text = "%d s"
+    font = "Outfit Regular 14"
+    color = "#8fa2cf"
+    align = "center"
+    left = 0
+    width = 100%
+    top = 88%
+}

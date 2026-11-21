@@ -73,6 +73,7 @@ Kirigami.ScrollablePage {
             ColumnLayout {
                 Kirigami.Heading {
                     level: 1
+                    font.family: "Outfit"
                     text: qsTr("Welcome to Arctiva")
                 }
                 QQC2.Label {
@@ -95,6 +96,14 @@ Kirigami.ScrollablePage {
         }
 
         Step {
+            stepIcon: "preferences-desktop-theme"
+            stepTitle: qsTr("Make it yours")
+            stepText: qsTr("Light or dark mode, accent colour, wallpaper, taskbar position and text size, all in one page.")
+            stepButton: qsTr("Open Personalization")
+            module: 1
+        }
+
+        Step {
             stepIcon: driversBackend.missingCount > 0 ? "dialog-warning" : "video-display"
             stepTitle: qsTr("Graphics drivers")
             stepText: driversBackend.checking ? qsTr("Checking your graphics card…")
@@ -102,7 +111,7 @@ Kirigami.ScrollablePage {
                     ? qsTr("Some drivers for your graphics card are missing, probably because Arctiva was installed without an internet connection.")
                     : qsTr("Your graphics card is ready.")
             stepButton: qsTr("Open Drivers")
-            module: 2
+            module: 3
         }
 
         Step {
@@ -110,7 +119,7 @@ Kirigami.ScrollablePage {
             stepTitle: qsTr("Updates")
             stepText: qsTr("Keep Arctiva up to date from here. Before updating, Arctiva Center shows the Arch Linux news that need your attention, and it will notify you when there are new updates.")
             stepButton: qsTr("Check now")
-            module: 1
+            module: 2
         }
 
         Step {
@@ -118,7 +127,7 @@ Kirigami.ScrollablePage {
             stepTitle: qsTr("Extras")
             stepText: qsTr("Add Gaming, Office or a second kernel whenever you want, with a switch.")
             stepButton: qsTr("Open Extras")
-            module: 3
+            module: 4
         }
 
         Step {

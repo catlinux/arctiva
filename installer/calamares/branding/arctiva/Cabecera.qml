@@ -15,6 +15,7 @@ ColumnLayout {
     Label {
         id: etiquetaTitulo
         Layout.fillWidth: true
+        font.family: A.marca
         font.pixelSize: 24
         font.bold: true
         color: A.texto

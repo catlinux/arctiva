@@ -1,0 +1,14 @@
+{
+    "KPackageStructure": "Plasma/LookAndFeel",
+    "KPlugin": {
+        "Authors": [{"Name": "CatLinux"}],
+        "Category": "",
+        "Description": "Arctiva: light desktop with a Windows-style taskbar",
+        "Description[es]": "Arctiva: escritorio claro con barra de tareas al estilo de Windows",
+        "Id": "org.arctiva.desktop",
+        "Name": "Arctiva",
+        "Website": "https://github.com/catlinux/arctiva"
+    },
+    "Keywords": "Desktop;Workspace;Appearance;Look and Feel;Arctiva;",
+    "X-Plasma-APIVersion": "2"
+}

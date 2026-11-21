@@ -78,12 +78,12 @@ Status of each work item: `[x]` done (with the version that closed it) and `[ ]`
 ### Phase 5: identity and desktop (0.6.0)
 
 - [x] Approved vector logo (0.1.6)
-- [ ] Corporate typeface and the logo tagline as paths
-- [ ] Graphical GRUB theme, always visible (menu, snapshots submenu, live ISO), Plymouth, login screen, global theme and wallpapers
-- [ ] Windows-like desktop: bottom taskbar with centred icons, start menu with search, panel and widgets locked by default
-- [ ] "Personalisation" module in Arctiva Center (light/dark, accent, wallpaper, taskbar alignment, scaling, night light) and "Restore Arctiva's look"
-- [ ] Snapshot limits and the space they use shown in Arctiva Center
-- [ ] Calamares and Arctiva Center branding
+- [x] Corporate typeface and the logo tagline as paths (0.5.3)
+- [x] Graphical GRUB theme, always visible, Plymouth, login screen, global theme and wallpapers (0.5.4–0.5.9); the live ISO still uses systemd-boot (see the TODO)
+- [x] Windows-like desktop: bottom taskbar with centred icons, start menu with search; in Plasma 6 the panel only moves in edit mode (0.5.5)
+- [x] "Personalisation" module in Arctiva Center (light/dark, accent, wallpaper, taskbar alignment, scaling, night light) and "Restore Arctiva's look"
+- [x] Snapshot limits and the space they use shown in Arctiva Center
+- [x] Calamares and Arctiva Center branding (typeface, slideshow)
 
 ### Phase 6: applications and Windows (0.7.0)
 

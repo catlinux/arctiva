@@ -32,6 +32,7 @@ def run(module):
     from .helper_process import HelperProcess
     from .drivers_backend import DriversBackend
     from .welcome_backend import WelcomeBackend
+    from .personalization_backend import PersonalizationBackend
     from .extras_backend import ExtrasBackend
     from .updates_backend import UpdatesBackend
 
@@ -42,6 +43,7 @@ def run(module):
     updates_backend = UpdatesBackend(where.data, app)
     drivers_backend = DriversBackend(app)
     extras_backend = ExtrasBackend(where.data, app)
+    personalization_backend = PersonalizationBackend(app)
     engine = QQmlApplicationEngine()
     engine.rootContext().setContextProperty("initialModule", MODULES.index(module))
     engine.rootContext().setContextProperty("helper", helper)
@@ -50,6 +52,7 @@ def run(module):
     engine.rootContext().setContextProperty("updatesBackend", updates_backend)
     engine.rootContext().setContextProperty("driversBackend", drivers_backend)
     engine.rootContext().setContextProperty("extrasBackend", extras_backend)
+    engine.rootContext().setContextProperty("personalizationBackend", personalization_backend)
     engine.load(QUrl.fromLocalFile(str(where.qml / "Main.qml")))
     if not engine.rootObjects():
         return 1

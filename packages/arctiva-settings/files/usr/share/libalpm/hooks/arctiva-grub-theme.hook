@@ -1,0 +1,10 @@
+[Trigger]
+Operation = Install
+Operation = Upgrade
+Type = Package
+Target = arctiva-branding
+
+[Action]
+Description = Actualizando el tema de GRUB de Arctiva...
+When = PostTransaction
+Exec = /usr/lib/arctiva/update-grub-theme

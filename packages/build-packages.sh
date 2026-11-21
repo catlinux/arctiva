@@ -19,13 +19,13 @@ build_dir="$(mktemp -d)"
 trap 'rm -rf -- "$build_dir"' EXIT
 cp -a -- "${repo_dir}/packages/." "$build_dir/"
 # La configuración del instalador vive en installer/ y toma de ../ la versión (VERSION) y el logo
-# (branding/logo/).
+# (branding/logo/); arctiva-branding también toma branding/wallpapers/.
 cp -a -- "${repo_dir}/installer" "${build_dir}/arctiva-calamares-config"
 cp -- "${repo_dir}/VERSION" "${build_dir}/VERSION"
 # El código de arctiva-center vive en center/ (su PKGBUILD lo busca en ../center).
 cp -a -- "${repo_dir}/center" "${build_dir}/center"
 mkdir -p -- "${build_dir}/branding"
-cp -a -- "${repo_dir}/branding/logo" "${build_dir}/branding/logo"
+cp -a -- "${repo_dir}/branding/." "${build_dir}/branding/"
 chown -R arctivabuild: "$build_dir" "$dest"
 
 # Orden de dependencias: los paquetes del sistema instalado primero (arctiva-center depende de branding y hardware); calamares necesita ckbcomp, y la configuración, calamares.

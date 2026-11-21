@@ -8,6 +8,104 @@ El formato se basa en [Keep a Changelog](https://keepachangelog.com/es-ES/1.1.0/
 
 ## [Sin publicar]
 
+## [0.6.0] - 2026-11-21
+
+Fase 5 terminada: identidad y escritorio. Probada el 2026-11-21 con una ISO construida en un contenedor y una instalación cifrada completa en QEMU (menú de GRUB con tema, Plymouth, pantalla de inicio de sesión, escritorio tipo Windows, página Personalización, límite de instantáneas). Versión menor (fase terminada, D-16).
+
+### Corregido
+
+- Plymouth no mostraba nada (`two-step` necesita en la carpeta del tema las imágenes del diálogo de contraseña): ahora se copian del paquete `plymouth` al compilar `arctiva-branding` 0.6.1.
+- La limpieza de Snapper nunca borraba instantáneas recientes (`NUMBER_MIN_AGE` era de una hora): ahora es 0 y el límite de 10 se cumple enseguida.
+- `splash` se añadía dos veces a la línea de órdenes del kernel (Calamares ya lo añade con Plymouth instalado).
+- Personalización: el acento se lee del esquema de color (Plasma no tiene la clave `AccentColor`), el modo oscuro aplica el acento azul de Arctiva y la muestra del acento elegido sigue marcada.
+- Tema de GRUB: sin flechas (Outfit no las tiene) y la cuenta atrás lleva texto.
+
+## [0.5.10] - 2026-11-21
+
+Identidad del instalador y de Arctiva Center. Versión de parche (la fase 5 sigue en curso).
+
+### Añadido
+
+- `arctiva-branding` 0.6.0 instala la tipografía Outfit (SIL OFL 1.1, con su licencia en `/usr/share/licenses/arctiva-branding/`).
+- Diapositiva «Hazlo tuyo» en la presentación del instalador, sobre la página Personalización.
+
+### Cambiado
+
+- Los títulos de las páginas y de la presentación del instalador, y el encabezado de la bienvenida de Arctiva Center 0.7.1, usan Outfit.
+
+## [0.5.9] - 2026-11-21
+
+Pantalla de inicio de sesión. Versión de parche (la fase 5 sigue en curso).
+
+### Añadido
+
+- `arctiva-settings` 0.5.1: `/etc/plasmalogin.conf.d/arctiva-greeter.conf` pone el fondo oscuro de Arctiva en la pantalla de Plasma Login. Plasma Login solo permite cambiar el fondo (colores y tipografía son fijos, estilo Breeze).
+- `arctiva-branding` 0.5.1: los temas globales ponen el mismo fondo en la pantalla de bloqueo.
+
+## [0.5.8] - 2026-11-21
+
+Pantalla de arranque con Plymouth. Versión de parche (la fase 5 sigue en curso).
+
+### Añadido
+
+- `arctiva-branding` 0.5.0: temas de Plymouth `arctiva` (el logo del fabricante del firmware, BGRT, con el arco del anillo de Arctiva girando debajo) y `arctiva-logo` (logo de Arctiva centrado, para equipos sin logo de fabricante).
+- `arctiva-settings` 0.5.0: depende de `plymouth` y añade el hook `plymouth` al initramfs del sistema instalado, justo después de `udev` (no al de la live).
+
+### Cambiado
+
+- El instalador elige el tema de Plymouth según haya logo del firmware (`/sys/firmware/acpi/bgrt/image`) y añade `splash` a la línea de órdenes del kernel.
+
+## [0.5.7] - 2026-11-21
+
+Tema de GRUB, siempre visible. Versión de parche (la fase 5 sigue en curso).
+
+### Añadido
+
+- `arctiva-branding` 0.4.0: tema de GRUB «Arctiva» (fondo «Órbita» oscuro, logo, fuente Outfit, selección azul translúcida, iconos de Arctiva y de otros sistemas), generado al compilar con `branding/grub/build-theme.sh`.
+- `arctiva-settings` 0.4.0: `arctiva-grub-theme.hook` refresca `/boot/grub/themes/arctiva` al instalar o actualizar `arctiva-branding`.
+
+### Cambiado
+
+- El instalador copia el tema a `/boot/grub/themes/arctiva` sin huecos (`prepare-target`) y fija `GRUB_THEME`, `GRUB_GFXMODE=auto` y `GRUB_TIMEOUT_STYLE=menu`: el menú sale siempre, 5 segundos.
+
+## [0.5.6] - 2026-11-21
+
+Módulo «Personalización» en Arctiva Center. Versión de parche (la fase 5 sigue en curso).
+
+### Añadido
+
+- Arctiva Center 0.7.0: página «Personalización» tras la Bienvenida: modo claro, oscuro o automático, color de acento, fondo de pantalla (el de Arctiva o cualquier imagen), barra centrada o a la izquierda y barra flotante, tamaño del texto, escala de pantalla y luz nocturna. «Restaurar el aspecto de Arctiva» (con confirmación) y «Configuración avanzada» (Configuración del sistema de KDE). Todo se ejecuta como el usuario, sin el ayudante.
+- `arctiva-branding` 0.3.1: variante «Arctiva Dark» del tema global, que usa el modo automático.
+
+## [0.5.5] - 2026-11-21
+
+Tema global y escritorio tipo Windows. Versión de parche.
+
+### Añadido
+
+- `arctiva-branding` 0.3.0: tema global «Arctiva» (`org.arctiva.desktop`) con barra inferior de lado a lado, iconos de aplicaciones centrados, menú de inicio con buscador, bandeja, reloj y «Mostrar escritorio», esquema de color claro de Arctiva y pantalla de bienvenida con el logo.
+- `arctiva-settings` 0.3.0: los usuarios nuevos empiezan con ese tema (`/etc/xdg/kdeglobals`, `/etc/xdg/ksplashrc`); los existentes no cambian.
+
+## [0.5.4] - 2026-11-21
+
+Fondos «Órbita». Versión de parche.
+
+### Añadido
+
+- `arctiva-branding` 0.2.0 instala el fondo «Arctiva» (`/usr/share/wallpapers/Arctiva`) en versión clara y oscura, generado al compilar desde los SVG de `branding/wallpapers/` (1920x1080, 2560x1440, 3840x2160 y 1920x1200).
+
+## [0.5.3] - 2026-11-21
+
+Tipografía corporativa y lema del logotipo en trazos. Versión de parche.
+
+### Añadido
+
+- `branding/fonts/`: Outfit (SIL OFL 1.1) con su licencia.
+
+### Cambiado
+
+- El lema de `arctiva-logo.svg` pasa a trazos dibujados con Outfit Light; el archivo ya no tiene texto vivo.
+
 ## [0.5.2] - 2026-11-21
 
 Límite de instantáneas. Versión de parche.

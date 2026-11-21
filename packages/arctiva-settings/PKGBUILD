@@ -2,13 +2,13 @@
 # Maintainer: CatLinux
 # Ajustes del sistema de Arctiva: zram, identidad en os-release y mirrors (reflector).
 pkgname=arctiva-settings
-pkgver=0.2.0
+pkgver=0.5.1
 pkgrel=1
 pkgdesc='Ajustes del sistema de Arctiva (zram, os-release, reflector, GRUB)'
 arch=(any)
 url='https://github.com/catlinux/arctiva'
 license=(GPL-3.0-or-later)
-depends=(zram-generator reflector)
+depends=(zram-generator reflector plymouth)
 backup=(etc/arctiva/reflector.conf etc/pacman.d/arctiva-mirrorlist)
 install=arctiva-settings.install
 
@@ -22,7 +22,16 @@ package() {
     install -Dm755 usr/lib/arctiva/update-grub "$pkgdir/usr/lib/arctiva/update-grub"
     install -Dm644 usr/share/libalpm/hooks/arctiva-grub.hook \
         "$pkgdir/usr/share/libalpm/hooks/arctiva-grub.hook"
+    # Plymouth en el initramfs del sistema instalado (no en la live).
+    install -Dm644 etc/mkinitcpio.conf.d/arctiva-plymouth.conf         "$pkgdir/etc/mkinitcpio.conf.d/arctiva-plymouth.conf"
+    # Fondo de la pantalla de inicio de sesión.
+    install -Dm644 etc/plasmalogin.conf.d/arctiva-greeter.conf "$pkgdir/etc/plasmalogin.conf.d/arctiva-greeter.conf"
+    install -Dm755 usr/lib/arctiva/update-grub-theme "$pkgdir/usr/lib/arctiva/update-grub-theme"
+    install -Dm644 usr/share/libalpm/hooks/arctiva-grub-theme.hook         "$pkgdir/usr/share/libalpm/hooks/arctiva-grub-theme.hook"
     install -Dm644 etc/arctiva/reflector.conf "$pkgdir/etc/arctiva/reflector.conf"
     install -Dm644 etc/pacman.d/arctiva-mirrorlist "$pkgdir/etc/pacman.d/arctiva-mirrorlist"
+    # Tema global y esquema de color por defecto de los usuarios nuevos (los existentes no cambian).
+    install -Dm644 etc/xdg/kdeglobals "$pkgdir/etc/xdg/kdeglobals"
+    install -Dm644 etc/xdg/ksplashrc "$pkgdir/etc/xdg/ksplashrc"
     install -Dm644 usr/lib/systemd/system/reflector.service.d/arctiva.conf         "$pkgdir/usr/lib/systemd/system/reflector.service.d/arctiva.conf"
 }

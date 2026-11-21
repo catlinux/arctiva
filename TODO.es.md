@@ -10,6 +10,8 @@ Trabajo pendiente agrupado por prioridad. Fases y decisiones: [hoja de ruta](doc
 
 ## Media: fase 2 (instalador)
 
+- [ ] ISO live con GRUB en lugar de systemd-boot (`bootmodes=('uefi.grub')`, `iso/grub/` con el tema de Arctiva, quitar `iso/efiboot/`): hace falta una máquina Arch para probar `mkarchiso`; `tests/boot-test.sh` no cambia (arranca el kernel directamente).
+
 - [ ] Al arrancar una instantánea falla `systemd-remount-fs` (fstab pide `subvol=/@` y la raíz es un overlay de grub-btrfs). No impide arrancar; valorar ocultarlo.
 - [ ] Que el instalador elija mirrors rápidos (`reflector`) antes de `pacman -Syu`: el sistema instalado se queda con todos los mirrors HTTPS en el orden por defecto.
 - [ ] Avisar en la página de resumen si la raíz no es Btrfs (modo manual): no habrá instantáneas.
@@ -21,7 +23,6 @@ Trabajo pendiente agrupado por prioridad. Fases y decisiones: [hoja de ruta](doc
 - [ ] Volver a probar «Instalar junto a» con el nuevo requisito de 25 GiB (0.3.13) en un disco de 60 GB con Windows.
 - [ ] ISO más ligera: la base ya es ajustada (instalada 4,3 GiB, ISO 1,76 GiB de los 1,9 permitidos). Lo mayor: `firefox` 307 MiB, `qt6-webengine` 284 MiB (lo pide `purpose`→`kaccounts`, que usan Spectacle y Gwenview), `llvm-libs` 165 MiB (Mesa), `linux-firmware-*` ~430 MiB (Intel 142, NVIDIA 104, Atheros 53, MediaTek 37, AMDGPU 28), `noto-fonts` 107 MiB. La única palanca real es instalar solo el firmware que pida el hardware detectado (fase 3).
 - [ ] Tras cambiar de idioma en la bienvenida, los textos de los requisitos siguen en el idioma en que se comprobaron (Calamares los genera antes de elegir): repetir la comprobación o traducirlos en la página.
-- [ ] Fondos de pantalla: `arctiva-branding` aún no los lleva; falta diseñarlos.
 
 ## Media: instalador
 
@@ -36,7 +37,6 @@ Trabajo pendiente agrupado por prioridad. Fases y decisiones: [hoja de ruta](doc
 
 - Fases 2 a 7 según la hoja de ruta.
 - Pruebas en hardware real (USB en el PC con la RTX 4060; portátil con Windows y Manjaro), solo al final, con todo implementado (fase 7). La entrada «safe graphics» ya funciona en VirtualBox.
-- Convertir en trazos el lema de `branding/logo/arctiva-logo.svg`, que ahora es texto, cuando se elija la tipografía corporativa (D-13).
 - Hibernación: subvolumen `@swap` con un archivo de intercambio además de zram (D-04). Queda fuera de la 1.0, que solo tiene suspensión.
 - ISO reproducible bit a bit: dos construcciones con la misma fecha del Arch Linux Archive tienen los mismos paquetes y tamaño, pero distinta suma (D-02).
 - Cifrado LUKS2 con desbloqueo por TPM2 o FIDO2, cuando Calamares permita elegir el método de derivación de la clave (D-04).

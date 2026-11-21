@@ -1,0 +1,19 @@
+[Plymouth Theme]
+Name=Arctiva (logo)
+Description=Logo de Arctiva centrado con el arco del anillo girando debajo, para equipos sin logo de fabricante (BGRT)
+ModuleName=two-step
+
+[two-step]
+ImageDir=/usr/share/plymouth/themes/arctiva-logo
+HorizontalAlignment=.5
+VerticalAlignment=.74
+WatermarkHorizontalAlignment=.5
+WatermarkVerticalAlignment=.4
+Transition=none
+TransitionDuration=0.0
+BackgroundStartColor=0x04060c
+BackgroundEndColor=0x0b1a4a
+ProgressBarBackgroundColor=0x1d2a4d
+ProgressBarForegroundColor=0x6fd6ff
+MessageBelowAnimation=true
+UseFirmwareBackground=false

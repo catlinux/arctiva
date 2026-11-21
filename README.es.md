@@ -12,6 +12,8 @@ Arctiva es un proyecto independiente, sin relación oficial con Arch Linux ni re
 
 ## Estado
 
+**Fase 5 terminada (0.6.0):** aspecto propio de Arctiva: escritorio al estilo de Windows (barra de tareas centrada, menú de inicio con buscador), modos claro y oscuro, fondo «Órbita», tema de GRUB y pantalla de arranque con Plymouth, página «Personalización» en Arctiva Center con «Restaurar el aspecto de Arctiva», tipografía Outfit y límite de instantáneas. Probada con una instalación cifrada completa en una máquina virtual.
+
 **Fase 4 terminada (0.5.0):** una ISO live con KDE Plasma y un instalador gráfico (Calamares) con perfiles Básico, Juegos y Oficina, Btrfs con instantáneas arrancables, cifrado opcional e instalación junto a Windows, probado en máquinas virtuales. El sistema instalado se actualiza desde un repositorio propio firmado (`[arctiva]`) e instala los controladores de la gráfica. Arctiva Center tiene bienvenida, actualizaciones, controladores y extras, probados con una instalación cifrada completa. Aún no hay ISO para descargar: se puede construir desde el código (ver la guía de desarrollo). La arquitectura está aprobada (decisiones D-01…D-16).
 
 - [Arquitectura y decisiones](docs/es/arquitectura.md)
@@ -46,3 +48,6 @@ Las copias y los forks deben conservar esta atribución y enlazar a https://gith
 
 - `packages/calamares` compila [Calamares](https://calamares.io) (GPL-3.0-or-later, © los autores de Calamares) y `packages/ckbcomp` empaqueta `ckbcomp` de [console-setup](https://salsa.debian.org/installer-team/console-setup) (GPL-2.0-or-later, © Anton Zinoviev). Los PKGBUILD son GPL-3.0-or-later.
 - `iso/` deriva del perfil `releng` de [archiso](https://gitlab.archlinux.org/archlinux/archiso) 92 (GPL-3.0-or-later, © los autores de archiso); los archivos adaptados y copiados conservan esa licencia.
+- `packages/arctiva-branding/files/color-schemes/ArctivaLight.colors` deriva de `BreezeLight.colors` de [Breeze](https://invent.kde.org/plasma/breeze) (LGPL-2.0-or-later, © los autores de KDE) y conserva esa licencia.
+- Los temas de Plymouth de `arctiva-branding` usan las imágenes del diálogo de contraseña (`lock`, `entry`, `bullet`, `capslock`, `keyboard`, `keymap-render`) del tema `spinner` de [Plymouth](https://www.freedesktop.org/wiki/Software/Plymouth/) (GPL-2.0-or-later, © los autores de Plymouth), copiadas del paquete `plymouth` al compilar `arctiva-branding`.
+- `branding/fonts/` contiene [Outfit](https://github.com/Outfitio/Outfit-Fonts) (SIL Open Font License 1.1, © The Outfit Project Authors); su licencia está en `branding/fonts/OFL.txt`. El lema del logotipo es esa fuente convertida a trazos.

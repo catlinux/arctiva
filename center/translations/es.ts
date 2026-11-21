@@ -23,6 +23,10 @@
         <source>Extras</source>
         <translation>Extras</translation>
     </message>
+    <message>
+        <source>Personalization</source>
+        <translation>Personalización</translation>
+    </message>
 </context>
 <context>
     <name>UpdatesPage</name>
@@ -394,6 +398,129 @@
     <message>
         <source>Show this welcome when logging in</source>
         <translation>Mostrar esta bienvenida al iniciar sesión</translation>
+    </message>
+    <message>
+        <source>Make it yours</source>
+        <translation>Hazlo tuyo</translation>
+    </message>
+    <message>
+        <source>Light or dark mode, accent colour, wallpaper, taskbar position and text size, all in one page.</source>
+        <translation>Modo claro u oscuro, color de acento, fondo de pantalla, posición de la barra y tamaño del texto, todo en una página.</translation>
+    </message>
+    <message>
+        <source>Open Personalization</source>
+        <translation>Abrir Personalización</translation>
+    </message>
+</context>
+<context>
+    <name>PersonalizationPage</name>
+    <message>
+        <source>Small</source>
+        <translation>Pequeño</translation>
+    </message>
+    <message>
+        <source>Normal</source>
+        <translation>Normal</translation>
+    </message>
+    <message>
+        <source>Large</source>
+        <translation>Grande</translation>
+    </message>
+    <message>
+        <source>Very large</source>
+        <translation>Muy grande</translation>
+    </message>
+    <message>
+        <source>Choose a wallpaper</source>
+        <translation>Elegir un fondo de pantalla</translation>
+    </message>
+    <message>
+        <source>Images (*.png *.jpg *.jpeg *.webp *.svg)</source>
+        <translation>Imágenes (*.png *.jpg *.jpeg *.webp *.svg)</translation>
+    </message>
+    <message>
+        <source>Restore the Arctiva look</source>
+        <translation>Restaurar el aspecto de Arctiva</translation>
+    </message>
+    <message>
+        <source>The theme, the taskbar, the wallpaper, the accent colour and the text size go back to how they were when Arctiva was installed. Your files and programs are not touched.</source>
+        <translation>El tema, la barra de tareas, el fondo de pantalla, el color de acento y el tamaño del texto vuelven a como estaban al instalar Arctiva. Tus archivos y programas no se tocan.</translation>
+    </message>
+    <message>
+        <source>Restore</source>
+        <translation>Restaurar</translation>
+    </message>
+    <message>
+        <source>Some changes could not be applied. This page works inside the Arctiva desktop session.</source>
+        <translation>No se han podido aplicar algunos cambios. Esta página funciona dentro de la sesión del escritorio de Arctiva.</translation>
+    </message>
+    <message>
+        <source>Appearance</source>
+        <translation>Aspecto</translation>
+    </message>
+    <message>
+        <source>Light</source>
+        <translation>Claro</translation>
+    </message>
+    <message>
+        <source>Dark</source>
+        <translation>Oscuro</translation>
+    </message>
+    <message>
+        <source>Automatic</source>
+        <translation>Automático</translation>
+    </message>
+    <message>
+        <source>Accent colour</source>
+        <translation>Color de acento</translation>
+    </message>
+    <message>
+        <source>Wallpaper</source>
+        <translation>Fondo de pantalla</translation>
+    </message>
+    <message>
+        <source>Arctiva wallpaper</source>
+        <translation>Fondo de Arctiva</translation>
+    </message>
+    <message>
+        <source>Choose image…</source>
+        <translation>Elegir imagen…</translation>
+    </message>
+    <message>
+        <source>Taskbar</source>
+        <translation>Barra de tareas</translation>
+    </message>
+    <message>
+        <source>Centre the applications</source>
+        <translation>Centrar las aplicaciones</translation>
+    </message>
+    <message>
+        <source>Floating bar</source>
+        <translation>Barra flotante</translation>
+    </message>
+    <message>
+        <source>To move or add things on the bar, right-click it and choose Enter Edit Mode.</source>
+        <translation>Para mover o añadir cosas en la barra, haz clic derecho sobre ella y elige «Entrar en modo edición».</translation>
+    </message>
+    <message>
+        <source>Screen</source>
+        <translation>Pantalla</translation>
+    </message>
+    <message>
+        <source>Text size</source>
+        <translation>Tamaño del texto</translation>
+    </message>
+    <message>
+        <source>Display scale</source>
+        <translation>Escala de la pantalla</translation>
+    </message>
+    <message>
+        <source>Night light</source>
+        <translation>Luz nocturna</translation>
+    </message>
+    <message>
+        <source>Advanced settings</source>
+        <translation>Configuración avanzada</translation>
     </message>
 </context>
 </TS>

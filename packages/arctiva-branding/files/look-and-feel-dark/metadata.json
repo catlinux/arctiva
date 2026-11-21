@@ -1,0 +1,14 @@
+{
+    "KPackageStructure": "Plasma/LookAndFeel",
+    "KPlugin": {
+        "Authors": [{"Name": "CatLinux"}],
+        "Category": "",
+        "Description": "Arctiva: dark variant",
+        "Description[es]": "Arctiva: variante oscura",
+        "Id": "org.arctiva.desktop.dark",
+        "Name": "Arctiva Dark",
+        "Website": "https://github.com/catlinux/arctiva"
+    },
+    "Keywords": "Desktop;Workspace;Appearance;Look and Feel;Arctiva;",
+    "X-Plasma-APIVersion": "2"
+}

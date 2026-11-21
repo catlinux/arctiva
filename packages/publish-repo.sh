@@ -46,9 +46,9 @@ build_dir="$work/src"; mkdir -- "$build_dir"
 cp -a -- "$repo_dir"/packages/arctiva-* "$build_dir/"
 # El código de arctiva-center vive en center/ (su PKGBUILD lo busca en ../center).
 cp -a -- "$repo_dir/center" "$build_dir/center"
-# arctiva-branding toma el logo de ../branding/logo.
+# arctiva-branding toma el logo y los fondos de ../branding.
 mkdir -- "$build_dir/branding"
-cp -a -- "$repo_dir/branding/logo" "$build_dir/branding/logo"
+cp -a -- "$repo_dir/branding/." "$build_dir/branding/"
 chown -R arctivabuild: "$build_dir"
 
 # Los arctiva-* que dependen de otros (arctiva-center) los toman de la base ya publicada, verificada

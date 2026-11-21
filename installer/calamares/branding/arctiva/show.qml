@@ -19,6 +19,10 @@ Item {
           texto: { es: "Antes de cada actualización Arctiva guarda una instantánea del sistema. Si después algo no va, elige una anterior en el menú de arranque.",
                    ca: "Abans de cada actualització Arctiva desa una instantània del sistema. Si després alguna cosa no va, tria'n una d'anterior al menú d'arrencada.",
                    en: "Before every update Arctiva saves a snapshot of the system. If something stops working, pick an earlier one from the boot menu." } },
+        { titulo: { es: "Hazlo tuyo", ca: "Fes-ho teu", en: "Make it yours" },
+          texto: { es: "En Arctiva Center, página «Personalización», cambias el modo claro u oscuro, el color, el fondo y la barra de tareas. Y con «Restaurar» vuelves al aspecto original.",
+                   ca: "A Arctiva Center, pàgina «Personalització», canvies el mode clar o fosc, el color, el fons i la barra de tasques. I amb «Restaurar» tornes a l'aspecte original.",
+                   en: "In Arctiva Center, on the Personalization page, you change light or dark mode, the colour, the wallpaper and the taskbar. And \"Restore\" takes you back to the original look." } },
         { titulo: { es: "El escritorio que ya conoces", ca: "L'escriptori que ja coneixes", en: "The desktop you already know" },
           texto: { es: "KDE Plasma, el mismo que estás usando ahora, con tus ajustes de idioma, teclado y zona horaria.",
                    ca: "KDE Plasma, el mateix que fas servir ara, amb els teus ajustos d'idioma, teclat i zona horària.",
@@ -73,6 +77,7 @@ Item {
             horizontalAlignment: Text.AlignHCenter
             text: A.t(presentacion.diapositivas[presentacion.actual], "titulo", presentacion.idioma)
             color: "#ffffff"
+            font.family: A.marca
             font.pixelSize: 30
             font.bold: true
             wrapMode: Text.WordWrap

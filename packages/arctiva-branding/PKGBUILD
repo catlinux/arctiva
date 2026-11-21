@@ -1,21 +1,23 @@
 # SPDX-License-Identifier: GPL-3.0-or-later
 # Maintainer: CatLinux
-# Identidad visual de Arctiva en el sistema instalado: icono de la distribución y «Acerca de» de Plasma.
+# Identidad visual de Arctiva en el sistema instalado: icono de la distribución, «Acerca de» de Plasma y fondos de pantalla,
+# esquema de color, tema global «Arctiva» (escritorio tipo Windows 11) tema de GRUB y temas de Plymouth.
 pkgname=arctiva-branding
-pkgver=0.1.0
+pkgver=0.6.1
 pkgrel=1
-pkgdesc='Logo e identidad visual de Arctiva'
+pkgdesc='Logo, fondos e identidad visual de Arctiva'
 arch=(any)
 url='https://github.com/catlinux/arctiva'
 license=(GPL-3.0-or-later)
-depends=(hicolor-icon-theme)
+depends=(hicolor-icon-theme plasma-workspace breeze)
+makedepends=(librsvg grub python-fonttools plymouth)
 
-prepare() {
-    # build-packages.sh deja el logo en ../branding/logo; en el repositorio está en ../../branding/logo.
+# build-packages.sh deja branding/ en ../branding; en el repositorio está en ../../branding.
+_branding() {
     local d
-    for d in "$startdir/../branding/logo" "$startdir/../../branding/logo"; do
-        if [[ -e "$d/arctiva-mark.svg" ]]; then
-            cp -- "$d/arctiva-mark.svg" "$srcdir/arctiva.svg"
+    for d in "$startdir/../branding" "$startdir/../../branding"; do
+        if [[ -e "$d/logo/arctiva-mark.svg" ]]; then
+            echo "$d"
             return
         fi
     done
@@ -23,8 +25,82 @@ prepare() {
     return 1
 }
 
+prepare() {
+    local b
+    b="$(_branding)"
+    cp -- "$b/logo/arctiva-mark.svg" "$srcdir/arctiva.svg"
+    cp -- "$b"/wallpapers/*.svg "$srcdir/"
+    cp -r -- "$b" "$srcdir/branding"
+}
+
+# 16:9 en tres tamaños y 16:10 en uno; Plasma elige el más cercano a la pantalla.
+build() {
+    cd "$srcdir"
+    local mode
+    for mode in light dark; do
+        mkdir -p "png-$mode"
+        rsvg-convert -w 1920 -h 1080 "orbita-$mode-16x9.svg" -o "png-$mode/1920x1080.png"
+        rsvg-convert -w 2560 -h 1440 "orbita-$mode-16x9.svg" -o "png-$mode/2560x1440.png"
+        rsvg-convert -w 3840 -h 2160 "orbita-$mode-16x9.svg" -o "png-$mode/3840x2160.png"
+        rsvg-convert -w 1920 -h 1200 "orbita-$mode-16x10.svg" -o "png-$mode/1920x1200.png"
+    done
+    # Plymouth (two-step) no muestra nada si faltan las imágenes del diálogo de contraseña: se
+    # copian del tema spinner de plymouth (GPL-2.0-or-later, registradas en los README). Los
+    # fotogramas `animation-` repiten los `throbber-` propios.
+    local theme img
+    for theme in arctiva arctiva-logo; do
+        mkdir -p "$srcdir/plymouth-$theme"
+        cp -- "$srcdir/branding/plymouth/$theme"/* "$srcdir/plymouth-$theme/"
+        for img in lock entry bullet capslock keyboard keymap-render; do
+            cp -- "/usr/share/plymouth/themes/spinner/$img.png" "$srcdir/plymouth-$theme/"
+        done
+        for img in "$srcdir/branding/plymouth/$theme"/throbber-*.png; do
+            cp -- "$img" "$srcdir/plymouth-$theme/animation-${img##*throbber-}"
+        done
+    done
+    # Tema de GRUB: fondo, logo, iconos y fuentes .pf2 (D-13).
+    bash "$srcdir/branding/grub/build-theme.sh" "$srcdir/branding" "$srcdir/grub-theme"
+}
+
 package() {
     install -Dm644 "$srcdir/arctiva.svg" "$pkgdir/usr/share/icons/hicolor/scalable/apps/arctiva.svg"
     install -Dm644 "$srcdir/arctiva.svg" "$pkgdir/usr/share/pixmaps/arctiva.svg"
     install -Dm644 "$startdir/files/kcm-about-distrorc" "$pkgdir/etc/xdg/kcm-about-distrorc"
+
+    # Tipografía corporativa (SIL OFL 1.1): la usan el instalador, Arctiva Center y los temas.
+    install -Dm644 "$srcdir/branding/fonts/Outfit[wght].ttf" "$pkgdir/usr/share/fonts/TTF/Outfit-Variable.ttf"
+    install -Dm644 "$srcdir/branding/fonts/OFL.txt" "$pkgdir/usr/share/licenses/$pkgname/OFL-Outfit.txt"
+
+    # Fondo «Órbita»: images/ (claro) e images_dark/ (oscuro, Plasma 6.1 o posterior).
+    local w="$pkgdir/usr/share/wallpapers/Arctiva"
+    install -Dm644 "$startdir/files/wallpaper-metadata.json" "$w/metadata.json"
+    install -Dm644 -t "$w/contents/images" "$srcdir"/png-light/*.png
+    install -Dm644 -t "$w/contents/images_dark" "$srcdir"/png-dark/*.png
+
+    # Tema de GRUB. La instalación lo copia a /boot/grub/themes (prepare-target) porque GRUB lee
+    # de ahí; esta copia es la fuente que refresca el hook arctiva-grub-theme.hook de arctiva-settings.
+    install -d "$pkgdir/usr/share/grub/themes/arctiva"
+    cp -r --no-preserve=mode,ownership "$srcdir/grub-theme/." "$pkgdir/usr/share/grub/themes/arctiva/"
+    find "$pkgdir/usr/share/grub/themes/arctiva" -type d -exec chmod 755 {} +
+    find "$pkgdir/usr/share/grub/themes/arctiva" -type f -exec chmod 644 {} +
+
+    # Plymouth: «arctiva» (logo del fabricante, BGRT) y «arctiva-logo» (sin BGRT); prepare-target
+    # elige uno según el firmware.
+    local theme
+    for theme in arctiva arctiva-logo; do
+        install -Dm644 -t "$pkgdir/usr/share/plymouth/themes/$theme"             "$srcdir/plymouth-$theme"/*
+    done
+
+    # Esquema de color claro propio (el oscuro es Breeze Dark) y tema global.
+    install -Dm644 "$startdir/files/color-schemes/ArctivaLight.colors"         "$pkgdir/usr/share/color-schemes/ArctivaLight.colors"
+    local lnf="$pkgdir/usr/share/plasma/look-and-feel/org.arctiva.desktop"
+    mkdir -p "$lnf"
+    cp -r --no-preserve=mode,ownership "$startdir/files/look-and-feel/." "$lnf/"
+    install -Dm644 "$srcdir/arctiva.svg" "$lnf/contents/splash/images/arctiva.svg"
+    # Variante oscura (sin disposición ni pantalla de bienvenida propias): la usa el modo automático.
+    local dark="$pkgdir/usr/share/plasma/look-and-feel/org.arctiva.desktop.dark"
+    install -Dm644 "$startdir/files/look-and-feel-dark/metadata.json" "$dark/metadata.json"
+    install -Dm644 "$startdir/files/look-and-feel-dark/contents/defaults" "$dark/contents/defaults"
+    find "$lnf" -type d -exec chmod 755 {} +
+    find "$lnf" -type f -exec chmod 644 {} +
 }

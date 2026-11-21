@@ -1,0 +1,20 @@
+#!/usr/bin/env bash
+# SPDX-License-Identifier: GPL-3.0-or-later
+# Copia el tema de GRUB de arctiva-branding a /boot/grub/themes/arctiva (hook arctiva-grub-theme.hook).
+# GRUB lee el tema de /boot, no de /usr/share, y debe leerlo sin huecos (cp --sparse=never).
+# Si el sistema no usa el tema (no hay /boot/grub/themes/arctiva), no hace nada.
+set -uo pipefail
+
+src=/usr/share/grub/themes/arctiva
+dest=/boot/grub/themes/arctiva
+[[ -d "$src" && -d "$dest" ]] || exit 0
+
+tmp="${dest}.arctiva-tmp"
+rm -rf -- "$tmp"
+if cp -r --sparse=never --no-preserve=ownership -- "$src" "$tmp"; then
+    rm -rf -- "$dest"
+    mv -- "$tmp" "$dest"
+else
+    rm -rf -- "$tmp"
+    echo "arctiva-grub-theme: no se ha podido copiar el tema; se deja el anterior."
+fi

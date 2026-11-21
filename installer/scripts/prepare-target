@@ -34,6 +34,34 @@ for pkgbase_file in "${root}"/usr/lib/modules/*/pkgbase; do
 done
 (( found )) || { echo "prepare-target: no hay ningún kernel en /usr/lib/modules." >&2; exit 1; }
 
+# Tema de GRUB (arctiva-branding): GRUB lo lee de /boot/grub/themes, no de /usr/share. Copia sin
+# huecos por la misma razón que el kernel (ver dense_copy).
+theme_src="${root}/usr/share/grub/themes/arctiva"
+if [[ -d "$theme_src" ]]; then
+    rm -rf -- "${root}/boot/grub/themes/arctiva"
+    install -d -m755 -- "${root}/boot/grub/themes"
+    cp -r --sparse=never --no-preserve=ownership -- "$theme_src" "${root}/boot/grub/themes/arctiva"
+    echo "Tema de GRUB copiado a /boot/grub/themes/arctiva"
+else
+    echo "prepare-target: arctiva-branding no trae el tema de GRUB; el menú saldrá sin tema." >&2
+fi
+
+# Plymouth: con logo del fabricante (BGRT) si el firmware lo expone; si no, logo de Arctiva
+# centrado. Se decide aquí, antes de initcpio, porque el tema entra en el initramfs.
+if [[ -e /sys/firmware/acpi/bgrt/image ]]; then
+    ply_theme=arctiva
+else
+    ply_theme=arctiva-logo
+fi
+install -d -m755 -- "${root}/etc/plymouth"
+cat >"${root}/etc/plymouth/plymouthd.conf" <<CONF
+[Daemon]
+Theme=${ply_theme}
+ShowDelay=0
+DeviceTimeout=8
+CONF
+echo "Tema de Plymouth: ${ply_theme}"
+
 # Paquetes que solo sirven en la live. -s quita también sus dependencias huérfanas (kpmcore, ckbcomp…).
 # Discover tampoco va en el sistema instalado (D-07): la tienda será la de Arctiva Center.
 live_only=(arctiva-calamares-config calamares mkinitcpio-archiso discover)

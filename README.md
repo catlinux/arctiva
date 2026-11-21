@@ -12,6 +12,8 @@ Arctiva is an independent project. It is not affiliated with or endorsed by Arch
 
 ## Status
 
+**Phase 5 completed (0.6.0):** Arctiva's own look: a Windows-style desktop (centred taskbar, start menu with search), light and dark modes, the "Orbit" wallpaper, a GRUB theme and a Plymouth boot screen, a "Personalization" page in Arctiva Center with "Restore the Arctiva look", the Outfit typeface and snapshot limits. Tested in a full encrypted install in a virtual machine.
+
 **Phase 4 completed (0.5.0):** a live ISO with KDE Plasma and a graphical installer (Calamares) with Basic, Gaming and Office profiles, Btrfs with bootable snapshots, optional encryption and installation alongside Windows, tested in virtual machines. The installed system updates from a signed in-house repository (`[arctiva]`) and installs the graphics drivers. Arctiva Center has the welcome screen, updates, drivers and extras, tested with a full encrypted install. There is no ISO to download yet: it can be built from the source (see the development guide). The architecture is approved (decisions D-01…D-16).
 
 - [Architecture and decisions](docs/en/architecture.md)
@@ -46,3 +48,6 @@ Copies and forks must keep this attribution and link to https://github.com/catli
 
 - `packages/calamares` builds [Calamares](https://calamares.io) (GPL-3.0-or-later, © the Calamares authors) and `packages/ckbcomp` packages `ckbcomp` from [console-setup](https://salsa.debian.org/installer-team/console-setup) (GPL-2.0-or-later, © Anton Zinoviev). The PKGBUILDs are GPL-3.0-or-later.
 - `iso/` is derived from the `releng` profile of [archiso](https://gitlab.archlinux.org/archlinux/archiso) 92 (GPL-3.0-or-later, © the archiso authors); adapted and copied files keep that licence.
+- `packages/arctiva-branding/files/color-schemes/ArctivaLight.colors` derives from `BreezeLight.colors` of [Breeze](https://invent.kde.org/plasma/breeze) (LGPL-2.0-or-later, © the KDE authors) and keeps that licence.
+- The Plymouth themes in `arctiva-branding` use the password-dialog images (`lock`, `entry`, `bullet`, `capslock`, `keyboard`, `keymap-render`) of the `spinner` theme of [Plymouth](https://www.freedesktop.org/wiki/Software/Plymouth/) (GPL-2.0-or-later, © the Plymouth authors), copied from the `plymouth` package when `arctiva-branding` is built.
+- `branding/fonts/` contains [Outfit](https://github.com/Outfitio/Outfit-Fonts) (SIL Open Font License 1.1, © The Outfit Project Authors); its licence is in `branding/fonts/OFL.txt`. The tagline of the logo is that font converted to paths.
