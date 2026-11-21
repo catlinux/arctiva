@@ -1,0 +1,10 @@
+[Trigger]
+Operation = Install
+Operation = Upgrade
+Type = Package
+Target = filesystem
+
+[Action]
+Description = Restaurando la identidad de Arctiva en os-release...
+When = PostTransaction
+Exec = /usr/lib/arctiva/update-os-release

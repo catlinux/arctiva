@@ -15,7 +15,6 @@ Trabajo pendiente agrupado por prioridad. Fases y decisiones: [hoja de ruta](doc
 ## Media: fase 2 (instalador)
 
 - [ ] Al arrancar una instantánea falla `systemd-remount-fs` (fstab pide `subvol=/@` y la raíz es un overlay de grub-btrfs). No impide arrancar; valorar ocultarlo.
-- [ ] `/etc/os-release` dice «Arch Linux»: lo cambiará el paquete de identidad de Arctiva (`arctiva-branding`/`arctiva-settings`).
 - [ ] Que el instalador elija mirrors rápidos (`reflector`) antes de `pacman -Syu`: el sistema instalado se queda con todos los mirrors HTTPS en el orden por defecto.
 - [ ] Avisar en la página de resumen si la raíz no es Btrfs (modo manual): no habrá instantáneas.
 - [ ] Las páginas QML del instalador llevan sus textos en castellano, catalán e inglés dentro del propio QML; pasarlos a traducciones del branding (`.ts`) para poder añadir más idiomas.
@@ -26,7 +25,7 @@ Trabajo pendiente agrupado por prioridad. Fases y decisiones: [hoja de ruta](doc
 - [ ] «Instalar junto a» solo aparece si el disco puede dar 40 GiB a Arctiva (el requisito de la bienvenida): en un disco de 60 GB con Windows no hay esa opción. Valorar bajar el requisito a lo que el sistema necesita de verdad (unos 25 GiB con perfiles) y volver a probar.
 - [ ] ISO más ligera: la base ya es ajustada (instalada 4,3 GiB, ISO 1,76 GiB de los 1,9 permitidos). Lo mayor: `firefox` 307 MiB, `qt6-webengine` 284 MiB (lo pide `purpose`→`kaccounts`, que usan Spectacle y Gwenview), `llvm-libs` 165 MiB (Mesa), `linux-firmware-*` ~430 MiB (Intel 142, NVIDIA 104, Atheros 53, MediaTek 37, AMDGPU 28), `noto-fonts` 107 MiB. La única palanca real es instalar solo el firmware que pida el hardware detectado (fase 3).
 - [ ] Tras cambiar de idioma en la bienvenida, los textos de los requisitos siguen en el idioma en que se comprobaron (Calamares los genera antes de elegir): repetir la comprobación o traducirlos en la página.
-- [ ] Pasar `zram-generator.conf` de `iso/airootfs/` al paquete `arctiva-settings` cuando exista.
+- [ ] Fondos de pantalla: `arctiva-branding` aún no los lleva; falta diseñarlos.
 
 ## Media: estudios
 

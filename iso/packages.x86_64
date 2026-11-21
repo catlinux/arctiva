@@ -110,7 +110,11 @@ firefox-i18n-ca
 noto-fonts
 noto-fonts-emoji
 
-# Instalador (paquetes propios de packages/ e installer/, repositorio arctiva-local).
+# Arctiva (paquetes propios de packages/, repositorio arctiva-local). Se quedan en el sistema instalado.
+arctiva-settings
+arctiva-branding
+
+# Instalador (paquetes propios de packages/ e installer/, repositorio arctiva-local). de packages/ e installer/, repositorio arctiva-local).
 # Se quitan del sistema instalado.
 calamares
 arctiva-calamares-config

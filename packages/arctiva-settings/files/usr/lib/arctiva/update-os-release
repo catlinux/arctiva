@@ -1,0 +1,23 @@
+#!/bin/sh
+# SPDX-License-Identifier: GPL-3.0-or-later
+# Reescribe /usr/lib/os-release con la identidad de Arctiva. El archivo es del paquete `filesystem`
+# y cada actualización suyo lo restaura: lo ejecuta el hook arctiva-os-release.hook.
+set -eu
+dest="${ARCTIVA_OS_RELEASE:-/usr/lib/os-release}"
+tmp="${dest}.arctiva.$$"
+trap 'rm -f -- "$tmp"' EXIT
+cat >"$tmp" <<'OSR'
+NAME="Arctiva"
+PRETTY_NAME="Arctiva"
+ID=arctiva
+ID_LIKE=arch
+BUILD_ID=rolling
+ANSI_COLOR="38;2;61;134;255"
+HOME_URL="https://github.com/catlinux/arctiva"
+DOCUMENTATION_URL="https://github.com/catlinux/arctiva"
+SUPPORT_URL="https://github.com/catlinux/arctiva"
+BUG_REPORT_URL="https://github.com/catlinux/arctiva/issues"
+LOGO=arctiva
+OSR
+chmod 644 "$tmp"
+mv -f -- "$tmp" "$dest"

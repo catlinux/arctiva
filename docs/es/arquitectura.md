@@ -31,7 +31,9 @@ Lo que **no** es realista y no se promete:
 ### D-01 Base: Arch sin modificar y repositorio propio mínimo (**Aprobada**)
 
 - Repositorios oficiales `core`, `extra` y `multilib` sin cambios ni retrasos. Pacman sigue siendo el único gestor de paquetes del sistema.
-- Repositorio `[arctiva]` firmado con GPG y alojado en GitHub, con paquetes propios (`arctiva-settings`, `arctiva-branding`, `arctiva-keyring`, `arctiva-center`, configuración de Calamares) y compilaciones de lo imprescindible que solo está en el AUR (`calamares`, `ckbcomp`).
+- Repositorio `[arctiva]` firmado con GPG, con solo lo que usa el sistema instalado: `arctiva-keyring`, `arctiva-settings`, `arctiva-branding`, `arctiva-hardware` y, más adelante, `arctiva-center`. Se aloja en un repositorio público aparte (`catlinux/arctiva-repo`), como archivos de una release fija: el repositorio principal es privado y un sistema instalado no puede leer de él. Cómo se firma: [firma.md](firma.md).
+- `calamares`, `ckbcomp` y la configuración del instalador solo sirven en la ISO: se compilan en local en cada construcción (contra la fecha del Archive de la ISO) y se quitan del sistema instalado.
+- `/etc/os-release` es del paquete `filesystem`, que no se reempaqueta: `arctiva-settings` lleva un hook de pacman que lo reescribe tras cada actualización de `filesystem`.
 - Prohibido: reempaquetar o retener paquetes oficiales. Si un paquete oficial se rompe, se mitiga con avisos e instantáneas, no con un fork.
 
 ### D-02 Construcción de la ISO: archiso (**Aprobada**)
@@ -132,7 +134,7 @@ Detección con `lspci` y un archivo de correspondencias (familia → paquetes), 
 |---|---|
 | AMD Radeon (GCN en adelante) | `mesa`, `vulkan-radeon`, `lib32-mesa`, `lib32-vulkan-radeon` |
 | Intel integradas y Arc | `mesa`, `vulkan-intel`, `intel-media-driver`, versiones `lib32` |
-| NVIDIA Turing y posteriores (GTX 16, RTX 20+) | `nvidia-open` y `nvidia-open-lts` (módulos precompilados para los dos kernels), `nvidia-utils`, `lib32-nvidia-utils`, KMS temprano |
+| NVIDIA Turing y posteriores (GTX 16, RTX 20+; id de dispositivo PCI `>= 0x1E00`) | `nvidia-open` y `nvidia-open-lts` (módulos precompilados para los dos kernels), `nvidia-utils`, `lib32-nvidia-utils`, KMS temprano |
 | NVIDIA Pascal/Maxwell (GTX 10/900) | Desde diciembre de 2025 el controlador 580xx solo está en el AUR. **No se instala automáticamente**: se usa `nouveau` y se avisa al usuario con las opciones |
 | Portátiles híbridos | `switcheroo-control` e integración de Plasma para lanzar con la gráfica dedicada |
 
@@ -216,7 +218,7 @@ Para mantenerla por debajo de 2 GiB: Plasma con una selección de paquetes en lu
 | Nombre y logo frente a otras marcas | Bajo | Nombre sin «Arch», logo propio, revisión antes de la 1.0 |
 | Seguridad del AUR | Medio | Desactivado por defecto, separado, con avisos y con diff del PKGBUILD en cada actualización |
 | Coste de construir la tienda propia | Medio | Comparte el ayudante, el traductor de errores y el flujo de D-08; prueba de concepto antes de la fase 5 |
-| Claves de firma del repositorio | Alto | Clave maestra fuera de línea; subclave de firma en secretos de Actions |
+| Claves de firma del repositorio | Alto | Clave maestra fuera de línea; subclave de firma en secretos de Actions ([guía](firma.md)) |
 | Pruebas en VirtualBox poco representativas (3D, Wayland) | Medio | Pruebas en hardware real con USB live antes de cada versión |
 
 ## 6. Requisitos de hardware

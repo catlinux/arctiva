@@ -15,7 +15,6 @@ Pending work grouped by priority. Phases and decisions: [roadmap](docs/en/roadma
 ## Medium — phase 2 (installer)
 
 - [ ] Booting a snapshot fails `systemd-remount-fs` (fstab asks for `subvol=/@` and the root is a grub-btrfs overlay). It still boots; consider hiding it.
-- [ ] `/etc/os-release` says "Arch Linux": the Arctiva identity package (`arctiva-branding`/`arctiva-settings`) will change it.
 - [ ] Have the installer pick fast mirrors (`reflector`) before `pacman -Syu`: the installed system keeps every HTTPS mirror in the default order.
 - [ ] Warn on the summary page when the root is not Btrfs (manual mode): there will be no snapshots.
 - [ ] The installer's QML pages carry their texts in Spanish, Catalan and English inside the QML itself; move them to branding translations (`.ts`) so more languages can be added.
@@ -26,7 +25,7 @@ Pending work grouped by priority. Phases and decisions: [roadmap](docs/en/roadma
 - [ ] "Install alongside" only appears when the disk can give Arctiva 40 GiB (the welcome page requirement): on a 60 GB disk with Windows there is no such option. Consider lowering the requirement to what the system really needs (about 25 GiB with profiles) and re-test.
 - [ ] Lighter ISO: the base is already lean (installed 4.3 GiB, ISO 1.76 GiB of the 1.9 limit). Biggest items: `firefox` 307 MiB, `qt6-webengine` 284 MiB (needed by `purpose`→`kaccounts`, used by Spectacle and Gwenview), `llvm-libs` 165 MiB (Mesa), `linux-firmware-*` ~430 MiB (Intel 142, NVIDIA 104, Atheros 53, MediaTek 37, AMDGPU 28), `noto-fonts` 107 MiB. The only real lever is installing only the firmware that the detected hardware needs (phase 3).
 - [ ] After switching language on the welcome page, the requirement texts stay in the language they were checked in (Calamares builds them before the choice): re-run the check or translate them in the page.
-- [ ] Move `zram-generator.conf` from `iso/airootfs/` to the `arctiva-settings` package when it exists.
+- [ ] Wallpapers: `arctiva-branding` ships no wallpapers yet; they need a design.
 
 ## Medium — studies
 

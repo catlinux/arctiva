@@ -1,0 +1,30 @@
+# SPDX-License-Identifier: GPL-3.0-or-later
+# Maintainer: CatLinux
+# Identidad visual de Arctiva en el sistema instalado: icono de la distribución y «Acerca de» de Plasma.
+pkgname=arctiva-branding
+pkgver=0.1.0
+pkgrel=1
+pkgdesc='Logo e identidad visual de Arctiva'
+arch=(any)
+url='https://github.com/catlinux/arctiva'
+license=(GPL-3.0-or-later)
+depends=(hicolor-icon-theme)
+
+prepare() {
+    # build-packages.sh deja el logo en ../branding/logo; en el repositorio está en ../../branding/logo.
+    local d
+    for d in "$startdir/../branding/logo" "$startdir/../../branding/logo"; do
+        if [[ -e "$d/arctiva-mark.svg" ]]; then
+            cp -- "$d/arctiva-mark.svg" "$srcdir/arctiva.svg"
+            return
+        fi
+    done
+    echo 'arctiva-branding: no se encuentra branding/logo/arctiva-mark.svg' >&2
+    return 1
+}
+
+package() {
+    install -Dm644 "$srcdir/arctiva.svg" "$pkgdir/usr/share/icons/hicolor/scalable/apps/arctiva.svg"
+    install -Dm644 "$srcdir/arctiva.svg" "$pkgdir/usr/share/pixmaps/arctiva.svg"
+    install -Dm644 "$startdir/files/kcm-about-distrorc" "$pkgdir/etc/xdg/kcm-about-distrorc"
+}

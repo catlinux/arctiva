@@ -8,6 +8,20 @@ El formato se basa en [Keep a Changelog](https://keepachangelog.com/es-ES/1.1.0/
 
 ## [Sin publicar]
 
+## [0.3.1] - 2026-11-21
+
+Fase 3, primer paso: los paquetes de identidad del sistema instalado. Versión de parche: no añade comportamiento al instalador.
+
+### Añadido
+
+- Paquete `arctiva-settings`: configuración de zram (movida desde la ISO), un hook de pacman que reescribe `/usr/lib/os-release` para que el sistema se identifique como Arctiva tras cada actualización de `filesystem`, y la configuración de `reflector`. El sistema instalado activa `reflector.timer`.
+- Paquete `arctiva-branding`: el logo de la distribución y la configuración de «Acerca de este sistema» de Plasma.
+- Guía de las claves de firma del repositorio ([docs/es/firma.md](docs/es/firma.md)).
+
+### Cambiado
+
+- D-01: `[arctiva]` solo contiene lo que usa el sistema instalado; `calamares`, `ckbcomp` y la configuración del instalador siguen solo en la ISO. D-10: la regla de NVIDIA es el id de dispositivo PCI (`>= 0x1E00`).
+
 ## [0.3.0] - 2026-11-21
 
 Fase 2 cerrada: el instalador está completo y probado en máquinas virtuales (UEFI, QEMU/KVM). Probado: borrar disco, con y sin cifrado; particionado manual (ESP propia y raíz Btrfs); «Instalar junto a» un Windows simulado (NTFS reducido, ESP reutilizada, `os-prober` añade Windows a GRUB); perfiles con y sin conexión. Las pruebas con Windows y hardware reales quedan para la fase 7.

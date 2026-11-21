@@ -1,0 +1,8 @@
+# SPDX-License-Identifier: GPL-3.0-or-later
+post_install() {
+    /usr/lib/arctiva/update-os-release
+}
+
+post_upgrade() {
+    /usr/lib/arctiva/update-os-release
+}
