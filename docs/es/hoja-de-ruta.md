@@ -72,7 +72,7 @@ Estado de cada trabajo: `[x]` hecho (con la versión en que se cerró) y `[ ]` p
 - [x] Actualizaciones (D-08): noticias que bloquean, paquetes delicados, `.pacnew`, errores traducidos (0.3.12)
 - [x] Evaluación de arch-update documentada
 - [x] Catálogo de extras (0.3.15)
-- [ ] GRUB reinstalado en la partición EFI al actualizar el paquete `grub`
+- [x] GRUB reinstalado en la partición EFI al actualizar el paquete `grub` (0.3.17)
 
 ### Fase 5: aplicaciones y Windows (0.6.0)
 

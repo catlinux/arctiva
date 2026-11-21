@@ -8,6 +8,15 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 
 ## [Unreleased]
 
+## [0.3.17] - 2026-11-21
+
+GRUB kept in sync on upgrades (phase 4, step 4.7). Patch release.
+
+### Added
+
+- `arctiva-settings` 0.2.0: pacman hook `arctiva-grub.hook` and `/usr/lib/arctiva/update-grub`. When the `grub` package is upgraded, GRUB is reinstalled on the EFI partition (`EFI/arctiva`) and `grub.cfg` is regenerated. The `EFI/Boot/BOOTX64.EFI` fallback copy is updated only if it is Arctiva's (another one, such as Windows', is left alone). If `grub-install` fails, `grub.cfg` is not regenerated and a clear message asks not to restart. Nothing happens on BIOS systems, without the EFI partition mounted or without `EFI/arctiva`.
+- `tests/update-grub-test.sh` (8 cases).
+
 ## [0.3.16] - 2026-11-21
 
 Arctiva Center welcome (phase 4, step 4.6). Patch release.

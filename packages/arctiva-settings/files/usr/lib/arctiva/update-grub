@@ -1,0 +1,50 @@
+#!/usr/bin/env bash
+# SPDX-License-Identifier: GPL-3.0-or-later
+# Reinstala GRUB en la partición EFI cuando se actualiza el paquete grub (hook arctiva-grub.hook).
+# pacman no lo hace: un grub.cfg generado por el GRUB nuevo con el grubx64.efi viejo puede dejar
+# el equipo sin arrancar. Si grub-install falla, no se regenera grub.cfg: el viejo sigue casando
+# con el .efi viejo.
+set -uo pipefail
+
+# Solo para las pruebas (tests/update-grub-test.sh), sin root: raíz falsa con /sys, /boot y la ESP.
+root=""
+(( EUID != 0 )) && root="${ARCTIVA_UPDATE_GRUB_ROOT:-}"
+esp="${root}/boot/efi"
+id=arctiva
+
+aviso() { echo "arctiva-grub: $*"; }
+
+if [[ ! -d "${root}/sys/firmware/efi" ]]; then
+    aviso "el equipo no arranca en modo UEFI: no se reinstala GRUB."
+    exit 0
+fi
+if ! mountpoint -q -- "$esp"; then
+    aviso "${esp} no está montada: no se ha reinstalado GRUB. Antes de reiniciar, móntala y ejecuta /usr/lib/arctiva/update-grub."
+    exit 0
+fi
+
+# FAT no distingue mayúsculas: los nombres se buscan sin distinguirlas.
+buscar() { find "${esp}/" -maxdepth 3 -type f -ipath "${esp}/$1" -print -quit 2>/dev/null; }
+nuestro="$(buscar "efi/${id}/grubx64.efi")"
+reserva="$(buscar "efi/boot/bootx64.efi")"
+
+if [[ -z "$nuestro" ]]; then
+    aviso "no hay EFI/${id}/grubx64.efi: este sistema no arranca con el GRUB de Arctiva y no se toca."
+    exit 0
+fi
+# La copia de reserva (EFI/Boot/BOOTX64.EFI) se actualiza solo si es la nuestra: si es otra (la de
+# Windows, por ejemplo), se deja como está. Se compara antes de instalar el nuevo.
+actualizar_reserva=0
+if [[ -n "$reserva" ]] && cmp -s -- "$nuestro" "$reserva"; then
+    actualizar_reserva=1
+fi
+
+if ! grub-install --target=x86_64-efi --efi-directory="$esp" --bootloader-id="$id"; then
+    aviso "ERROR: grub-install ha fallado y no se ha tocado grub.cfg. No reinicies hasta resolverlo: revisa el mensaje de arriba y vuelve a ejecutar /usr/lib/arctiva/update-grub."
+    exit 1
+fi
+if (( actualizar_reserva )); then
+    grub-install --target=x86_64-efi --efi-directory="$esp" --removable --no-nvram ||
+        aviso "no se ha podido actualizar la copia de reserva EFI/Boot/BOOTX64.EFI; el arranque normal no se ve afectado."
+fi
+grub-mkconfig -o "${root}/boot/grub/grub.cfg"

@@ -1,0 +1,10 @@
+[Trigger]
+Operation = Upgrade
+Type = Package
+Target = grub
+
+[Action]
+Description = Reinstalando GRUB en la partición EFI...
+When = PostTransaction
+Depends = grub
+Exec = /usr/lib/arctiva/update-grub

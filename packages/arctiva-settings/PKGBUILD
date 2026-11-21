@@ -2,9 +2,9 @@
 # Maintainer: CatLinux
 # Ajustes del sistema de Arctiva: zram, identidad en os-release y mirrors (reflector).
 pkgname=arctiva-settings
-pkgver=0.1.1
+pkgver=0.2.0
 pkgrel=1
-pkgdesc='Ajustes del sistema de Arctiva (zram, os-release, reflector)'
+pkgdesc='Ajustes del sistema de Arctiva (zram, os-release, reflector, GRUB)'
 arch=(any)
 url='https://github.com/catlinux/arctiva'
 license=(GPL-3.0-or-later)
@@ -18,6 +18,10 @@ package() {
     install -Dm755 usr/lib/arctiva/update-os-release "$pkgdir/usr/lib/arctiva/update-os-release"
     install -Dm644 usr/share/libalpm/hooks/arctiva-os-release.hook \
         "$pkgdir/usr/share/libalpm/hooks/arctiva-os-release.hook"
+    # Reinstala GRUB en la partición EFI cuando se actualiza el paquete grub (D-04).
+    install -Dm755 usr/lib/arctiva/update-grub "$pkgdir/usr/lib/arctiva/update-grub"
+    install -Dm644 usr/share/libalpm/hooks/arctiva-grub.hook \
+        "$pkgdir/usr/share/libalpm/hooks/arctiva-grub.hook"
     install -Dm644 etc/arctiva/reflector.conf "$pkgdir/etc/arctiva/reflector.conf"
     install -Dm644 etc/pacman.d/arctiva-mirrorlist "$pkgdir/etc/pacman.d/arctiva-mirrorlist"
     install -Dm644 usr/lib/systemd/system/reflector.service.d/arctiva.conf         "$pkgdir/usr/lib/systemd/system/reflector.service.d/arctiva.conf"
