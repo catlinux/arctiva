@@ -46,6 +46,9 @@ build_dir="$work/src"; mkdir -- "$build_dir"
 cp -a -- "$repo_dir"/packages/arctiva-* "$build_dir/"
 # El código de arctiva-center vive en center/ (su PKGBUILD lo busca en ../center).
 cp -a -- "$repo_dir/center" "$build_dir/center"
+# arctiva-branding toma el logo de ../branding/logo.
+mkdir -- "$build_dir/branding"
+cp -a -- "$repo_dir/branding/logo" "$build_dir/branding/logo"
 chown -R arctivabuild: "$build_dir"
 
 # Los arctiva-* que dependen de otros (arctiva-center) los toman de la base ya publicada, verificada
@@ -84,9 +87,11 @@ if (( ${#new[@]} == 0 )); then echo "Nada que publicar."; exit 0; fi
 
 cd -- "$out"
 repo-add --sign --key "$fpr" --verify arctiva.db.tar.gz "${new[@]}"
-# Los assets de GitHub no admiten enlaces: la base es un archivo real con su firma.
+# Los assets de GitHub no admiten enlaces: la base es un archivo real con su firma. repo-add deja
+# arctiva.db y arctiva.db.sig como enlaces a los .tar.gz; se quitan antes de copiar.
 for f in arctiva.db arctiva.files; do
-    cp -f -- "$f.tar.gz" "$f"; cp -f -- "$f.tar.gz.sig" "$f.sig"
+    rm -f -- "$f" "$f.sig"
+    cp -- "$f.tar.gz" "$f"; cp -- "$f.tar.gz.sig" "$f.sig"
 done
 
 # La release fija se crea la primera vez (el token tiene permiso de escritura sobre arctiva-repo).
@@ -96,7 +101,8 @@ gh release view x86_64 --repo "$target" >/dev/null 2>&1 ||
 
 # Primero se sube todo y después se borran las versiones anteriores: mientras tanto, la base vieja
 # sigue apuntando a archivos que existen.
-gh release upload x86_64 --clobber --repo "$target" \n    arctiva.db arctiva.db.sig arctiva.files arctiva.files.sig "${new[@]}" "${new[@]/%/.sig}"
+gh release upload x86_64 --clobber --repo "$target" \
+    arctiva.db arctiva.db.sig arctiva.files arctiva.files.sig "${new[@]}" "${new[@]/%/.sig}"
 assets="$(gh release view x86_64 --repo "$target" --json assets --jq '.assets[].name')"
 for p in "${new[@]}"; do
     base="$(basename -- "$p")"; pkg="${base%-*-*-*}"

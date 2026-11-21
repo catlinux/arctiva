@@ -8,6 +8,12 @@ El formato se basa en [Keep a Changelog](https://keepachangelog.com/es-ES/1.1.0/
 
 ## [Sin publicar]
 
+## [0.3.8] - 2026-11-21
+
+### Corregido
+
+- Publicación del repositorio: se copia el logo que necesita `arctiva-branding` al directorio de compilación, la base se copia sobre los enlaces que deja `repo-add` y se quita un argumento sobrante de la orden de subida. Script probado entero en un contenedor `archlinux` con una clave desechable.
+
 ## [0.3.7] - 2026-11-21
 
 ### Corregido

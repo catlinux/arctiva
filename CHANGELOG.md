@@ -8,6 +8,12 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 
 ## [Unreleased]
 
+## [0.3.8] - 2026-11-21
+
+### Fixed
+
+- Repository publishing: the logo needed by `arctiva-branding` is copied into the build directory, the database is copied over the links left by `repo-add`, and a stray argument in the upload command was removed. The whole script was tested in an `archlinux` container with a throwaway key.
+
 ## [0.3.7] - 2026-11-21
 
 ### Fixed
