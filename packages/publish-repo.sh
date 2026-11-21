@@ -16,6 +16,9 @@ id -u arctivabuild >/dev/null 2>&1 || useradd -m arctivabuild
 echo 'arctivabuild ALL=(ALL) NOPASSWD: ALL' >/etc/sudoers.d/arctivabuild
 
 work="$(mktemp -d)"
+# mktemp crea el directorio en 700: arctivabuild tiene que poder entrar en src/ y out/. La clave
+# queda en gnupg/, que sigue siendo 700 y de root.
+chmod 755 -- "$work"
 export GNUPGHOME="$work/gnupg"
 mkdir -m 700 -- "$GNUPGHOME"
 trap 'gpgconf --kill gpg-agent || true; rm -rf -- "$work"' EXIT

@@ -8,6 +8,12 @@ El formato se basa en [Keep a Changelog](https://keepachangelog.com/es-ES/1.1.0/
 
 ## [Sin publicar]
 
+## [0.3.7] - 2026-11-21
+
+### Corregido
+
+- Publicación del repositorio: el usuario de compilación no podía entrar en el directorio de trabajo temporal (creado con permisos 700) y no se compilaba ningún paquete.
+
 ## [0.3.6] - 2026-11-21
 
 Repositorio `[arctiva]` firmado (fase 3, pasos 3.3 y 3.4). Versión de parche: no se publica nada hasta el primer push.

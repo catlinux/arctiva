@@ -8,6 +8,12 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 
 ## [Unreleased]
 
+## [0.3.7] - 2026-11-21
+
+### Fixed
+
+- Repository publishing: the build user could not enter the temporary working directory (created with mode 700), so no package was built.
+
 ## [0.3.6] - 2026-11-21
 
 Signed `[arctiva]` repository (phase 3, steps 3.3 and 3.4). Patch release: nothing is published until the first push.
