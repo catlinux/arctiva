@@ -1,0 +1,59 @@
+title: "[Hardware] "
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Tell us how Arctiva behaves on your computer. Every report helps, whether it works or not.
+  - type: input
+    id: machine
+    attributes:
+      label: Computer model
+      description: Brand and model, or "custom desktop" if you built it yourself.
+    validations:
+      required: true
+  - type: input
+    id: cpu
+    attributes:
+      label: Processor
+      placeholder: e.g. AMD Ryzen 5 5600
+    validations:
+      required: true
+  - type: input
+    id: gpu
+    attributes:
+      label: Graphics card
+      description: Brand and model. Integrated graphics count too.
+      placeholder: e.g. NVIDIA RTX 3060, Intel UHD 630, AMD Radeon RX 6600
+    validations:
+      required: true
+  - type: dropdown
+    id: firmware
+    attributes:
+      label: Boot mode
+      options:
+        - UEFI
+        - Legacy BIOS
+        - I don't know
+    validations:
+      required: true
+  - type: input
+    id: version
+    attributes:
+      label: Arctiva version
+      description: The version or ISO you used, if you know it.
+  - type: textarea
+    id: works
+    attributes:
+      label: What works
+      placeholder: Live session, installation, Wi-Fi, sound, suspend, games...
+    validations:
+      required: true
+  - type: textarea
+    id: fails
+    attributes:
+      label: What doesn't work
+      description: Include any error message you saw.
+  - type: textarea
+    id: extra
+    attributes:
+      label: Anything else

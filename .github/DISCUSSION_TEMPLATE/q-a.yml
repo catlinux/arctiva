@@ -1,0 +1,23 @@
+title: ""
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Before asking, have a quick look at existing discussions. If you found a bug rather than having a question, please open an issue instead.
+  - type: textarea
+    id: question
+    attributes:
+      label: What do you need help with?
+      description: What were you trying to do, what did you expect, and what happened instead?
+    validations:
+      required: true
+  - type: input
+    id: version
+    attributes:
+      label: Arctiva version
+      description: The version or ISO you use, if you know it.
+  - type: textarea
+    id: details
+    attributes:
+      label: Details
+      description: Your hardware (especially the graphics card), the steps you followed and any error text. Paste text rather than a photo when you can.
