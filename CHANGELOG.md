@@ -8,6 +8,23 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 
 ## [Unreleased]
 
+## [0.5.2] - 2026-11-21
+
+Snapshot limits. Patch version.
+
+### Changed
+
+- Snapper keeps at most 10 snapshots (5 of the important ones) and `snapper-cleanup.timer` removes the oldest; no space limit, as it needs Btrfs quotas.
+- Arctiva Center shows the number of snapshots and the free disk space in the welcome page.
+
+## [0.5.1] - 2026-11-21
+
+Visual direction for phase 5 decided (step 5.0). Documentation only; patch version.
+
+### Changed
+
+- Architecture (D-13): Outfit as the corporate typeface, the "Orbit" wallpaper, light mode by default with Arctiva's own colour scheme and Breeze Dark with Arctiva's accent in dark mode, a full-width taskbar with a floating option, the ring arc as the boot indicator, and GRUB for the live ISO.
+
 ## [0.5.0] - 2026-11-21
 
 Phase 4 closed: Arctiva Center (welcome, updates, drivers and extras). Closing tests passed on 2026-11-21: update from Arctiva Center, an extra, drivers with a simulated `lspci`, `.pacnew`, the GRUB hook with LUKS, and a fresh encrypted install with the 0.4.1 ISO that boots the default entry and the initial snapshot. No code changes. Minor version (phase completed, D-16).

@@ -324,6 +324,10 @@
         <translation>Et donem la benvinguda a Arctiva</translation>
     </message>
     <message>
+        <source>%1 snapshots kept (the oldest are deleted automatically); %2 free on the disk.</source>
+        <translation>Es conserven %1 instantànies (les més antigues s'esborren soles); queden %2 lliures al disc.</translation>
+    </message>
+    <message>
         <source>These are the first steps to leave your system ready. You can come back to them at any time from Arctiva Center.</source>
         <translation>Aquests són els primers passos per deixar el sistema a punt. Hi pots tornar quan vulguis des d&apos;Arctiva Center.</translation>
     </message>

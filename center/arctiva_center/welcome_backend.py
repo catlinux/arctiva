@@ -1,8 +1,8 @@
 # SPDX-License-Identifier: GPL-3.0-or-later
-from PySide6.QtCore import Property, QObject, Signal
+from PySide6.QtCore import Property, QObject, Signal, Slot
 
 from . import __version__
-from .core import welcome
+from .core import snapshots, welcome
 
 
 class WelcomeBackend(QObject):
@@ -11,6 +11,10 @@ class WelcomeBackend(QObject):
     @Property(str, constant=True)
     def version(self):
         return __version__
+
+    @Slot(result="QVariantMap")
+    def snapshotInfo(self):
+        return {"count": snapshots.count(), "free": snapshots.free_bytes()}
 
     def _get_show(self):
         return not welcome.done_file().exists()

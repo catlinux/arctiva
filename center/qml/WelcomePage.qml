@@ -8,7 +8,12 @@ import org.kde.kirigami as Kirigami
 Kirigami.ScrollablePage {
     id: page
 
-    Component.onCompleted: driversBackend.refresh()
+    property var snapInfo: ({count: -1, free: -1})
+
+    Component.onCompleted: {
+        driversBackend.refresh()
+        snapInfo = welcomeBackend.snapshotInfo()
+    }
 
     component Step: Kirigami.AbstractCard {
         id: step
@@ -16,6 +21,7 @@ Kirigami.ScrollablePage {
         property string stepTitle
         property string stepText
         property string stepButton
+        property string stepStatus
         property int module: -1
         Layout.fillWidth: true
         contentItem: RowLayout {
@@ -36,6 +42,13 @@ Kirigami.ScrollablePage {
                     Layout.fillWidth: true
                     wrapMode: Text.WordWrap
                     text: step.stepText
+                }
+                QQC2.Label {
+                    visible: step.stepStatus !== ""
+                    Layout.fillWidth: true
+                    wrapMode: Text.WordWrap
+                    font.bold: true
+                    text: step.stepStatus
                 }
             }
             QQC2.Button {
@@ -112,6 +125,7 @@ Kirigami.ScrollablePage {
             stepIcon: "document-revert"
             stepTitle: qsTr("Snapshots: going back")
             stepText: qsTr("Before and after every installation or update, Arctiva takes a snapshot of the system. If something stops working after an update, restart and choose 'Arctiva snapshots' in the start menu (GRUB) to start the computer as it was before. Changes made while started from a snapshot are temporary.")
+            stepStatus: page.snapInfo.count < 0 ? "" : qsTr("%1 snapshots kept (the oldest are deleted automatically); %2 free on the disk.").arg(page.snapInfo.count).arg(Qt.locale().formattedDataSize(page.snapInfo.free, 1))
         }
 
         QQC2.CheckBox {

@@ -45,8 +45,10 @@ mount -o subvol=/@snapshots -- "$source_dev" "$snapshots"
 chmod 750 -- "$snapshots"
 
 # Los usuarios del grupo wheel pueden ver las instantáneas sin sudo. Sin instantáneas por horas:
-# solo las de snap-pac (antes y después de cada transacción de pacman).
-in_target snapper --no-dbus -c root set-config ALLOW_GROUPS=wheel SYNC_ACL=yes TIMELINE_CREATE=no
+# solo las de snap-pac (antes y después de cada transacción de pacman). Límite de 10 (5 las
+# importantes) que aplica snapper-cleanup.timer; sin FREE_LIMIT/SPACE_LIMIT, que exigen cuotas
+# de Btrfs y ralentizan el disco.
+in_target snapper --no-dbus -c root set-config ALLOW_GROUPS=wheel SYNC_ACL=yes TIMELINE_CREATE=no     NUMBER_CLEANUP=yes NUMBER_LIMIT=10 NUMBER_LIMIT_IMPORTANT=5
 
 # Descripción sin tildes: grub-btrfs las muestra como entidades HTML en el menú.
 in_target snapper --no-dbus -c root create --description "Arctiva: estado inicial"

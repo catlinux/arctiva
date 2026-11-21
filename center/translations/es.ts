@@ -324,6 +324,10 @@
         <translation>Te damos la bienvenida a Arctiva</translation>
     </message>
     <message>
+        <source>%1 snapshots kept (the oldest are deleted automatically); %2 free on the disk.</source>
+        <translation>Se conservan %1 instantáneas (las más antiguas se borran solas); quedan %2 libres en el disco.</translation>
+    </message>
+    <message>
         <source>These are the first steps to leave your system ready. You can come back to them at any time from Arctiva Center.</source>
         <translation>Estos son los primeros pasos para dejar tu sistema a punto. Puedes volver a ellos cuando quieras desde Arctiva Center.</translation>
     </message>

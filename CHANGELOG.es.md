@@ -8,6 +8,23 @@ El formato se basa en [Keep a Changelog](https://keepachangelog.com/es-ES/1.1.0/
 
 ## [Sin publicar]
 
+## [0.5.2] - 2026-11-21
+
+Límite de instantáneas. Versión de parche.
+
+### Cambiado
+
+- Snapper conserva como máximo 10 instantáneas (5 de las importantes) y `snapper-cleanup.timer` borra las más antiguas; sin límite por espacio, porque exige cuotas de Btrfs.
+- Arctiva Center muestra en la bienvenida el número de instantáneas y el espacio libre del disco.
+
+## [0.5.1] - 2026-11-21
+
+Dirección visual de la fase 5 decidida (paso 5.0). Solo documentación; versión de parche.
+
+### Cambiado
+
+- Arquitectura (D-13): Outfit como tipografía corporativa, el fondo «Órbita», modo claro por defecto con un esquema de color propio de Arctiva y Breeze Dark con el acento de Arctiva en modo oscuro, barra de tareas de lado a lado con opción flotante, el arco del anillo como indicador de arranque y GRUB en la ISO live.
+
 ## [0.5.0] - 2026-11-21
 
 Fase 4 terminada: Arctiva Center (bienvenida, actualizaciones, controladores y extras). Pruebas de cierre superadas el 2026-11-21: actualización desde Arctiva Center, un extra, controladores con un `lspci` simulado, `.pacnew`, el hook de GRUB con LUKS y una instalación nueva cifrada con la ISO 0.4.1 que arranca la entrada por defecto y la instantánea inicial. Sin cambios de código. Versión menor (fase terminada, D-16).
