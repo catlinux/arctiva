@@ -1,0 +1,11 @@
+blank_issues_enabled: false
+contact_links:
+  - name: Questions and help
+    url: https://github.com/catlinux/arctiva/discussions/categories/q-a
+    about: For questions about installing or using Arctiva, ask in Discussions.
+  - name: Hardware compatibility
+    url: https://github.com/catlinux/arctiva/discussions/categories/hardware-compatibility
+    about: Tell us whether Arctiva works on your computer.
+  - name: Ideas
+    url: https://github.com/catlinux/arctiva/discussions/categories/ideas
+    about: Suggest a feature or a change.
