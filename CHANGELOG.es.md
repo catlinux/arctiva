@@ -8,6 +8,20 @@ El formato se basa en [Keep a Changelog](https://keepachangelog.com/es-ES/1.1.0/
 
 ## [Sin publicar]
 
+## [0.3.14] - 2026-11-21
+
+Módulo «Controladores» de Arctiva Center (fase 4, paso 4.4). Versión de parche.
+
+### Añadido
+
+- Módulo Controladores: tarjetas gráficas detectadas, los controladores que necesitan y si están instalados, con un botón «Instalar controladores» (operación `drivers-apply` del ayudante); para las NVIDIA antiguas (GTX 10/900 y anteriores), una explicación de por qué se usa el controlador libre nouveau y qué supone la opción del AUR.
+- `tests/install-drivers-test.sh`: `install-drivers --upgrade` con `pacman`, `systemctl` y `mkinitcpio` falsos.
+- `arctiva-hardware` 0.2.0 y `arctiva-center` 0.4.0.
+
+### Cambiado
+
+- `install-drivers` pasa del instalador a `arctiva-hardware` (`/usr/lib/arctiva/install-drivers`), compartido por el instalador y Arctiva Center. Nuevo modo `--upgrade` para el sistema en marcha: `pacman -Syu --needed`, servicios activados en el momento, `mkinitcpio -P` al final y código de error si algo falla (arquitectura, D-10).
+
 ## [0.3.13] - 2026-11-21
 
 Requisitos más bajos. Versión de parche.

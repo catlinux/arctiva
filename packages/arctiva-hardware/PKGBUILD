@@ -2,14 +2,16 @@
 # Maintainer: CatLinux
 # Detección de hardware de Arctiva: de momento, las gráficas y sus controladores (D-10).
 pkgname=arctiva-hardware
-pkgver=0.1.0
+pkgver=0.2.0
 pkgrel=1
 pkgdesc='Detección de gráficas y controladores de Arctiva'
 arch=(any)
 url='https://github.com/catlinux/arctiva'
 license=(GPL-3.0-or-later)
-depends=(pciutils bash)
+depends=(pciutils bash curl)
 
 package() {
     install -Dm755 "$startdir/files/usr/bin/arctiva-gpu" "$pkgdir/usr/bin/arctiva-gpu"
+    # Lo usan el instalador y Arctiva Center (drivers-apply del ayudante).
+    install -Dm755 "$startdir/files/usr/lib/arctiva/install-drivers" "$pkgdir/usr/lib/arctiva/install-drivers"
 }

@@ -61,14 +61,14 @@ Status of each work item: `[x]` done (with the version that closed it) and `[ ]`
 - [x] Signing key (offline master, subkey in CI) and the `arctiva-keyring` package (0.3.6)
 - [x] Signed and published `[arctiva]` repository, with package builds in CI (0.3.9)
 - [x] `arctiva-settings` (defaults, zram, multilib, reflector) and provisional `arctiva-branding`
-- [x] GPU detection (D-10) in the installer (0.3.2); sharing it with Arctiva Center comes in phase 4
+- [x] GPU detection (D-10) in the installer (0.3.2), shared with Arctiva Center (0.3.14)
 - [x] Complete "Gaming" profile with multilib (D-11) (0.3.2: `lib32-nvidia-utils` with Steam)
 
 ### Phase 4: Arctiva Center (0.5.0)
 
 - [x] Base PySide6 application and polkit helper with a closed set of operations (0.3.11)
 - [ ] First-boot welcome
-- [ ] Drivers
+- [x] Drivers (0.3.14)
 - [x] Updates (D-08): blocking news, sensitive packages, `.pacnew`, translated errors (0.3.12)
 - [x] arch-update evaluation documented
 - [ ] Extras catalogue

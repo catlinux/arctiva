@@ -24,7 +24,9 @@ Kirigami.ApplicationWindow {
         if (index === current)
             return
         current = index
-        const page = index === 1 ? Qt.resolvedUrl("UpdatesPage.qml") : modulePage
+        const page = index === 1 ? Qt.resolvedUrl("UpdatesPage.qml")
+            : index === 2 ? Qt.resolvedUrl("DriversPage.qml")
+            : modulePage
         const props = { title: modules[index].title }
         if (pageStack.depth === 0)
             pageStack.push(page, props)

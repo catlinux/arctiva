@@ -8,6 +8,20 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 
 ## [Unreleased]
 
+## [0.3.14] - 2026-11-21
+
+Arctiva Center "Drivers" module (phase 4, step 4.4). Patch release.
+
+### Added
+
+- Drivers module: detected graphics cards, the drivers they need and whether they are installed, with an "Install drivers" button (helper operation `drivers-apply`); for older NVIDIA cards (GTX 10/900 and earlier), an explanation of why the free nouveau driver is used and what the AUR option involves.
+- `tests/install-drivers-test.sh`: `install-drivers --upgrade` with fake `pacman`, `systemctl` and `mkinitcpio`.
+- `arctiva-hardware` 0.2.0 and `arctiva-center` 0.4.0.
+
+### Changed
+
+- `install-drivers` moves from the installer to `arctiva-hardware` (`/usr/lib/arctiva/install-drivers`), shared by the installer and Arctiva Center. New `--upgrade` mode for the running system: `pacman -Syu --needed`, services enabled immediately, `mkinitcpio -P` at the end and an error code when something fails (architecture, D-10).
+
 ## [0.3.13] - 2026-11-21
 
 Lower requirements. Patch release.

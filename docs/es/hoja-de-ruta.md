@@ -61,14 +61,14 @@ Estado de cada trabajo: `[x]` hecho (con la versión en que se cerró) y `[ ]` p
 - [x] Clave de firma (maestra fuera de línea, subclave en el CI) y paquete `arctiva-keyring` (0.3.6)
 - [x] Repositorio `[arctiva]` firmado y publicado, con compilación de paquetes en el CI (0.3.9)
 - [x] `arctiva-settings` (valores por defecto, zram, multilib, reflector) y `arctiva-branding` provisional
-- [x] Detección de gráficas (D-10) en el instalador (0.3.2); la compartida con Arctiva Center llega en la fase 4
+- [x] Detección de gráficas (D-10) en el instalador (0.3.2), compartida con Arctiva Center (0.3.14)
 - [x] Perfil «Juegos» completo con multilib (D-11) (0.3.2: `lib32-nvidia-utils` con Steam)
 
 ### Fase 4: Arctiva Center (0.5.0)
 
 - [x] Aplicación base PySide6 y ayudante polkit con operaciones cerradas (0.3.11)
 - [ ] Bienvenida en el primer arranque
-- [ ] Controladores
+- [x] Controladores (0.3.14)
 - [x] Actualizaciones (D-08): noticias que bloquean, paquetes delicados, `.pacnew`, errores traducidos (0.3.12)
 - [x] Evaluación de arch-update documentada
 - [ ] Catálogo de extras

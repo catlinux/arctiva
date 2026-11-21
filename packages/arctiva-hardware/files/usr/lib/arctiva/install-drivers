@@ -1,0 +1,82 @@
+#!/usr/bin/env bash
+# SPDX-License-Identifier: GPL-3.0-or-later
+# Instala los controladores gráficos que pida arctiva-gpu (D-10). Lo comparten el instalador y
+# Arctiva Center:
+#   install-drivers <raíz>             Calamares (shellprocess@drivers), desde la live, tras
+#                                      «packages» y antes de generar los initramfs. Nunca rompe la
+#                                      instalación: sin red o ante cualquier fallo avisa y sale
+#                                      con 0; el sistema se queda con el controlador libre.
+#   install-drivers --upgrade <raíz>   Arctiva Center (ayudante, drivers-apply) en el sistema en
+#                                      marcha: pacman -Syu --needed (nunca una actualización
+#                                      parcial), mkinitcpio -P al final y código de error si falla.
+set -uo pipefail
+
+upgrade=0
+if [[ "${1:-}" == --upgrade ]]; then
+    upgrade=1
+    shift
+fi
+root="${1:?uso: install-drivers [--upgrade] <raíz-del-destino>}"
+
+# En el sistema en marcha no hace falta chroot.
+en_destino() {
+    if [[ "$root" == / ]]; then "$@"; else chroot "$root" "$@"; fi
+}
+
+fallo() {
+    echo "install-drivers: $1"
+    (( upgrade )) && exit 1
+    echo "install-drivers: el sistema usará el controlador libre."
+    exit 0
+}
+
+if (( ! upgrade )) && ! curl -fsS --max-time 5 -o /dev/null http://ping.archlinux.org/nm-check.txt 2>/dev/null; then
+    echo "install-drivers: sin conexión; se omiten los controladores gráficos."
+    exit 0
+fi
+
+salida="$(arctiva-gpu --root "$root")" || fallo "arctiva-gpu falló."
+echo "$salida"
+valor() { sed -n "s/^$1=//p" <<<"$salida"; }
+
+read -r -a paquetes <<<"$(valor packages)"
+read -r -a servicios <<<"$(valor services)"
+if (( ! ${#paquetes[@]} )); then
+    echo "install-drivers: no hacen falta controladores adicionales."
+    exit 0
+fi
+
+if (( upgrade )); then
+    # Instalar desde una base recién sincronizada exige actualizar todo a la vez (D-07).
+    en_destino pacman -Syu --needed --noconfirm -- "${paquetes[@]}" || fallo "no se pudieron instalar ${paquetes[*]}."
+else
+    en_destino pacman -S --needed --noconfirm -- "${paquetes[@]}" || fallo "no se pudieron instalar ${paquetes[*]}."
+fi
+
+# Los módulos NVIDIA en el initramfs (KMS temprano) y sin el hook kms, que los bloquearía.
+# Los archivos de conf.d se cargan después del principal, así que este HOOKS prevalece.
+kms=0
+if [[ "$(valor nvidia_kms)" == 1 ]]; then
+    kms=1
+    install -Dm644 /dev/stdin "${root%/}/etc/mkinitcpio.conf.d/arctiva-nvidia.conf" <<'CONF'
+# Arctiva: KMS temprano de NVIDIA. Sin el hook kms, que cargaría nouveau antes.
+MODULES+=(nvidia nvidia_modeset nvidia_uvm nvidia_drm)
+HOOKS=(${HOOKS[@]/kms})
+CONF
+fi
+
+for s in "${servicios[@]}"; do
+    if (( upgrade )); then
+        en_destino systemctl enable --now "$s" || echo "install-drivers: no se pudo activar $s."
+    else
+        en_destino systemctl enable "$s" || echo "install-drivers: no se pudo activar $s."
+    fi
+done
+
+# En el instalador, el módulo initcpio genera los initramfs después; en el sistema en marcha,
+# pacman los generó antes de existir arctiva-nvidia.conf.
+if (( upgrade && kms )); then
+    en_destino mkinitcpio -P || fallo "mkinitcpio -P falló; revisa el registro antes de reiniciar."
+    echo "install-drivers: listo. Reinicia para usar el controlador nuevo."
+fi
+exit 0

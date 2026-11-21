@@ -147,4 +147,103 @@
         <translation>Mostrar el registro</translation>
     </message>
 </context>
+<context>
+    <name>DriversPage</name>
+    <message>
+        <source>NVIDIA (GTX 16, RTX 20 or newer)</source>
+        <translation>NVIDIA (GTX 16, RTX 20 o posterior)</translation>
+    </message>
+    <message>
+        <source>NVIDIA (GTX 10, GTX 900 or older)</source>
+        <translation>NVIDIA (GTX 10, GTX 900 o anterior)</translation>
+    </message>
+    <message>
+        <source>AMD Radeon</source>
+        <translation>AMD Radeon</translation>
+    </message>
+    <message>
+        <source>Intel</source>
+        <translation>Intel</translation>
+    </message>
+    <message>
+        <source>Virtual machine graphics</source>
+        <translation>Gráfica de máquina virtual</translation>
+    </message>
+    <message>
+        <source>Other graphics card</source>
+        <translation>Otra tarjeta gráfica</translation>
+    </message>
+    <message>
+        <source>Check again</source>
+        <translation>Volver a comprobar</translation>
+    </message>
+    <message>
+        <source>Install drivers</source>
+        <translation>Instalar controladores</translation>
+    </message>
+    <message>
+        <source>Installing the drivers…</source>
+        <translation>Instalando los controladores…</translation>
+    </message>
+    <message>
+        <source>The drivers are installed. Restart to start using them.</source>
+        <translation>Los controladores están instalados. Reinicia para empezar a usarlos.</translation>
+    </message>
+    <message>
+        <source>Authorization cancelled</source>
+        <translation>Autorización cancelada</translation>
+    </message>
+    <message>
+        <source>The drivers could not be installed (error code %1). Check your internet connection and the log below.</source>
+        <translation>No se han podido instalar los controladores (código de error %1). Comprueba la conexión a internet y el registro de abajo.</translation>
+    </message>
+    <message>
+        <source>Could not detect the graphics cards: %1</source>
+        <translation>No se han podido detectar las tarjetas gráficas: %1</translation>
+    </message>
+    <message>
+        <source>Graphics cards</source>
+        <translation>Tarjetas gráficas</translation>
+    </message>
+    <message>
+        <source>No graphics card was detected.</source>
+        <translation>No se ha detectado ninguna tarjeta gráfica.</translation>
+    </message>
+    <message>
+        <source>Drivers</source>
+        <translation>Controladores</translation>
+    </message>
+    <message>
+        <source>Checking…</source>
+        <translation>Comprobando…</translation>
+    </message>
+    <message>
+        <source>No additional drivers are needed: your graphics work with the drivers included in Arctiva.</source>
+        <translation>No hacen falta controladores adicionales: tu gráfica funciona con los que incluye Arctiva.</translation>
+    </message>
+    <message>
+        <source>Everything that is needed is installed.</source>
+        <translation>Está instalado todo lo necesario.</translation>
+    </message>
+    <message>
+        <source>Some drivers are missing (for example, because Arctiva was installed without an internet connection). Install them with the button above; you will need to restart afterwards.</source>
+        <translation>Faltan controladores (por ejemplo, porque Arctiva se instaló sin conexión a internet). Instálalos con el botón de arriba; después tendrás que reiniciar.</translation>
+    </message>
+    <message>
+        <source>installed</source>
+        <translation>instalado</translation>
+    </message>
+    <message>
+        <source>missing</source>
+        <translation>falta</translation>
+    </message>
+    <message>
+        <source>Your NVIDIA card is supported only by the old proprietary driver (580xx series), which Arch Linux no longer ships: it is only in the AUR, maintained by the community. Arctiva uses the free nouveau driver instead, which is fine for the desktop and video but slow for games. Advanced users can install the AUR driver at their own risk; Arctiva does not do it automatically because an update could leave the system without graphics.</source>
+        <translation>Tu tarjeta NVIDIA solo la admite el controlador propietario antiguo (serie 580xx), que Arch Linux ya no incluye: solo está en el AUR, mantenido por la comunidad. Arctiva usa en su lugar el controlador libre nouveau, que sirve para el escritorio y el vídeo pero es lento para juegos. Los usuarios avanzados pueden instalar el del AUR bajo su responsabilidad; Arctiva no lo hace automáticamente porque una actualización podría dejar el sistema sin gráficos.</translation>
+    </message>
+    <message>
+        <source>More information</source>
+        <translation>Más información</translation>
+    </message>
+</context>
 </TS>

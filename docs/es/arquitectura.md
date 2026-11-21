@@ -132,7 +132,7 @@ Diseño (fase 4): interfaz en QML con Kirigami, para que se vea como el resto de
 
 ### D-10 Gráficas (**Aprobada**)
 
-Detección con `lspci` y un archivo de correspondencias (familia → paquetes), compartido por el instalador y Arctiva Center.
+Detección con `lspci` y un archivo de correspondencias (familia → paquetes), compartido por el instalador y Arctiva Center. Los dos viven en `arctiva-hardware`: `arctiva-gpu` dice qué necesita cada gráfica y `/usr/lib/arctiva/install-drivers` lo instala. El instalador lo ejecuta sobre el destino y nunca hace fallar la instalación; Arctiva Center lo ejecuta a través del ayudante con `--upgrade`, que usa `pacman -Syu --needed` (nunca una actualización parcial), regenera los initramfs con `mkinitcpio -P` y devuelve un código de error si algo falla.
 
 | Gráfica | Paquetes |
 |---|---|

@@ -132,7 +132,7 @@ Design (phase 4): the interface in QML with Kirigami, so it looks like the rest 
 
 ### D-10 Graphics (**Approved**)
 
-Detection with `lspci` and a mapping file (family → packages), shared by the installer and Arctiva Center.
+Detection with `lspci` and a mapping file (family → packages), shared by the installer and Arctiva Center. Both live in `arctiva-hardware`: `arctiva-gpu` says what each card needs and `/usr/lib/arctiva/install-drivers` installs it. The installer runs it on the target and never fails the installation; Arctiva Center runs it through the helper with `--upgrade`, which uses `pacman -Syu --needed` (never a partial upgrade), regenerates the initramfs with `mkinitcpio -P` and returns an error code if something fails.
 
 | GPU | Packages |
 |---|---|
