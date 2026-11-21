@@ -246,4 +246,63 @@
         <translation>Més informació</translation>
     </message>
 </context>
+<context>
+    <name>ExtrasPage</name>
+    <message>
+        <source>Removing %1…</source>
+        <translation>S&apos;està traient %1…</translation>
+    </message>
+    <message>
+        <source>Installing %1…</source>
+        <translation>S&apos;està instal·lant %1…</translation>
+    </message>
+    <message>
+        <source>%1 has been removed.</source>
+        <translation>S&apos;ha tret %1.</translation>
+    </message>
+    <message>
+        <source>%1 has been installed.</source>
+        <translation>S&apos;ha instal·lat %1.</translation>
+    </message>
+    <message>
+        <source>Authorization cancelled</source>
+        <translation>Autorització cancel·lada</translation>
+    </message>
+    <message>
+        <source>The operation failed (error code %1). The log below has the details; if it mentions dependencies, another program still needs these packages.</source>
+        <translation>L&apos;operació ha fallat (codi d&apos;error %1). El registre de sota té els detalls; si parla de dependències, un altre programa encara necessita aquests paquets.</translation>
+    </message>
+    <message>
+        <source>Groups of programs that you can add or remove at any time. They need an internet connection.</source>
+        <translation>Grups de programes que pots afegir o treure quan vulguis. Necessiten connexió a internet.</translation>
+    </message>
+    <message>
+        <source>Remove</source>
+        <translation>Treu</translation>
+    </message>
+    <message>
+        <source>Install</source>
+        <translation>Instal·la</translation>
+    </message>
+    <message>
+        <source>Already included</source>
+        <translation>Ja inclòs</translation>
+    </message>
+    <message>
+        <source>Printers: printing support is installed and active. Add your printer from the printer settings.</source>
+        <translation>Impressores: la impressió està instal·lada i activa. Afegeix la teva impressora des de la configuració d&apos;impressores.</translation>
+    </message>
+    <message>
+        <source>Printer settings</source>
+        <translation>Configuració d&apos;impressores</translation>
+    </message>
+    <message>
+        <source>Firewall: installed but turned off. Turn it on from the firewall settings, especially if you connect to networks you do not trust.</source>
+        <translation>Tallafoc: instal·lat però apagat. Activa&apos;l des de la seva configuració, sobretot si et connectes a xarxes de les quals no et fies.</translation>
+    </message>
+    <message>
+        <source>Firewall settings</source>
+        <translation>Configuració del tallafoc</translation>
+    </message>
+</context>
 </TS>

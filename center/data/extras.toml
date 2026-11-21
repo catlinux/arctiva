@@ -1,3 +1,64 @@
 # SPDX-License-Identifier: GPL-3.0-or-later
-# Catálogo de extras instalables desde Arctiva Center (se rellena en el módulo «Extras»).
+# Extras que se instalan y quitan desde Arctiva Center (decisión 8 de la fase 4). Lo leen la
+# ventana y el ayudante privilegiado, que solo acepta los id de este archivo.
+#   packages      se instalan con pacman -Syu --needed; el extra cuenta como instalado si están todos.
+#   services      se activan al instalar y se desactivan al quitar.
+#   with_drivers  tras instalar, vuelve a aplicar los controladores (arctiva-gpu).
+#   update_grub   regenera el menú de GRUB al instalar y al quitar.
+#   remove_also   se quitan también, si están instalados (dependen de los paquetes del extra).
+# Juegos y Oficina deben tener los mismos paquetes que los perfiles del instalador
+# (installer/calamares/modules/packagechooser-perfiles.conf): lo comprueba una prueba.
+# Impresoras y cortafuegos ya vienen en el sistema base: la ventana enlaza a su configuración.
 version = 1
+
+[[extra]]
+id = "juegos"
+icon = "applications-games"
+packages = [
+    "steam", "lutris", "gamemode", "lib32-gamemode", "mangohud", "lib32-mangohud", "gamescope",
+    "lib32-mesa", "lib32-vulkan-radeon", "lib32-vulkan-intel", "ttf-liberation",
+]
+# Con NVIDIA, lib32-nvidia-utils (arctiva-gpu lo pide cuando está steam).
+with_drivers = true
+[extra.name]
+en = "Gaming"
+es = "Juegos"
+ca = "Jocs"
+[extra.description]
+en = "Steam, Lutris, GameMode, MangoHud and Gamescope, with 32-bit graphics libraries. Download of about 0.3 GB."
+es = "Steam, Lutris, GameMode, MangoHud y Gamescope, con las bibliotecas gráficas de 32 bits. Descarga de unos 0,3 GB."
+ca = "Steam, Lutris, GameMode, MangoHud i Gamescope, amb les biblioteques gràfiques de 32 bits. Descàrrega d'uns 0,3 GB."
+
+[[extra]]
+id = "oficina"
+icon = "applications-office"
+packages = [
+    "libreoffice-fresh", "libreoffice-fresh-es", "libreoffice-fresh-ca", "hunspell-en_us",
+    "hunspell-es_es", "hyphen-en", "hyphen-es", "mythes-en", "mythes-es", "ttf-carlito",
+    "ttf-caladea", "ttf-liberation", "thunderbird", "thunderbird-i18n-es-es",
+    "thunderbird-i18n-ca", "skanpage", "sane-airscan", "gutenprint",
+]
+[extra.name]
+en = "Office"
+es = "Oficina"
+ca = "Oficina"
+[extra.description]
+en = "LibreOffice and Thunderbird in English, Spanish and Catalan, with spell checkers, compatible fonts, scanner and printer support. Download of about 0.3 GB."
+es = "LibreOffice y Thunderbird en inglés, castellano y catalán, con correctores, tipografías compatibles y compatibilidad con escáneres e impresoras. Descarga de unos 0,3 GB."
+ca = "LibreOffice i Thunderbird en anglès, castellà i català, amb correctors, tipografies compatibles i suport d'escàners i impressores. Descàrrega d'uns 0,3 GB."
+
+[[extra]]
+id = "kernel-lts"
+icon = "preferences-system"
+packages = ["linux-lts"]
+remove_also = ["nvidia-open-lts"]
+with_drivers = true
+update_grub = true
+[extra.name]
+en = "LTS kernel"
+es = "Kernel LTS"
+ca = "Nucli LTS"
+[extra.description]
+en = "A second, long-term support kernel. If an update of the main kernel causes problems, choose it in the GRUB menu when starting the computer."
+es = "Un segundo kernel, con soporte a largo plazo. Si una actualización del kernel principal da problemas, elígelo en el menú de GRUB al encender el equipo."
+ca = "Un segon nucli, amb suport a llarg termini. Si una actualització del nucli principal dona problemes, tria'l al menú de GRUB en engegar l'ordinador."

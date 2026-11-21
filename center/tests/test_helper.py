@@ -25,8 +25,14 @@ packages = ["libreoffice-fresh", "thunderbird"]
 services = ["cups.service"]
 
 [[extra]]
+id = "games"
+packages = ["steam", "ttf-liberation"]
+
+[[extra]]
 id = "lts"
 packages = ["linux-lts"]
+remove_also = ["nvidia-open-lts"]
+update_grub = true
 with_drivers = true
 
 [[extra]]
@@ -40,6 +46,7 @@ services = ["-H root@host"]
 """
 
 FAKE = """#!/bin/sh
+if [ "$1" = "-Qq" ]; then cat "$ARCTIVA_FAKE_INSTALLED"; exit 0; fi
 echo "$(basename "$0") $*" >>"$ARCTIVA_FAKE_LOG"
 echo "LC_ALL=$LC_ALL LANGUAGE=$LANGUAGE" >>"$ARCTIVA_FAKE_LOG.env"
 echo "salida de $(basename "$0")"
@@ -53,7 +60,8 @@ def root(tmp_path):
     for d in ("usr/bin", "usr/share/arctiva-center", "var/lib/pacman", "etc/sub", "usr/lib/arctiva"):
         (r / d).mkdir(parents=True)
     (r / "usr/share/arctiva-center/extras.toml").write_text(CATALOG, encoding="utf-8")
-    for name in ("pacman", "systemctl"):
+    (r / "installed").write_text("")
+    for name in ("pacman", "systemctl", "grub-mkconfig"):
         f = r / "usr/bin" / name
         f.write_text(FAKE)
         f.chmod(0o755)
@@ -63,7 +71,8 @@ def root(tmp_path):
 def helper(root, *args, rc=0):
     log = root.parent / "calls.log"
     env = dict(os.environ, ARCTIVA_HELPER_TEST_ROOT=str(root), ARCTIVA_FAKE_LOG=str(log),
-               ARCTIVA_FAKE_RC=str(rc), LANGUAGE="es", LC_ALL="es_ES.UTF-8")
+               ARCTIVA_FAKE_RC=str(rc), LANGUAGE="es", LC_ALL="es_ES.UTF-8",
+               ARCTIVA_FAKE_INSTALLED=str(root / "installed"))
     p = subprocess.run([sys.executable, "-I", str(HELPER), *args], env=env,
                        capture_output=True, text=True)
     calls = log.read_text().splitlines() if log.exists() else []
@@ -147,29 +156,67 @@ def test_extra_with_drivers_unavailable(root):
     assert calls == ["pacman -Syu --needed --noconfirm -- linux-lts"]
 
 
-def test_extra_with_drivers(root):
+def test_extra_with_drivers_and_grub(root):
     drivers = root / "usr/lib/arctiva/install-drivers"
     drivers.write_text(FAKE)
     drivers.chmod(0o755)
+    real = os.path.realpath(root)
+    # Sin grub.cfg (por ejemplo, otro cargador de arranque) no se regenera el menú.
     rc, calls, _ = helper(root, "extra-install", "lts")
     assert rc == 0
-    assert calls[-1] == f"install-drivers --upgrade {os.path.realpath(root)}"
+    assert calls[-1] == f"install-drivers --upgrade {real}"
+    (root / "boot/grub").mkdir(parents=True)
+    (root / "boot/grub/grub.cfg").write_text("")
+    (root.parent / "calls.log").unlink()
+    rc, calls, _ = helper(root, "extra-install", "lts")
+    assert calls[-2:] == [f"install-drivers --upgrade {real}",
+                          f"grub-mkconfig -o {real}/boot/grub/grub.cfg"]
+
+
+def test_extra_remove_lts_with_nvidia(root):
+    (root / "boot/grub").mkdir(parents=True)
+    (root / "boot/grub/grub.cfg").write_text("")
+    (root / "installed").write_text("linux\nlinux-lts\nnvidia-open-lts\n")
+    rc, calls, _ = helper(root, "extra-remove", "lts")
+    real = os.path.realpath(root)
+    assert rc == 0
+    assert calls == ["pacman -Rs --print -- linux-lts nvidia-open-lts",
+                     "pacman -Rns --noconfirm -- linux-lts nvidia-open-lts",
+                     f"grub-mkconfig -o {real}/boot/grub/grub.cfg"]
+
+
+def test_extra_remove_keeps_shared_packages(root):
+    # ttf-liberation es también de «games», que está instalado entero: se queda.
+    (root / "installed").write_text("libreoffice-fresh\nthunderbird\nsteam\nttf-liberation\n")
+    (root / "usr/share/arctiva-center/extras.toml").write_text(CATALOG.replace(
+        'packages = ["libreoffice-fresh", "thunderbird"]',
+        'packages = ["libreoffice-fresh", "thunderbird", "ttf-liberation"]'), encoding="utf-8")
+    rc, calls, _ = helper(root, "extra-remove", "office")
+    assert rc == 0
+    assert calls[0] == "pacman -Rs --print -- libreoffice-fresh thunderbird"
+
+
+def test_extra_remove_nothing_installed(root):
+    rc, calls, out = helper(root, "extra-remove", "office")
+    assert rc == 0 and calls == [] and "nada que quitar" in out
 
 
 def test_extra_remove(root):
+    (root / "installed").write_text("libreoffice-fresh\nthunderbird\n")
     rc, calls, _ = helper(root, "extra-remove", "office")
     assert rc == 0
     assert calls == [
-        "pacman -Rns --print -- libreoffice-fresh thunderbird",
+        "pacman -Rs --print -- libreoffice-fresh thunderbird",
         "systemctl disable --now -- cups.service",
         "pacman -Rns --noconfirm -- libreoffice-fresh thunderbird",
     ]
 
 
 def test_extra_remove_blocked_keeps_services(root):
+    (root / "installed").write_text("libreoffice-fresh\nthunderbird\n")
     rc, calls, _ = helper(root, "extra-remove", "office", rc=1)
     assert rc == 1
-    assert calls == ["pacman -Rns --print -- libreoffice-fresh thunderbird"]
+    assert calls == ["pacman -Rs --print -- libreoffice-fresh thunderbird"]
 
 
 @pytest.mark.parametrize("extra_id", [

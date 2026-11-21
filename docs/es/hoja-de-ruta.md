@@ -71,7 +71,7 @@ Estado de cada trabajo: `[x]` hecho (con la versión en que se cerró) y `[ ]` p
 - [x] Controladores (0.3.14)
 - [x] Actualizaciones (D-08): noticias que bloquean, paquetes delicados, `.pacnew`, errores traducidos (0.3.12)
 - [x] Evaluación de arch-update documentada
-- [ ] Catálogo de extras
+- [x] Catálogo de extras (0.3.15)
 - [ ] GRUB reinstalado en la partición EFI al actualizar el paquete `grub`
 
 ### Fase 5: aplicaciones y Windows (0.6.0)

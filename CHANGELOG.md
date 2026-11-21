@@ -8,6 +8,20 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 
 ## [Unreleased]
 
+## [0.3.15] - 2026-11-21
+
+Arctiva Center "Extras" module (phase 4, step 4.5). Patch release.
+
+### Added
+
+- Extras module: Gaming, Office and LTS kernel, each with a switch to install or remove it. Gaming and Office have the same packages as the installer profiles (a test fails if they diverge). The LTS kernel also installs the matching NVIDIA module when needed and updates the GRUB menu when it is installed or removed. Printing and the firewall are already in the base system: the module links to their System Settings pages.
+- Helper: when removing an extra, packages still used by another installed extra are kept (for example, fonts shared by Gaming and Office); `remove_also` and `update_grub` in the catalogue.
+- `arctiva-center` 0.5.0.
+
+### Fixed
+
+- Helper: removing an extra failed because the dry run used `pacman -Rns --print`, a combination pacman rejects; it now uses `-Rs --print`.
+
 ## [0.3.14] - 2026-11-21
 
 Arctiva Center "Drivers" module (phase 4, step 4.4). Patch release.

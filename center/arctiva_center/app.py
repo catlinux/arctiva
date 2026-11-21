@@ -31,16 +31,19 @@ def run(module):
 
     from .helper_process import HelperProcess
     from .drivers_backend import DriversBackend
+    from .extras_backend import ExtrasBackend
     from .updates_backend import UpdatesBackend
 
     helper = HelperProcess(app)
     updates_backend = UpdatesBackend(where.data, app)
     drivers_backend = DriversBackend(app)
+    extras_backend = ExtrasBackend(where.data, app)
     engine = QQmlApplicationEngine()
     engine.rootContext().setContextProperty("initialModule", MODULES.index(module))
     engine.rootContext().setContextProperty("helper", helper)
     engine.rootContext().setContextProperty("updatesBackend", updates_backend)
     engine.rootContext().setContextProperty("driversBackend", drivers_backend)
+    engine.rootContext().setContextProperty("extrasBackend", extras_backend)
     engine.load(QUrl.fromLocalFile(str(where.qml / "Main.qml")))
     if not engine.rootObjects():
         return 1

@@ -8,6 +8,20 @@ El formato se basa en [Keep a Changelog](https://keepachangelog.com/es-ES/1.1.0/
 
 ## [Sin publicar]
 
+## [0.3.15] - 2026-11-21
+
+Módulo «Extras» de Arctiva Center (fase 4, paso 4.5). Versión de parche.
+
+### Añadido
+
+- Módulo Extras: Juegos, Oficina y Kernel LTS, cada uno con un interruptor para instalarlo o quitarlo. Juegos y Oficina tienen los mismos paquetes que los perfiles del instalador (una prueba falla si divergen). El kernel LTS instala también el módulo de NVIDIA que corresponda y actualiza el menú de GRUB al instalarlo y al quitarlo. La impresión y el cortafuegos ya vienen en el sistema base: el módulo enlaza a sus páginas de Configuración del sistema.
+- Ayudante: al quitar un extra se conservan los paquetes que siga usando otro extra instalado (por ejemplo, las tipografías que comparten Juegos y Oficina); `remove_also` y `update_grub` en el catálogo.
+- `arctiva-center` 0.5.0.
+
+### Corregido
+
+- Ayudante: quitar un extra fallaba porque la simulación usaba `pacman -Rns --print`, una combinación que pacman rechaza; ahora usa `-Rs --print`.
+
 ## [0.3.14] - 2026-11-21
 
 Módulo «Controladores» de Arctiva Center (fase 4, paso 4.4). Versión de parche.

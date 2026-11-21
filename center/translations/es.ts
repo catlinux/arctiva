@@ -246,4 +246,63 @@
         <translation>Más información</translation>
     </message>
 </context>
+<context>
+    <name>ExtrasPage</name>
+    <message>
+        <source>Removing %1…</source>
+        <translation>Quitando %1…</translation>
+    </message>
+    <message>
+        <source>Installing %1…</source>
+        <translation>Instalando %1…</translation>
+    </message>
+    <message>
+        <source>%1 has been removed.</source>
+        <translation>Se ha quitado %1.</translation>
+    </message>
+    <message>
+        <source>%1 has been installed.</source>
+        <translation>Se ha instalado %1.</translation>
+    </message>
+    <message>
+        <source>Authorization cancelled</source>
+        <translation>Autorización cancelada</translation>
+    </message>
+    <message>
+        <source>The operation failed (error code %1). The log below has the details; if it mentions dependencies, another program still needs these packages.</source>
+        <translation>La operación ha fallado (código de error %1). El registro de abajo tiene los detalles; si habla de dependencias, otro programa todavía necesita estos paquetes.</translation>
+    </message>
+    <message>
+        <source>Groups of programs that you can add or remove at any time. They need an internet connection.</source>
+        <translation>Grupos de programas que puedes añadir o quitar cuando quieras. Necesitan conexión a internet.</translation>
+    </message>
+    <message>
+        <source>Remove</source>
+        <translation>Quitar</translation>
+    </message>
+    <message>
+        <source>Install</source>
+        <translation>Instalar</translation>
+    </message>
+    <message>
+        <source>Already included</source>
+        <translation>Ya incluido</translation>
+    </message>
+    <message>
+        <source>Printers: printing support is installed and active. Add your printer from the printer settings.</source>
+        <translation>Impresoras: la impresión está instalada y activa. Añade tu impresora desde la configuración de impresoras.</translation>
+    </message>
+    <message>
+        <source>Printer settings</source>
+        <translation>Configuración de impresoras</translation>
+    </message>
+    <message>
+        <source>Firewall: installed but turned off. Turn it on from the firewall settings, especially if you connect to networks you do not trust.</source>
+        <translation>Cortafuegos: instalado pero apagado. Actívalo desde su configuración, sobre todo si te conectas a redes de las que no te fías.</translation>
+    </message>
+    <message>
+        <source>Firewall settings</source>
+        <translation>Configuración del cortafuegos</translation>
+    </message>
+</context>
 </TS>

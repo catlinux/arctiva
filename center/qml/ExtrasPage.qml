@@ -1,0 +1,163 @@
+// SPDX-License-Identifier: GPL-3.0-or-later
+// Módulo «Extras»: instalar y quitar grupos de programas del catálogo (extras.toml).
+import QtQuick
+import QtQuick.Controls as QQC2
+import QtQuick.Layouts
+import org.kde.kirigami as Kirigami
+
+Kirigami.ScrollablePage {
+    id: page
+
+    property string working: ""
+    property bool removing: false
+    property int lastCode: -2
+    property string lastName: ""
+    readonly property bool busy: helper.running || extrasBackend.checking
+
+    function toggle(extra) {
+        log.clear()
+        page.lastCode = -2
+        page.working = extra.id
+        page.lastName = extra.name
+        page.removing = extra.installed
+        helper.run(extra.installed ? "extra-remove" : "extra-install", [extra.id])
+    }
+
+    Component.onCompleted: extrasBackend.refresh()
+
+    Connections {
+        target: helper
+        function onLine(text) { if (page.working !== "") log.append(text) }
+        function onFinished(code) {
+            if (page.working === "")
+                return
+            page.working = ""
+            page.lastCode = code
+            extrasBackend.refresh()
+        }
+    }
+
+    ColumnLayout {
+        spacing: Kirigami.Units.largeSpacing
+
+        Kirigami.InlineMessage {
+            Layout.fillWidth: true
+            visible: page.working !== "" || page.lastCode !== -2
+            type: page.working !== "" ? Kirigami.MessageType.Information
+                : page.lastCode === 0 ? Kirigami.MessageType.Positive
+                : Kirigami.MessageType.Error
+            text: page.working !== ""
+                ? (page.removing ? qsTr("Removing %1…") : qsTr("Installing %1…")).arg(page.lastName)
+                : page.lastCode === 0
+                    ? (page.removing ? qsTr("%1 has been removed.") : qsTr("%1 has been installed.")).arg(page.lastName)
+                : (page.lastCode === 126 || page.lastCode === 127) ? qsTr("Authorization cancelled")
+                : qsTr("The operation failed (error code %1). The log below has the details; if it mentions dependencies, another program still needs these packages.").arg(page.lastCode)
+        }
+
+        QQC2.Label {
+            Layout.fillWidth: true
+            wrapMode: Text.WordWrap
+            text: qsTr("Groups of programs that you can add or remove at any time. They need an internet connection.")
+        }
+
+        Repeater {
+            model: extrasBackend.extras
+            delegate: Kirigami.AbstractCard {
+                id: card
+                required property var modelData
+                Layout.fillWidth: true
+                contentItem: RowLayout {
+                    spacing: Kirigami.Units.largeSpacing
+                    Kirigami.Icon {
+                        source: card.modelData.icon
+                        Layout.preferredWidth: Kirigami.Units.iconSizes.medium
+                        Layout.preferredHeight: Kirigami.Units.iconSizes.medium
+                        Layout.alignment: Qt.AlignTop
+                    }
+                    ColumnLayout {
+                        Layout.fillWidth: true
+                        Kirigami.Heading {
+                            level: 3
+                            text: card.modelData.name
+                        }
+                        QQC2.Label {
+                            Layout.fillWidth: true
+                            wrapMode: Text.WordWrap
+                            text: card.modelData.description
+                        }
+                    }
+                    QQC2.BusyIndicator {
+                        visible: page.working === card.modelData.id
+                        running: visible
+                    }
+                    QQC2.Switch {
+                        // Muestra el estado real: no cambia hasta que la operación termina.
+                        checked: card.modelData.installed
+                        enabled: !page.busy
+                        onToggled: {
+                            checked = Qt.binding(() => card.modelData.installed)
+                            page.toggle(card.modelData)
+                        }
+                        QQC2.ToolTip.visible: hovered
+                        QQC2.ToolTip.text: card.modelData.installed ? qsTr("Remove") : qsTr("Install")
+                    }
+                }
+            }
+        }
+
+        Kirigami.Heading {
+            level: 2
+            text: qsTr("Already included")
+        }
+
+        Kirigami.AbstractCard {
+            Layout.fillWidth: true
+            contentItem: RowLayout {
+                Kirigami.Icon {
+                    source: "printer"
+                    Layout.preferredWidth: Kirigami.Units.iconSizes.medium
+                    Layout.preferredHeight: Kirigami.Units.iconSizes.medium
+                }
+                QQC2.Label {
+                    Layout.fillWidth: true
+                    wrapMode: Text.WordWrap
+                    text: qsTr("Printers: printing support is installed and active. Add your printer from the printer settings.")
+                }
+                QQC2.Button {
+                    text: qsTr("Printer settings")
+                    onClicked: extrasBackend.openSettings("kcm_printer_manager")
+                }
+            }
+        }
+
+        Kirigami.AbstractCard {
+            Layout.fillWidth: true
+            contentItem: RowLayout {
+                Kirigami.Icon {
+                    source: "security-high"
+                    Layout.preferredWidth: Kirigami.Units.iconSizes.medium
+                    Layout.preferredHeight: Kirigami.Units.iconSizes.medium
+                }
+                QQC2.Label {
+                    Layout.fillWidth: true
+                    wrapMode: Text.WordWrap
+                    text: qsTr("Firewall: installed but turned off. Turn it on from the firewall settings, especially if you connect to networks you do not trust.")
+                }
+                QQC2.Button {
+                    text: qsTr("Firewall settings")
+                    onClicked: extrasBackend.openSettings("kcm_firewall")
+                }
+            }
+        }
+
+        QQC2.TextArea {
+            id: log
+            Layout.fillWidth: true
+            Layout.preferredHeight: Kirigami.Units.gridUnit * 14
+            visible: text !== ""
+            readOnly: true
+            wrapMode: TextEdit.WrapAnywhere
+            font.family: "monospace"
+        }
+    }
+}

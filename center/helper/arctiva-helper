@@ -16,6 +16,7 @@ import stat
 import subprocess
 import sys
 import tomllib
+from collections import namedtuple
 
 EX_USAGE, EX_UNAVAILABLE, EX_SOFTWARE, EX_TEMPFAIL, EX_NOPERM = 64, 69, 70, 75, 77
 
@@ -29,6 +30,7 @@ ETC = ROOT + "/etc"
 CATALOG = ROOT + "/usr/share/arctiva-center/extras.toml"
 DB_LOCK = ROOT + "/var/lib/pacman/db.lck"
 INSTALL_DRIVERS = ROOT + "/usr/lib/arctiva/install-drivers"
+GRUB_CFG = ROOT + "/boot/grub/grub.cfg"
 # stdbuf hace que pacman escriba línea a línea aunque su salida sea una tubería.
 STDBUF = "" if ROOT else "/usr/bin/stdbuf"
 
@@ -70,6 +72,18 @@ def systemctl(*args):
     return run(BIN + "/systemctl", *args)
 
 
+Extra = namedtuple("Extra", "packages services remove_also with_drivers update_grub others")
+
+
+def _names(value, regex, allow_empty=True):
+    """La lista si todos sus elementos casan con regex; si no, None."""
+    if not isinstance(value, list) or (not value and not allow_empty):
+        return None
+    if not all(isinstance(v, str) and regex.fullmatch(v) for v in value):
+        return None
+    return value
+
+
 def load_extra(extra_id):
     if not ID_RE.fullmatch(extra_id):
         raise Refused(f"identificador no válido: {extra_id!r}")
@@ -79,24 +93,40 @@ def load_extra(extra_id):
     except (OSError, tomllib.TOMLDecodeError) as e:
         say(f"no se puede leer el catálogo: {e}")
         sys.exit(EX_SOFTWARE)
-    extras = catalog.get("extra", [])
-    if not isinstance(extras, list):
-        extras = []
+    extras = [e for e in catalog.get("extra", []) if isinstance(e, dict)] \
+        if isinstance(catalog.get("extra"), list) else []
     for extra in extras:
-        if isinstance(extra, dict) and extra.get("id") == extra_id:
+        if extra.get("id") == extra_id:
             break
     else:
         raise Refused(f"el extra {extra_id!r} no está en el catálogo")
-    packages = extra.get("packages", [])
-    services = extra.get("services", [])
     # El catálogo es de root, pero se valida igual: nada que pueda leerse como una opción.
-    if (not isinstance(packages, list) or not packages
-            or not all(isinstance(p, str) and PKG_RE.fullmatch(p) for p in packages)):
+    packages = _names(extra.get("packages"), PKG_RE, allow_empty=False)
+    remove_also = _names(extra.get("remove_also", []), PKG_RE)
+    services = _names(extra.get("services", []), UNIT_RE)
+    if packages is None or remove_also is None:
         raise Refused(f"paquetes no válidos en el extra {extra_id!r}")
-    if not isinstance(services, list) or not all(
-            isinstance(s, str) and UNIT_RE.fullmatch(s) for s in services):
+    if services is None:
         raise Refused(f"servicios no válidos en el extra {extra_id!r}")
-    return packages, services, extra.get("with_drivers") is True
+    # Paquetes de los demás extras: al quitar este, no se tocan los que otro siga usando.
+    others = [set(p) for e in extras if e is not extra
+              for p in [_names(e.get("packages"), PKG_RE, allow_empty=False)] if p]
+    return Extra(packages, services, remove_also, extra.get("with_drivers") is True,
+                 extra.get("update_grub") is True, others)
+
+
+def installed_packages():
+    out = subprocess.run([BIN + "/pacman", "-Qq"], stdin=subprocess.DEVNULL,
+                         capture_output=True, text=True, env=dict(os.environ, LC_ALL="C.UTF-8"))
+    return set(out.stdout.split()) if out.returncode == 0 else set()
+
+
+def update_grub():
+    # Un kernel nuevo o quitado no aparece en el menú hasta regenerar grub.cfg.
+    if not os.path.exists(GRUB_CFG):
+        say("no hay /boot/grub/grub.cfg: no se regenera el menú de arranque")
+        return 0
+    return run(BIN + "/grub-mkconfig", "-o", GRUB_CFG)
 
 
 def pacnew_paths(path):
@@ -136,27 +166,41 @@ def op_update(args):
 
 
 def op_extra_install(args):
-    packages, services, with_drivers = load_extra(one_arg(args))
+    extra = load_extra(one_arg(args))
     check_lock()
-    rc = pacman("-Syu", "--needed", "--noconfirm", "--", *packages)
-    for unit in services:
+    rc = pacman("-Syu", "--needed", "--noconfirm", "--", *extra.packages)
+    for unit in extra.services:
         rc = rc or systemctl("enable", "--now", "--", unit)
-    if not rc and with_drivers:
+    # Controladores después (con linux-lts ya instalado, arctiva-gpu pide nvidia-open-lts) y el
+    # menú de GRUB al final, con los initramfs ya generados.
+    if not rc and extra.with_drivers:
         rc = drivers_apply()
+    if not rc and extra.update_grub:
+        rc = update_grub()
     return rc
 
 
 def op_extra_remove(args):
-    packages, services, _ = load_extra(one_arg(args))
+    extra = load_extra(one_arg(args))
     check_lock()
+    installed = installed_packages()
+    keep = set().union(*[o for o in extra.others if o <= installed])
+    targets = [p for p in dict.fromkeys(extra.packages + extra.remove_also)
+               if p in installed and p not in keep]
+    if not targets:
+        say("no hay nada que quitar")
+        return 0
     # Primero se comprueba que se puede quitar (otro paquete puede depender de él): si no, no
-    # se ha tocado ningún servicio.
-    rc = run(BIN + "/pacman", "-Rns", "--print", "--", *packages)
+    # se ha tocado ningún servicio. --print no admite -n (--nosave): la simulación va sin él.
+    rc = run(BIN + "/pacman", "-Rs", "--print", "--", *targets)
     if rc:
         return rc
-    for unit in services:
+    for unit in extra.services:
         systemctl("disable", "--now", "--", unit)
-    return pacman("-Rns", "--noconfirm", "--", *packages)
+    rc = pacman("-Rns", "--noconfirm", "--", *targets)
+    if not rc and extra.update_grub:
+        rc = update_grub()
+    return rc
 
 
 def op_drivers_apply(args):

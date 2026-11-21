@@ -71,7 +71,7 @@ Status of each work item: `[x]` done (with the version that closed it) and `[ ]`
 - [x] Drivers (0.3.14)
 - [x] Updates (D-08): blocking news, sensitive packages, `.pacnew`, translated errors (0.3.12)
 - [x] arch-update evaluation documented
-- [ ] Extras catalogue
+- [x] Extras catalogue (0.3.15)
 - [ ] GRUB reinstalled on the EFI partition when the `grub` package is upgraded
 
 ### Phase 5: applications and Windows (0.6.0)
