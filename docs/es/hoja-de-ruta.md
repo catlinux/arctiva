@@ -56,13 +56,14 @@ Estado de cada trabajo: `[x]` hecho (con la versión en que se cerró) y `[ ]` p
 - [x] Perfiles Básico, Juegos y Oficina (0.2.7–0.2.8)
 - [x] Pruebas en máquinas virtuales: instalación sin terminal, junto a Windows simulado, cifrada, particionado manual (0.3.0)
 
-### Fase 3: repositorio propio y hardware (0.4.0)
+### Fase 3: repositorio propio y hardware (0.4.0) — terminada
 
 - [x] Clave de firma (maestra fuera de línea, subclave en el CI) y paquete `arctiva-keyring` (0.3.6)
 - [x] Repositorio `[arctiva]` firmado y publicado, con compilación de paquetes en el CI (0.3.9)
 - [x] `arctiva-settings` (valores por defecto, zram, multilib, reflector) y `arctiva-branding` provisional
 - [x] Detección de gráficas (D-10) en el instalador (0.3.2), compartida con Arctiva Center (0.3.14)
 - [x] Perfil «Juegos» completo con multilib (D-11) (0.3.2: `lib32-nvidia-utils` con Steam)
+- [x] El sistema instalado usa `[arctiva]`; instalación completa probada en QEMU (0.4.0)
 
 ### Fase 4: Arctiva Center (0.5.0)
 

@@ -12,7 +12,7 @@ Arctiva es un proyecto independiente, sin relación oficial con Arch Linux ni re
 
 ## Estado
 
-**Fase 2 terminada (0.3.0):** una ISO live con KDE Plasma y un instalador gráfico (Calamares) con perfiles Básico, Juegos y Oficina, Btrfs con instantáneas arrancables, cifrado opcional e instalación junto a Windows, probado en máquinas virtuales. Aún no hay ISO para descargar: se puede construir desde el código (ver la guía de desarrollo). La arquitectura está aprobada (decisiones D-01…D-16).
+**Fase 3 terminada (0.4.0):** una ISO live con KDE Plasma y un instalador gráfico (Calamares) con perfiles Básico, Juegos y Oficina, Btrfs con instantáneas arrancables, cifrado opcional e instalación junto a Windows, probado en máquinas virtuales. El sistema instalado se actualiza desde un repositorio propio firmado (`[arctiva]`) e instala los controladores de la gráfica. Arctiva Center (fase 4) ya tiene bienvenida, actualizaciones, controladores y extras, pendientes de las pruebas de cierre. Aún no hay ISO para descargar: se puede construir desde el código (ver la guía de desarrollo). La arquitectura está aprobada (decisiones D-01…D-16).
 
 - [Arquitectura y decisiones](docs/es/arquitectura.md)
 - [Hoja de ruta](docs/es/hoja-de-ruta.md)
@@ -22,7 +22,7 @@ Arctiva es un proyecto independiente, sin relación oficial con Arch Linux ni re
 ## Requisitos previstos
 
 - PC x86 de 64 bits con firmware UEFI (Secure Boot desactivado)
-- 4 GB de RAM (8 GB recomendados); pendiente de confirmar midiendo un sistema instalado
+- 4 GB de RAM (8 GB recomendados); el escritorio en reposo usa unos 1,2 GB
 - 25 GB de disco (40 GB recomendados, por las instantáneas); el sistema base ocupa unos 5 GB
 - Gráfica compatible con Vulkan para jugar
 - Un USB de 4 GB o más para el medio de instalación

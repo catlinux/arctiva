@@ -8,6 +8,14 @@ El formato se basa en [Keep a Changelog](https://keepachangelog.com/es-ES/1.1.0/
 
 ## [Sin publicar]
 
+## [0.4.0] - 2026-11-21
+
+Fase 3 cerrada: el sistema instalado usa el repositorio firmado `[arctiva]`. Probado con una instalación completa de la ISO 0.3.17 en QEMU (UEFI, con red y el perfil Juegos): `pacman -Sy` descarga y valida `arctiva.db`, los cinco paquetes propios vienen de `[arctiva]`, la clave de firma tiene confianza total, y `os-release`, zram, `reflector.timer`, multilib, los paquetes de Juegos, el kernel LTS en GRUB y la instantánea inicial están en su sitio. El instalador ejecuta `/usr/lib/arctiva/install-drivers`. En reposo, tras iniciar sesión, el sistema usa unos 1,2 GB de RAM. Versión menor (fase terminada, D-16).
+
+### Corregido
+
+- En el panel del sistema instalado quedaba un icono en blanco: el lanzador de Discover, que el instalador quita. Un script de actualización de Plasma lo cambia por Arctiva Center la primera vez que el usuario inicia sesión; en la ISO live, con Discover, no hace nada (`arctiva-center` 0.6.1).
+
 ## [0.3.17] - 2026-11-21
 
 GRUB al día tras las actualizaciones (fase 4, paso 4.7). Versión de parche.

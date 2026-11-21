@@ -2,7 +2,7 @@
 # Maintainer: CatLinux
 # Arctiva Center: actualizaciones, controladores y extras (D-09). El código está en center/.
 pkgname=arctiva-center
-pkgver=0.6.0
+pkgver=0.6.1
 pkgrel=1
 pkgdesc='Centro de control de Arctiva: actualizaciones, controladores y extras'
 arch=(any)
@@ -52,6 +52,9 @@ package() {
     install -Dm644 -t "$pkgdir/usr/share/applications" desktop/arctiva-center.desktop
     # Bienvenida al iniciar sesión: arctiva-center --welcome sale sin ventana si ya no toca.
     install -Dm644 -t "$pkgdir/etc/xdg/autostart" desktop/arctiva-center-welcome.desktop
+    # Sustituye el lanzador de Discover del panel (el sistema instalado no lo lleva).
+    install -Dm644 -t "$pkgdir/usr/share/plasma/shells/org.kde.plasma.desktop/contents/updates" \
+        plasma/arctiva-center-launcher.js
     # Aviso periódico de actualizaciones, activado para todos los usuarios.
     install -Dm644 -t "$pkgdir/usr/lib/systemd/user" systemd/arctiva-center-check.{service,timer}
     install -d -- "$pkgdir/usr/lib/systemd/user/timers.target.wants"

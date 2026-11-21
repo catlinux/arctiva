@@ -8,6 +8,14 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 
 ## [Unreleased]
 
+## [0.4.0] - 2026-11-21
+
+Phase 3 closed: the installed system uses the signed `[arctiva]` repository. Tested with a full install of the 0.3.17 ISO in QEMU (UEFI, online, Gaming profile): `pacman -Sy` downloads and validates `arctiva.db`, the five in-house packages come from `[arctiva]`, the signing key has full trust, and `os-release`, zram, `reflector.timer`, multilib, the Gaming packages, the LTS kernel in GRUB and the initial snapshot are in place. The installer runs `/usr/lib/arctiva/install-drivers`. Idle after login, the system uses about 1.2 GB of RAM. Minor version (phase completed, D-16).
+
+### Fixed
+
+- The installed system's panel showed a blank icon: the Discover launcher, which the installer removes. A Plasma update script replaces it with Arctiva Center the first time the user logs in; on the live ISO, which has Discover, it does nothing (`arctiva-center` 0.6.1).
+
 ## [0.3.17] - 2026-11-21
 
 GRUB kept in sync on upgrades (phase 4, step 4.7). Patch release.

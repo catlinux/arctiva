@@ -56,13 +56,14 @@ Status of each work item: `[x]` done (with the version that closed it) and `[ ]`
 - [x] Basic, Gaming and Office profiles (0.2.7–0.2.8)
 - [x] Tests in virtual machines: installation without a terminal, alongside Windows, encrypted, manual partitioning
 
-### Phase 3: own repository and hardware (0.4.0)
+### Phase 3: own repository and hardware (0.4.0) — done
 
 - [x] Signing key (offline master, subkey in CI) and the `arctiva-keyring` package (0.3.6)
 - [x] Signed and published `[arctiva]` repository, with package builds in CI (0.3.9)
 - [x] `arctiva-settings` (defaults, zram, multilib, reflector) and provisional `arctiva-branding`
 - [x] GPU detection (D-10) in the installer (0.3.2), shared with Arctiva Center (0.3.14)
 - [x] Complete "Gaming" profile with multilib (D-11) (0.3.2: `lib32-nvidia-utils` with Steam)
+- [x] The installed system uses `[arctiva]`; full install tested in QEMU (0.4.0)
 
 ### Phase 4: Arctiva Center (0.5.0)
 

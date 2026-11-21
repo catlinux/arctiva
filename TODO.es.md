@@ -18,10 +18,15 @@ Trabajo pendiente agrupado por prioridad. Fases y decisiones: [hoja de ruta](doc
 - [ ] Ofrecer Heroic, ProtonPlus y Bottles (Flatpak) desde Arctiva Center (fase 5).
 - [ ] Si se cae la conexión después de la bienvenida, el instalador sigue creyendo que hay internet y `packages` falla en `pacman -Sy` con un mensaje poco claro. Comprobarlo otra vez antes de instalar o mostrar un error más claro.
 - [ ] La lista de perfiles necesita Ctrl+clic para elegir varios (Calamares usa selección extendida; la pista va en el texto de «Básico»). Una página QML propia permitiría el clic simple.
-- [ ] Volver a probar «Instalar junto a» con el nuevo requisito de 25 GiB (0.3.13) en un disco de 60 GB con Windows, y medir la RAM de un sistema instalado en reposo para confirmar el mínimo de 4 GB.
+- [ ] Volver a probar «Instalar junto a» con el nuevo requisito de 25 GiB (0.3.13) en un disco de 60 GB con Windows.
 - [ ] ISO más ligera: la base ya es ajustada (instalada 4,3 GiB, ISO 1,76 GiB de los 1,9 permitidos). Lo mayor: `firefox` 307 MiB, `qt6-webengine` 284 MiB (lo pide `purpose`→`kaccounts`, que usan Spectacle y Gwenview), `llvm-libs` 165 MiB (Mesa), `linux-firmware-*` ~430 MiB (Intel 142, NVIDIA 104, Atheros 53, MediaTek 37, AMDGPU 28), `noto-fonts` 107 MiB. La única palanca real es instalar solo el firmware que pida el hardware detectado (fase 3).
 - [ ] Tras cambiar de idioma en la bienvenida, los textos de los requisitos siguen en el idioma en que se comprobaron (Calamares los genera antes de elegir): repetir la comprobación o traducirlos en la página.
 - [ ] Fondos de pantalla: `arctiva-branding` aún no los lleva; falta diseñarlos.
+
+## Media: cierre de la fase 4 (0.5.0)
+
+- [ ] Pruebas en un sistema instalado: una actualización real con noticias desde Arctiva Center, instalar un extra, controladores con un `lspci` simulado, el aviso de `.pacnew`, y el hook de GRUB en una instalación cifrada con LUKS.
+- [ ] En la página «Perfiles» del instalador, la imagen del perfil toca el borde derecho de la ventana.
 
 ## Media: estudios
 

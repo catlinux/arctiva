@@ -18,10 +18,15 @@ Pending work grouped by priority. Phases and decisions: [roadmap](docs/en/roadma
 - [ ] Offer Heroic, ProtonPlus and Bottles (Flatpak) from Arctiva Center (phase 5).
 - [ ] If the connection drops after the welcome page, the installer still thinks it is online and `packages` fails at `pacman -Sy` with an obscure message. Re-check before installing or show a clearer error.
 - [ ] The profiles list needs Ctrl+click to pick several (Calamares uses extended selection; the hint is in the "Basic" text). A custom QML page would allow plain clicks.
-- [ ] Re-test "Install alongside" with the new 25 GiB requirement (0.3.13) on a 60 GB disk with Windows, and measure the RAM of an installed system at idle to confirm the 4 GB minimum.
+- [ ] Re-test "Install alongside" with the new 25 GiB requirement (0.3.13) on a 60 GB disk with Windows.
 - [ ] Lighter ISO: the base is already lean (installed 4.3 GiB, ISO 1.76 GiB of the 1.9 limit). Biggest items: `firefox` 307 MiB, `qt6-webengine` 284 MiB (needed by `purpose`→`kaccounts`, used by Spectacle and Gwenview), `llvm-libs` 165 MiB (Mesa), `linux-firmware-*` ~430 MiB (Intel 142, NVIDIA 104, Atheros 53, MediaTek 37, AMDGPU 28), `noto-fonts` 107 MiB. The only real lever is installing only the firmware that the detected hardware needs (phase 3).
 - [ ] After switching language on the welcome page, the requirement texts stay in the language they were checked in (Calamares builds them before the choice): re-run the check or translate them in the page.
 - [ ] Wallpapers: `arctiva-branding` ships no wallpapers yet; they need a design.
+
+## Medium — phase 4 closing (0.5.0)
+
+- [ ] Tests on an installed system: a real update with news from Arctiva Center, installing an extra, drivers with a simulated `lspci`, the `.pacnew` notice, and the GRUB hook on a LUKS-encrypted install.
+- [ ] On the installer's "Profiles" page, the profile image touches the right edge of the window.
 
 ## Medium — studies
 
