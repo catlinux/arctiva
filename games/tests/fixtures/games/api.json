@@ -1,0 +1,5 @@
+{"name": "Lanzador JSON", "slug": "json-example", "runner": "wine", "user": "autor-json",
+ "script": {"files": [{"setup": "https://example.com/a.exe"}],
+            "installer": [{"task": {"name": "create_prefix"}},
+                          {"task": {"name": "wineexec", "executable": "setup", "wait": "user",
+                                    "wait_message": "Inicia sesión y pulsa Continuar."}}]}}

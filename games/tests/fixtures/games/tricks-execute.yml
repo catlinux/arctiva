@@ -1,0 +1,36 @@
+# Ejemplo escrito a mano (no es un script de lutris.net).
+name: Lanzador con winetricks
+slug: tricks-example
+runner: wine
+user: otro-autor
+script:
+  files:
+    - setup:
+        url: https://example.com/setup.msi
+        filename: setup.msi
+    - extra: "N/A:Selecciona el instalador del juego"
+  system:
+    postexit_command: killall helper
+  installer:
+    - task:
+        name: create_prefix
+    - task:
+        name: winetricks
+        app: corefonts physx
+    - task:
+        name: wineexec
+        executable: msiexec
+        args: /i "$setup"
+        return_code: 768
+        exclude_processes: helper.exe
+    - write_file:
+        file: $GAMEDIR/run.sh
+        content: |
+          #!/bin/sh
+          echo hola
+    - chmodx: $GAMEDIR/run.sh
+    - execute:
+        file: $GAMEDIR/run.sh
+    - task:
+        name: delete_registry_key
+        key: HKEY_CURRENT_USER\Software\Viejo

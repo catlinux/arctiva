@@ -6,6 +6,7 @@ on:
     paths:
       - 'packages/arctiva-*/**'
       - 'center/**'
+      - 'games/**'
       - 'packages/publish-repo.sh'
       - '.github/workflows/repo.yml'
   workflow_dispatch:

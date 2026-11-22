@@ -96,7 +96,9 @@ El código de `arctiva-center` está en `center/` (el PKGBUILD de `packages/arct
 
 ### Publicar un paquete en `[arctiva]`
 
-Los paquetes de `packages/arctiva-*` los compila, firma y publica el flujo `Repositorio` (`.github/workflows/repo.yml`) en cada push a `main` que toque `packages/arctiva-*/**` o `center/**`. Solo se compilan los paquetes cuya versión (`pkgver`-`pkgrel`) no está ya en la base publicada: para publicar un cambio, **sube `pkgver` (o `pkgrel`)** en su PKGBUILD. El resultado va a la release `x86_64` de `catlinux/arctiva-repo`. Claves de firma: [firma.md](firma.md).
+La aplicación opcional Arctiva Games está en `games/` (paquete `arctiva-games`, que Arctiva Center ofrece como extra): `cd games && python3 -m pytest` (necesita `pytest`, `PyYAML` y `PySide6`); `python3 -m arctiva_games` la abre desde el árbol.
+
+Los paquetes de `packages/arctiva-*` los compila, firma y publica el flujo `Repositorio` (`.github/workflows/repo.yml`) en cada push a `main` que toque `packages/arctiva-*/**` `center/**` o `games/**`. Solo se compilan los paquetes cuya versión (`pkgver`-`pkgrel`) no está ya en la base publicada: para publicar un cambio, **sube `pkgver` (o `pkgrel`)** en su PKGBUILD. El resultado va a la release `x86_64` de `catlinux/arctiva-repo`. Claves de firma: [firma.md](firma.md).
 
 ## Finales de línea
 

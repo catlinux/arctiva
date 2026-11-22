@@ -24,12 +24,14 @@ cp -a -- "${repo_dir}/installer" "${build_dir}/arctiva-calamares-config"
 cp -- "${repo_dir}/VERSION" "${build_dir}/VERSION"
 # El código de arctiva-center vive en center/ (su PKGBUILD lo busca en ../center).
 cp -a -- "${repo_dir}/center" "${build_dir}/center"
+# El de arctiva-games vive en games/ (su PKGBUILD lo busca en ../games).
+cp -a -- "${repo_dir}/games" "${build_dir}/games"
 mkdir -p -- "${build_dir}/branding"
 cp -a -- "${repo_dir}/branding/." "${build_dir}/branding/"
 chown -R arctivabuild: "$build_dir" "$dest"
 
 # Orden de dependencias: los paquetes del sistema instalado primero (arctiva-center depende de branding y hardware); calamares necesita ckbcomp, y la configuración, calamares.
-for name in arctiva-keyring arctiva-settings arctiva-branding arctiva-hardware arctiva-center ckbcomp calamares arctiva-calamares-config; do
+for name in arctiva-keyring arctiva-settings arctiva-branding arctiva-hardware arctiva-center arctiva-games ckbcomp calamares arctiva-calamares-config; do
     d="${build_dir}/${name}"
     echo "== Compilando $(basename -- "$d")"
     # makepkg no importa keys/pgp/ por sí solo: se hace aquí para verificar las firmas de las fuentes.

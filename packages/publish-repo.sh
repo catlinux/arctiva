@@ -46,6 +46,8 @@ build_dir="$work/src"; mkdir -- "$build_dir"
 cp -a -- "$repo_dir"/packages/arctiva-* "$build_dir/"
 # El código de arctiva-center vive en center/ (su PKGBUILD lo busca en ../center).
 cp -a -- "$repo_dir/center" "$build_dir/center"
+# El de arctiva-games vive en games/ (su PKGBUILD lo busca en ../games).
+cp -a -- "$repo_dir/games" "$build_dir/games"
 # arctiva-branding toma el logo y los fondos de ../branding.
 mkdir -- "$build_dir/branding"
 cp -a -- "$repo_dir/branding/." "$build_dir/branding/"

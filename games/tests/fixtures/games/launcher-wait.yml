@@ -1,0 +1,41 @@
+# Ejemplo escrito a mano (imita la estructura de un instalador de lanzador; no es un script de lutris.net).
+name: Lanzador de ejemplo
+slug: launcher-example
+runner: wine
+user: autor-ejemplo
+credits: Créditos de ejemplo
+script:
+  files:
+    - setup: https://example.com/Launcher-Setup.exe
+  game:
+    exe: $GAMEDIR/drive_c/Program Files (x86)/Launcher/Launcher.exe
+    prefix: $GAMEDIR
+    arch: win64
+  system:
+    env:
+      WINEDLLOVERRIDES: "dxgi=n"
+  wine:
+    overrides:
+      dxgi: native
+  installer:
+    - task:
+        name: create_prefix
+        prefix: $GAMEDIR
+        arch: win64
+    - task:
+        name: set_regedit
+        path: HKEY_CURRENT_USER\Software\Wine\Direct3D
+        key: csmt
+        value: "0x00000001"
+        type: REG_DWORD
+    - task:
+        name: wineexec
+        executable: setup
+        args: /S
+        description: Instalando el lanzador
+    - task:
+        name: winekill
+    - write_json:
+        file: $GAMEDIR/drive_c/ProgramData/Launcher/config.json
+        data:
+          region: eu

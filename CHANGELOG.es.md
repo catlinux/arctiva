@@ -8,6 +8,11 @@ El formato se basa en [Keep a Changelog](https://keepachangelog.com/es-ES/1.1.0/
 
 ## [Sin publicar]
 
+### Añadido
+
+- Arctiva Games 0.1.0: nuevo paquete opcional (`arctiva-games`, con su propia ventana y entrada de menú) que instala lanzadores de juegos de Windows (Battle.net, EA app, Ubisoft Connect, GOG Galaxy, Epic Games) con recetas propias, o cualquier instalador de lutris.net, paso a paso: resumen de lo que se descargará y ejecutará antes de empezar, registro en directo guardado en disco, reintentar / saltar / parar en cualquier paso, botón «Continuar» en los lanzadores donde hay que iniciar sesión (no se cierran), lista de los procesos de Wine del juego y biblioteca con Jugar y Desinstalar. Usa el `wine` y el `winetricks` del sistema (dependencias). Aún sin probar en hardware real.
+- Arctiva Center 0.7.10: nuevo extra «Arctiva Games» en Extras, que instala ese paquete.
+
 ### Cambiado
 
 - El Bloq Num queda activado por defecto al iniciar la sesión, en la live y en el sistema instalado (`arctiva-settings` 0.5.2, `/etc/xdg/kcminputrc`). La pantalla de inicio de sesión también lo pide (`Numlock=on` en Plasma Login), aún sin probar.

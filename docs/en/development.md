@@ -96,7 +96,9 @@ The code of `arctiva-center` lives in `center/` (the PKGBUILD in `packages/arcti
 
 ### Publishing a package to `[arctiva]`
 
-Packages in `packages/arctiva-*` are built, signed and published by the `Repositorio` workflow (`.github/workflows/repo.yml`) on each push to `main` that touches `packages/arctiva-*/**` or `center/**`. Only packages whose version (`pkgver`-`pkgrel`) is not yet in the published database are built, so to publish a change, **bump `pkgver` (or `pkgrel`)** in its PKGBUILD. The result goes to the `x86_64` release of `catlinux/arctiva-repo`. Signing keys: [signing.md](signing.md).
+The optional Arctiva Games app lives in `games/` (package `arctiva-games`, offered as an extra in Arctiva Center): `cd games && python3 -m pytest` (needs `pytest`, `PyYAML` and `PySide6`); `python3 -m arctiva_games` runs it from the tree.
+
+Packages in `packages/arctiva-*` are built, signed and published by the `Repositorio` workflow (`.github/workflows/repo.yml`) on each push to `main` that touches `packages/arctiva-*/**` `center/**` or `games/**`. Only packages whose version (`pkgver`-`pkgrel`) is not yet in the published database are built, so to publish a change, **bump `pkgver` (or `pkgrel`)** in its PKGBUILD. The result goes to the `x86_64` release of `catlinux/arctiva-repo`. Signing keys: [signing.md](signing.md).
 
 ## Line endings
 

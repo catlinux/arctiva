@@ -1,0 +1,155 @@
+# Recetas propias de Arctiva Games (D-G9): mismo formato que los scripts de instalación de Lutris,
+# escritas a mano. Sirven sin lutris.net. Las URL son las descargas oficiales de cada lanzador.
+# Sin probar aún en un equipo real: ver TODO.
+version = 1
+
+[[recipe]]
+slug = "battlenet"
+name = "Battle.net"
+description = "Lanzador de Blizzard"
+script = '''
+name: Battle.net
+slug: battlenet
+runner: wine
+user: Arctiva
+script:
+  files:
+    - setup:
+        url: "https://www.battle.net/download/getInstallerForGame?os=win&gameProgram=BATTLENET_APP&version=Live"
+        filename: Battle.net-Setup.exe
+  game:
+    exe: $WINEPREFIX/drive_c/Program Files (x86)/Battle.net/Battle.net Launcher.exe
+    arch: win64
+  installer:
+    - task:
+        name: create_prefix
+        arch: win64
+    - task:
+        name: wineexec
+        executable: setup
+        args: --lang=enUS
+        description: Instalar Battle.net e iniciar sesión
+        wait: user
+        wait_message: Inicia sesión en Battle.net y, cuando hayas terminado, pulsa Continuar. El lanzador no se cierra.
+'''
+
+[[recipe]]
+slug = "ea-app"
+name = "EA app"
+description = "Lanzador de Electronic Arts"
+script = '''
+name: EA app
+slug: ea-app
+runner: wine
+user: Arctiva
+script:
+  files:
+    - setup: "https://origin-a.akamaihd.net/EA-Desktop-Client-Download/installer-releases/EAappInstaller.exe"
+  game:
+    exe: $WINEPREFIX/drive_c/Program Files/Electronic Arts/EA Desktop/EA Desktop/EADesktop.exe
+    arch: win64
+  installer:
+    - task:
+        name: create_prefix
+        arch: win64
+    - task:
+        name: winetricks
+        app: corefonts win10
+        description: Instalar fuentes y ajustar la versión de Windows
+    - task:
+        name: wineexec
+        executable: setup
+        args: /S
+        return_code: "0,3"
+        description: Instalar la EA app
+'''
+
+[[recipe]]
+slug = "ubisoft-connect"
+name = "Ubisoft Connect"
+description = "Lanzador de Ubisoft"
+script = '''
+name: Ubisoft Connect
+slug: ubisoft-connect
+runner: wine
+user: Arctiva
+script:
+  files:
+    - setup: "https://static3.cdn.ubi.com/orbit/launcher_installer/UbisoftConnectInstaller.exe"
+  game:
+    exe: $WINEPREFIX/drive_c/Program Files (x86)/Ubisoft/Ubisoft Game Launcher/UbisoftConnect.exe
+    arch: win64
+  installer:
+    - task:
+        name: create_prefix
+        arch: win64
+    - task:
+        name: winetricks
+        app: d3dcompiler_43 corefonts
+        description: Instalar componentes de Windows
+    - task:
+        name: wineexec
+        executable: setup
+        args: /S
+        description: Instalar Ubisoft Connect
+'''
+
+[[recipe]]
+slug = "gog-galaxy"
+name = "GOG Galaxy"
+description = "Lanzador de GOG"
+script = '''
+name: GOG Galaxy
+slug: gog-galaxy
+runner: wine
+user: Arctiva
+script:
+  files:
+    - setup: "https://webinstallers.gog-statics.com/download/GOG_Galaxy_2.0.exe"
+  game:
+    exe: $WINEPREFIX/drive_c/Program Files (x86)/GOG Galaxy/GalaxyClient.exe
+    arch: win64
+  installer:
+    - task:
+        name: create_prefix
+        arch: win64
+    - task:
+        name: winetricks
+        app: corefonts win10
+        description: Instalar fuentes y ajustar la versión de Windows
+    - task:
+        name: wineexec
+        executable: setup
+        args: /VERYSILENT /NORESTART
+        description: Instalar GOG Galaxy
+'''
+
+[[recipe]]
+slug = "epic-games"
+name = "Epic Games Launcher"
+description = "Lanzador de Epic Games"
+script = '''
+name: Epic Games Launcher
+slug: epic-games
+runner: wine
+user: Arctiva
+script:
+  files:
+    - setup: "https://launcher-public-service-prod06.ol.epicgames.com/launcher/api/installer/download/EpicGamesLauncher.msi"
+  game:
+    exe: $WINEPREFIX/drive_c/Program Files (x86)/Epic Games/Launcher/Portal/Binaries/Win32/EpicGamesLauncher.exe
+    arch: win64
+  installer:
+    - task:
+        name: create_prefix
+        arch: win64
+    - task:
+        name: winetricks
+        app: corefonts
+        description: Instalar fuentes
+    - task:
+        name: wineexec
+        executable: msiexec
+        args: /i $setup /qn
+        description: Instalar Epic Games Launcher
+'''

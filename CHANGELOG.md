@@ -8,6 +8,11 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 
 ## [Unreleased]
 
+### Added
+
+- Arctiva Games 0.1.0: new optional package (`arctiva-games`, with its own window and menu entry) that installs Windows game launchers (Battle.net, EA app, Ubisoft Connect, GOG Galaxy, Epic Games) from our own recipes, or any installer found on lutris.net, step by step: summary of what will be downloaded and run before starting, live log saved to disk, retry / skip / stop at any step, a "Continue" button for launchers where you must sign in (they are not closed), a list of the Wine processes of the game, and a library with Play and Uninstall. It uses the system `wine` and `winetricks` (dependencies). Not yet tested on real hardware.
+- Arctiva Center 0.7.10: new "Arctiva Games" extra in Extras, which installs that package.
+
 ### Changed
 
 - Num Lock is now on by default when the session starts, in the live session and the installed system (`arctiva-settings` 0.5.2, `/etc/xdg/kcminputrc`). The login screen also requests it (`Numlock=on` in Plasma Login), still untested.

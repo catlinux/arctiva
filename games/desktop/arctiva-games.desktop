@@ -1,0 +1,14 @@
+[Desktop Entry]
+Type=Application
+Name=Arctiva Games
+Comment=Install and run Windows game launchers and games
+Comment[es]=Instala y ejecuta lanzadores y juegos de Windows
+Comment[ca]=Instal·la i executa llançadors i jocs de Windows
+Exec=arctiva-games
+Icon=applications-games
+Terminal=false
+Categories=Game;
+Keywords=games;wine;battle.net;lutris;launcher;
+Keywords[es]=juegos;wine;battle.net;lutris;lanzador;
+Keywords[ca]=jocs;wine;battle.net;lutris;llançador;
+StartupNotify=true
