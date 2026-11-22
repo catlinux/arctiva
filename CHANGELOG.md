@@ -8,6 +8,14 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 
 ## [Unreleased]
 
+## [0.7.4] - 2026-11-22
+
+Boot test fix. Patch version.
+
+### Fixed
+
+- The live ISO announces on the console when the graphical session of the `live` user is up (`arctiva-live-ready.service`): the boot test looked for a systemd message that is no longer printed, so it never found the session even though the desktop started (checked in QEMU).
+
 ## [0.7.3] - 2026-11-22
 
 Release workflow, user guide and hardware test matrix (phase 7, steps 7.2 to 7.4). Patch version.

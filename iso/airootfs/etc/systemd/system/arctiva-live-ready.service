@@ -1,0 +1,11 @@
+[Unit]
+Description=Announce that the Arctiva live graphical session is up (boot test)
+ConditionKernelCommandLine=archisobasedir
+After=graphical.target arctiva-live-setup.service
+
+[Service]
+Type=oneshot
+# systemd ya no imprime en la consola «Started Session N of User live» (tests/boot-test.sh lo
+# buscaba): se espera a que logind tenga la sesión del usuario live y se escribe la señal.
+ExecStart=/bin/sh -c 'for i in $(seq 1 600); do if loginctl list-sessions --no-legend 2>/dev/null | grep -qw live; then echo "Session 1 of User live: ARCTIVA-LIVE-SESSION-READY" > /dev/console; exit 0; fi; sleep 1; done; exit 1'
+

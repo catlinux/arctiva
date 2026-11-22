@@ -8,6 +8,14 @@ El formato se basa en [Keep a Changelog](https://keepachangelog.com/es-ES/1.1.0/
 
 ## [Sin publicar]
 
+## [0.7.4] - 2026-11-22
+
+Corrección de la prueba de arranque. Versión de parche.
+
+### Corregido
+
+- La ISO live avisa en la consola cuando la sesión gráfica del usuario `live` está en marcha (`arctiva-live-ready.service`): la prueba de arranque buscaba un mensaje de systemd que ya no se imprime y no encontraba la sesión aunque el escritorio arrancaba (comprobado en QEMU).
+
 ## [0.7.3] - 2026-11-22
 
 Flujo de publicación, guía de usuario y matriz de pruebas en hardware (fase 7, pasos 7.2 a 7.4). Versión de parche.
