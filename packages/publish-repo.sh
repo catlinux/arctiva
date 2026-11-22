@@ -12,6 +12,9 @@ server="https://github.com/${target}/releases/download/x86_64"
 : "${ARCTIVA_SIGNING_KEY:?}" "${ARCTIVA_SIGNING_PASSPHRASE:?}" "${GH_TOKEN:?}"
 
 pacman -Syu --noconfirm --needed base-devel git sudo github-cli gnupg curl >/dev/null
+# umu-launcher (dependencia de arctiva-games) está en multilib, desactivado en la imagen archlinux.
+grep -q '^\[multilib\]' /etc/pacman.conf || printf '\n[multilib]\nInclude = /etc/pacman.d/mirrorlist\n' >>/etc/pacman.conf
+pacman -Sy --noconfirm >/dev/null
 id -u arctivabuild >/dev/null 2>&1 || useradd -m arctivabuild
 echo 'arctivabuild ALL=(ALL) NOPASSWD: ALL' >/etc/sudoers.d/arctivabuild
 
