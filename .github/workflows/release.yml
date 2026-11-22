@@ -50,9 +50,9 @@ jobs:
             bash -c 'set -euo pipefail
               fecha="$(tr -d "[:space:]" < iso/archive-date)"
               printf "Server = https://archive.archlinux.org/repos/%s/\$repo/os/\$arch\n" "$fecha" > /etc/pacman.d/mirrorlist
-              pacman -Syyuu --noconfirm
+              pacman -Syyuu --noconfirm --disable-download-timeout
               pacman -S --noconfirm --needed archiso
-              ./build.sh -o /repo/out -w /var/tmp/arctiva-work'
+              ok=0; for i in 1 2 3; do if ./build.sh -o /repo/out -w /var/tmp/arctiva-work; then ok=1; break; fi; echo "Intento $i fallido" >&2; done; [ $ok = 1 ]'
 
       - name: Prueba de arranque (QEMU, UEFI)
         run: |

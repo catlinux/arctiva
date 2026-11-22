@@ -21,6 +21,7 @@ First beta candidate: welcome and desktop icons in the live session and the inst
 ### Fixed
 
 - If you connect to the internet after opening the installer, `linux-lts` and the profiles are now installed anyway: Calamares checked the network only once at startup and `packages` skipped the installation even when a connection was available. A new job (`arctivanet`) checks again right before. The "Requirements" page still shows the startup state.
+- The ISO build no longer aborts when `archive.archlinux.org` is slow from the GitHub runners (pacman gave up after 10 s under 1 B/s): `DisableDownloadTimeout`, 3 parallel downloads and up to 3 build attempts in the `ISO` and release workflows.
 
 ### Changed
 
