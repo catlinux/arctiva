@@ -135,6 +135,9 @@ class AurBackend(QObject):
             entries, clones = [], {}
             for pkg in plan.aur_chain:
                 folder, commit = aur.clone(pkg.base)
+                hidden = aur.unreviewable(folder)
+                if hidden:
+                    raise aur.AurError(f"{pkg.name}: {', '.join(hidden)} es un enlace simbólico y no se puede revisar")
                 clones[pkg.name] = (folder, commit)
                 old = (state.get(pkg.name) or {}).get("commit")
                 diff = ""

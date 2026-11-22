@@ -256,3 +256,20 @@ def test_foreign_packages():
     out = NS(returncode=0, stdout="yay-bin 13.1.0-1\nsolouna\nparu 2-1\n", stderr="")
     assert aur.foreign_packages(lambda argv: out) == {"yay-bin": "13.1.0-1", "paru": "2-1"}
     assert aur.foreign_packages(lambda argv: NS(returncode=1, stdout="x y", stderr="")) == {}
+
+
+def test_review_includes_install_script_declared_in_pkgbuild(tmp_path):
+    (tmp_path / "PKGBUILD").write_text("pkgname=p\ninstall='hook.sh'\n")
+    (tmp_path / "hook.sh").write_text("rm -rf /")
+    (tmp_path / "otro.txt").write_text("no")
+    assert [n for n, _ in aur.review_files(tmp_path)] == ["PKGBUILD", "hook.sh"]
+
+
+def test_unreviewable_flags_symlinked_pkgbuild_and_install(tmp_path):
+    (tmp_path / "real").write_text("echo")
+    try:
+        (tmp_path / "PKGBUILD").symlink_to("real")
+        (tmp_path / "x.install").symlink_to("real")
+    except OSError:
+        pytest.skip("sin enlaces simbólicos")
+    assert aur.unreviewable(tmp_path) == ["PKGBUILD", "x.install"]

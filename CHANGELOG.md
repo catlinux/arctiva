@@ -25,6 +25,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 
 ### Fixed
 
+- AUR review: the package review now also shows the install script a PKGBUILD declares with `install=` under any name (pacman runs it as root), not only `*.install` files, and refuses to continue if the PKGBUILD or an install script is a symbolic link (it could not be shown). Arctiva Center 0.7.12.
 - Arctiva Center: opening an AUR package on a system without `git` no longer fails with "No such file or directory: git": `git` is now a dependency of the package.
 
 ## [0.8.0] - 2026-11-22

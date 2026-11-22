@@ -195,23 +195,43 @@ def clone(base, src_dir=SRC_DIR, runner=run_command, url_for=GIT_URL.format):
     return dest, _git(runner, "rev-parse", "HEAD", cwd=dest).strip()
 
 
-def review_files(folder):
-    """PKGBUILD y todos los .install completos, en ese orden: lo que el usuario debe leer."""
+def _install_scripts(folder):
+    """Nombres de los scripts que el PKGBUILD declara con `install=` (pacman los ejecuta como root al
+    instalar, y pueden llamarse como sea, no solo `*.install`) más los `*.install` de la carpeta."""
     folder = Path(folder)
-    names = ["PKGBUILD"] + sorted(p.name for p in folder.glob("*.install"))
+    names = {p.name for p in folder.glob("*.install")}
+    pkgbuild = folder / "PKGBUILD"
+    if pkgbuild.is_file() and not pkgbuild.is_symlink():
+        text = pkgbuild.read_text(encoding="utf-8", errors="replace")
+        for m in re.finditer(r"^\s*install=['\"]?([^'\"\s;#$]+)", text, re.M):
+            if "/" not in m.group(1) and m.group(1) not in (".", ".."):
+                names.add(m.group(1))
+    return sorted(names)
+
+
+def review_files(folder):
+    """PKGBUILD y todos los scripts de instalación completos, en ese orden: lo que el usuario debe leer."""
+    folder = Path(folder)
     result = []
-    for name in names:
+    for name in ["PKGBUILD", *_install_scripts(folder)]:
         path = folder / name
         if path.is_file() and not path.is_symlink():
             result.append((name, path.read_text(encoding="utf-8", errors="replace")))
     return result
 
 
+def unreviewable(folder):
+    """Archivos que makepkg usaría pero que no se pueden mostrar al usuario (enlaces simbólicos)."""
+    folder = Path(folder)
+    return [n for n in ["PKGBUILD", *_install_scripts(folder)] if (folder / n).is_symlink()]
+
+
 def diff_since(folder, old_commit, runner=run_command):
     """Cambios del PKGBUILD y los .install entre lo instalado y lo último; vacío si no hay."""
     if not re.fullmatch(r"[0-9a-f]{7,64}", old_commit or ""):
         raise AurError("commit instalado no válido")
-    return _git(runner, "diff", f"{old_commit}..HEAD", "--", "PKGBUILD", "*.install", cwd=folder)
+    paths = ["PKGBUILD", "*.install", *_install_scripts(folder)]
+    return _git(runner, "diff", f"{old_commit}..HEAD", "--", *dict.fromkeys(paths), cwd=folder)
 
 
 # --- dependencias ---
