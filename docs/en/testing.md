@@ -56,6 +56,16 @@ Test matrix run on physical machines before releasing a version. One box per cas
 - [x] Store: search, install and remove from Arch and Flathub; AUR with review; `.exe` dialog.
 - [ ] Vendor logo (BGRT) under Plymouth: only visible on real hardware.
 
+## Recorded results
+
+Real-hardware tests, as reported by whoever ran them. Each line has a date and a version; what is not here has not been checked.
+
+- **2026-11-22, ISO 0.7.4, MSI laptop (NVIDIA, Windows 11):**
+  - Live boot from a Ventoy USB stick: only works with "Boot in grub2 mode" (the normal mode drops to an emergency shell); 1 min 53 s to the desktop (`systemd-analyze`: firmware 7.5 s, loader 32.3 s, kernel 48.6 s, userspace 24.7 s). See the TODO.
+  - Installation **alongside Windows 11**: no problems, according to the user.
+  - NVIDIA graphics: games load and run on the dedicated GPU (Battle.net and World of Warcraft, installed with Lutris).
+  - In the live session the tray showed audio, Bluetooth, wifi and battery (42 %, charging).
+
 ## How to report a failure
 
 Open an issue with the repository template: version, machine, what you did and what happened (and `journalctl -b` or a screenshot if you can). Link it here next to the case.

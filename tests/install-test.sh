@@ -116,14 +116,14 @@ shot resumen
 vnc move 1120 711 click 1 pause 4 # Instalar
 vnc move 700 425 click 1 pause 3  # confirmar
 
-echo "== Instalando (puede tardar unos 10 minutos)"
+echo "== Instalando (puede tardar de 10 a 25 minutos)"
 done_ok=0
-for _ in $(seq 1 120); do
+for _ in $(seq 1 180); do
     sleep 10
     vnc move $((600 + RANDOM % 80)) 400 2>/dev/null || true
     shot progreso
-    # Página final: botón «Hecho» azul abajo a la derecha
-    if pixel_is "$out/progreso.png" 1125 711 29 78 216 25 2>/dev/null; then done_ok=1; break; fi
+    # Página final: botón «Hecho» azul abajo a la derecha (dos puntos del botón, lejos de su texto)
+    if pixel_is "$out/progreso.png" 1100 700 29 78 216 25 2>/dev/null && pixel_is "$out/progreso.png" 1150 700 29 78 216 25 2>/dev/null; then done_ok=1; break; fi
 done
 (( done_ok )) || fail "el instalador no llegó a la pantalla final"
 shot instalado

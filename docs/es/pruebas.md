@@ -56,6 +56,16 @@ Matriz de pruebas que se hacen en equipos físicos antes de publicar una versió
 - [x] Tienda: buscar, instalar y quitar desde Arch y Flathub; AUR con revisión; diálogo de `.exe`.
 - [ ] Logo del fabricante (BGRT) bajo Plymouth: solo se ve en hardware real.
 
+## Resultados anotados
+
+Pruebas en hardware real, tal como las ha comunicado quien las hizo. Cada línea lleva fecha y versión; lo que no esté aquí no se ha comprobado.
+
+- **2026-11-22, ISO 0.7.4, portátil MSI (NVIDIA, Windows 11):**
+  - Arranque de la live desde un USB con Ventoy: solo funciona con «Boot in grub2 mode» (el modo normal se queda en un shell de emergencia); 1 min 53 s hasta el escritorio (`systemd-analyze`: firmware 7,5 s, loader 32,3 s, kernel 48,6 s, espacio de usuario 24,7 s). Ver TODO.
+  - Instalación **junto a Windows 11**: sin problemas, según el usuario.
+  - Gráfica NVIDIA: juegos que se cargan y se mueven con la GPU dedicada (Battle.net y World of Warcraft, instalados con Lutris).
+  - En la live se veían en la bandeja el audio, Bluetooth, wifi y batería (42 % cargando).
+
 ## Cómo anotar un fallo
 
 Abre un issue con la plantilla del repositorio: versión, equipo, qué hiciste y qué pasó (y `journalctl -b` o la captura si puedes). Enlázalo aquí junto al caso.
