@@ -265,6 +265,14 @@
 <context>
     <name>ExtrasPage</name>
     <message>
+        <source>Install %1?</source>
+        <translation>Vols instal·lar %1?</translation>
+    </message>
+    <message>
+        <source>The download can be large and take from a few minutes to over half an hour, depending on your connection. You can keep using the computer, but do not turn it off or suspend it until it finishes.</source>
+        <translation>La descàrrega pot ser gran i trigar des d&apos;uns minuts fins a més de mitja hora, segons la teva connexió. Pots seguir utilitzant l&apos;equip, però no l&apos;apaguis ni el suspenguis fins que acabi.</translation>
+    </message>
+    <message>
         <source>This is the live session: installing and updating only work once Arctiva is installed.</source>
         <translation>Aquesta és la sessió live: instal·lar i actualitzar només funcionen quan Arctiva està instal·lat.</translation>
     </message>
@@ -344,8 +352,16 @@
         <translation>Arctiva Center %1</translation>
     </message>
     <message>
-        <source>This is the live session: you can look around, but installing and updating only work once Arctiva is installed.</source>
-        <translation>Aquesta és la sessió live: pots fer un cop d&apos;ull, però instal·lar i actualitzar només funcionen quan Arctiva està instal·lat.</translation>
+        <source>Install Arctiva</source>
+        <translation>Instal·la Arctiva</translation>
+    </message>
+    <message>
+        <source>Install Arctiva on this computer, next to Windows or on its own. You can also keep trying it first without changing anything.</source>
+        <translation>Instal·la Arctiva en aquest ordinador, al costat de Windows o sol. També pots seguir provant-lo abans sense canviar res.</translation>
+    </message>
+    <message>
+        <source>This is the live session: you can look around, but updating the system and installing programs only work once Arctiva is installed.</source>
+        <translation>Aquesta és la sessió live: pots fer un cop d&apos;ull, però actualitzar el sistema i instal·lar programes només funciona quan Arctiva està instal·lat.</translation>
     </message>
     <message>
         <source>Graphics drivers</source>
@@ -902,5 +918,16 @@
         <source>Check if it works first</source>
         <translation>Comprova abans si funciona</translation>
     </message>
+</context>
+<context>
+    <name>InstallProgress</name>
+    <message><source>%1 min %2 s</source><translation>%1 min %2 s</translation></message>
+    <message><source>%1 s</source><translation>%1 s</translation></message>
+    <message><source>Preparing…</source><translation>Preparant…</translation></message>
+    <message><source>Components processed: %1</source><translation>Components tractats: %1</translation></message>
+    <message><source>Downloading and installing…</source><translation>Descarregant i instal·lant…</translation></message>
+    <message><source>%1% done</source><translation>%1 % completat</translation></message>
+    <message><source>Time elapsed: %1</source><translation>Temps transcorregut: %1</translation></message>
+    <message><source>This can take several minutes. Do not turn off or suspend the computer until it finishes.</source><translation>Pot trigar uns quants minuts. No apaguis ni suspenguis l&apos;equip fins que acabi.</translation></message>
 </context>
 </TS>

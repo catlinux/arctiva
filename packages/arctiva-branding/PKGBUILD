@@ -3,7 +3,7 @@
 # Identidad visual de Arctiva en el sistema instalado: icono de la distribución, «Acerca de» de Plasma y fondos de pantalla,
 # esquema de color, tema global «Arctiva» (escritorio tipo Windows 11) tema de GRUB y temas de Plymouth.
 pkgname=arctiva-branding
-pkgver=0.6.2
+pkgver=0.6.3
 pkgrel=1
 pkgdesc='Logo, fondos e identidad visual de Arctiva'
 arch=(any)
@@ -66,6 +66,12 @@ package() {
     install -Dm644 "$srcdir/arctiva.svg" "$pkgdir/usr/share/icons/hicolor/scalable/apps/arctiva.svg"
     install -Dm644 "$srcdir/arctiva.svg" "$pkgdir/usr/share/pixmaps/arctiva.svg"
     install -Dm644 "$startdir/files/kcm-about-distrorc" "$pkgdir/etc/xdg/kcm-about-distrorc"
+
+    # Icono «Carpeta personal» en el escritorio de los usuarios nuevos. Va ejecutable: Plasma
+    # solo lanza sin preguntar los .desktop del escritorio que lo son.
+    install -Dm755 "$startdir/files/skel/Desktop/arctiva-home.desktop" \
+        "$pkgdir/etc/skel/Desktop/arctiva-home.desktop"
+    install -Dm644 "$startdir/files/skel/.config/user-dirs.dirs" "$pkgdir/etc/skel/.config/user-dirs.dirs"
 
     # Tipografía corporativa (SIL OFL 1.1): la usan el instalador, Arctiva Center y los temas.
     install -Dm644 "$srcdir/branding/fonts/Outfit[wght].ttf" "$pkgdir/usr/share/fonts/TTF/Outfit-Variable.ttf"

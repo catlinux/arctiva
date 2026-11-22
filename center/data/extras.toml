@@ -74,9 +74,9 @@ en = "Windows programs"
 es = "Programas de Windows"
 ca = "Programes de Windows"
 [extra.description]
-en = "Bottles, to run many Windows programs and games. Double-click a .exe or .msi to open it. Not everything works: games with anti-cheat usually do not. Download of about 0.2 GB."
-es = "Bottles, para ejecutar muchos programas y juegos de Windows. Haz doble clic en un .exe o .msi para abrirlo. No todo funciona: los juegos con anti-trampas suelen no funcionar. Descarga de unos 0,2 GB."
-ca = "Bottles, per executar molts programes i jocs de Windows. Fes doble clic en un .exe o .msi per obrir-lo. No tot funciona: els jocs amb anti-trampes solen no funcionar. Descàrrega d'uns 0,2 GB."
+en = "Bottles, to run many Windows programs and games. Double-click a .exe or .msi to open it. Not everything works: games with anti-cheat usually do not. The program itself is about 0.2 GB, but the first time Flatpak also downloads its shared components (runtimes), which can be much larger, and Bottles downloads more when you open it for the first time."
+es = "Bottles, para ejecutar muchos programas y juegos de Windows. Haz doble clic en un .exe o .msi para abrirlo. No todo funciona: los juegos con anti-trampas suelen no funcionar. El programa son unos 0,2 GB, pero la primera vez Flatpak descarga además sus componentes comunes (runtimes), que pueden ser mucho mayores, y Bottles descarga más al abrirlo por primera vez."
+ca = "Bottles, per executar molts programes i jocs de Windows. Fes doble clic en un .exe o .msi per obrir-lo. No tot funciona: els jocs amb anti-trampes solen no funcionar. El programa són uns 0,2 GB, però la primera vegada Flatpak descarrega a més els seus components comuns (runtimes), que poden ser molt més grans, i Bottles descarrega més en obrir-lo per primera vegada."
 
 [[extra]]
 id = "heroic"

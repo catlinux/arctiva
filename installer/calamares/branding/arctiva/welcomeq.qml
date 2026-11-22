@@ -27,6 +27,32 @@ Item {
     })
     function t(clave) { return A.t(textos, clave, idioma); }
 
+    // Textos propios de los requisitos, por identificador. Calamares los genera una sola vez, en
+    // el idioma de la sesión al arrancar, y no los retraduce al cambiar de idioma en esta página.
+    // Si falta alguno (un requisito nuevo), se usa el texto de Calamares.
+    readonly property var textosRequisito: ({
+        storage_ok: { es: "Hay al menos 25 GiB libres en el disco.", ca: "Hi ha almenys 25 GiB lliures al disc.", en: "There is at least 25 GiB of free disk space." },
+        storage_no: { es: "Hacen falta al menos 25 GiB libres en el disco.", ca: "Calen almenys 25 GiB lliures al disc.", en: "At least 25 GiB of free disk space is needed." },
+        ram_ok: { es: "Hay al menos 4 GiB de memoria.", ca: "Hi ha almenys 4 GiB de memòria.", en: "There is at least 4 GiB of memory." },
+        ram_no: { es: "Hacen falta al menos 4 GiB de memoria.", ca: "Calen almenys 4 GiB de memòria.", en: "At least 4 GiB of memory is needed." },
+        power_ok: { es: "El equipo está conectado a la corriente.", ca: "L'ordinador està connectat al corrent.", en: "The computer is plugged in." },
+        power_no: { es: "Conecta el equipo a la corriente antes de instalar.", ca: "Connecta l'ordinador al corrent abans d'instal·lar.", en: "Plug the computer in before installing." },
+        internet_ok: { es: "Hay conexión a internet.", ca: "Hi ha connexió a internet.", en: "There is an internet connection." },
+        internet_no: { es: "Sin conexión a internet: conéctate antes de instalar para añadir el kernel LTS y los perfiles; sin ella se instala solo lo que trae la ISO.",
+                       ca: "Sense connexió a internet: connecta't abans d'instal·lar per afegir el nucli LTS i els perfils; sense ella s'instal·la només el que porta la ISO.",
+                       en: "No internet connection: connect before installing to add the LTS kernel and the profiles; without it only what the ISO includes is installed." },
+        root_ok: { es: "El instalador tiene los permisos necesarios.", ca: "L'instal·lador té els permisos necessaris.", en: "The installer has the permissions it needs." },
+        root_no: { es: "El instalador debe ejecutarse como administrador.", ca: "L'instal·lador s'ha d'executar com a administrador.", en: "The installer must be run as administrator." },
+        screen_ok: { es: "La pantalla es lo bastante grande.", ca: "La pantalla és prou gran.", en: "The screen is large enough." },
+        screen_no: { es: "La pantalla es pequeña: algunas páginas pueden verse recortadas.", ca: "La pantalla és petita: algunes pàgines poden veure's retallades.", en: "The screen is small: some pages may look cut off." }
+    })
+    function textoRequisito(requisito) {
+        var clave = requisito.name + (requisito.satisfied ? "_ok" : "_no");
+        if (textosRequisito[clave] === undefined)
+            return requisito.satisfied ? requisito.details : requisito.negatedText;
+        return A.t(textosRequisito, clave, idioma);
+    }
+
     function onActivate() {
         recargarRequisitos();
     }
@@ -118,7 +144,7 @@ Item {
                         Label {
                             Layout.fillWidth: true
                             // «name» es el identificador interno (storage, ram…); «details», el texto.
-                            text: model.satisfied ? model.details : model.negatedText
+                            text: page.textoRequisito(model)
                             wrapMode: Text.WordWrap
                             color: A.texto
                         }

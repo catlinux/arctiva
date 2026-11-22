@@ -265,6 +265,14 @@
 <context>
     <name>ExtrasPage</name>
     <message>
+        <source>Install %1?</source>
+        <translation>¿Instalar %1?</translation>
+    </message>
+    <message>
+        <source>The download can be large and take from a few minutes to over half an hour, depending on your connection. You can keep using the computer, but do not turn it off or suspend it until it finishes.</source>
+        <translation>La descarga puede ser grande y tardar desde unos minutos hasta más de media hora, según tu conexión. Puedes seguir usando el equipo, pero no lo apagues ni lo suspendas hasta que termine.</translation>
+    </message>
+    <message>
         <source>This is the live session: installing and updating only work once Arctiva is installed.</source>
         <translation>Esta es la sesión live: instalar y actualizar solo funcionan cuando Arctiva está instalado.</translation>
     </message>
@@ -344,8 +352,16 @@
         <translation>Arctiva Center %1</translation>
     </message>
     <message>
-        <source>This is the live session: you can look around, but installing and updating only work once Arctiva is installed.</source>
-        <translation>Esta es la sesión live: puedes echar un vistazo, pero instalar y actualizar solo funcionan cuando Arctiva está instalado.</translation>
+        <source>Install Arctiva</source>
+        <translation>Instalar Arctiva</translation>
+    </message>
+    <message>
+        <source>Install Arctiva on this computer, next to Windows or on its own. You can also keep trying it first without changing anything.</source>
+        <translation>Instala Arctiva en este equipo, junto a Windows o solo. También puedes seguir probándolo antes sin cambiar nada.</translation>
+    </message>
+    <message>
+        <source>This is the live session: you can look around, but updating the system and installing programs only work once Arctiva is installed.</source>
+        <translation>Esta es la sesión live: puedes echar un vistazo, pero actualizar el sistema e instalar programas solo funciona cuando Arctiva está instalado.</translation>
     </message>
     <message>
         <source>Graphics drivers</source>
@@ -902,5 +918,16 @@
         <source>Check if it works first</source>
         <translation>Comprueba antes si funciona</translation>
     </message>
+</context>
+<context>
+    <name>InstallProgress</name>
+    <message><source>%1 min %2 s</source><translation>%1 min %2 s</translation></message>
+    <message><source>%1 s</source><translation>%1 s</translation></message>
+    <message><source>Preparing…</source><translation>Preparando…</translation></message>
+    <message><source>Components processed: %1</source><translation>Componentes tratados: %1</translation></message>
+    <message><source>Downloading and installing…</source><translation>Descargando e instalando…</translation></message>
+    <message><source>%1% done</source><translation>%1 % completado</translation></message>
+    <message><source>Time elapsed: %1</source><translation>Tiempo transcurrido: %1</translation></message>
+    <message><source>This can take several minutes. Do not turn off or suspend the computer until it finishes.</source><translation>Puede tardar varios minutos. No apagues ni suspendas el equipo hasta que termine.</translation></message>
 </context>
 </TS>

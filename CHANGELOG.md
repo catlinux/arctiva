@@ -8,6 +8,29 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 
 ## [Unreleased]
 
+## [0.8.0] - 2026-11-22
+
+First beta candidate: welcome and desktop icons in the live session and the installed system, installer and Arctiva Center fixes. Minor version (step 7.5 of phase 7: beta).
+
+### Added
+
+- The live session opens the Arctiva Center welcome at login, with an "Install Arctiva" button, and puts an "Install Arctiva" icon on the `live` user's desktop (Arctiva Center 0.7.9).
+- A "Home" icon on the desktop of every new user, in the live session and the installed system (`arctiva-branding` 0.6.3, through `/etc/skel`). The desktop is pinned to `~/Desktop` so the icon also shows with the system in Spanish or Catalan.
+- Arctiva Center: installing an extra now warns first that the download can take from minutes to over half an hour, and during installation (extras and applications) it shows a progress bar, the current step and the elapsed time. The bar is real with pacman (package n of m) and indeterminate with Flatpak, which gives no percentage.
+
+### Fixed
+
+- If you connect to the internet after opening the installer, `linux-lts` and the profiles are now installed anyway: Calamares checked the network only once at startup and `packages` skipped the installation even when a connection was available. A new job (`arctivanet`) checks again right before. The "Requirements" page still shows the startup state.
+
+### Changed
+
+- The welcome is no longer skipped in the live session; on the installed system it still appears on its own until it is switched off.
+- The requirement texts on the installer's welcome page now follow the chosen language (Spanish, Catalan or English) instead of staying in the language of the startup.
+- The "Windows programs" description no longer says it is only 0.2 GB: the program is, but the first time Flatpak also downloads its shared components.
+- `release.yml`: checks the signing secrets before building, aligns the build container with the Archive date and publishes the notes in English and Spanish.
+- User guide: Ventoy only boots in "grub2 mode", boot time from USB, the live welcome and a Btrfs root for manual partitioning.
+- `tests/install-test.sh` waits up to 30 minutes for the installation to finish and detects the final button at two points of the button, away from its text.
+
 ## [0.7.4] - 2026-11-22
 
 Boot test fix. Patch version.

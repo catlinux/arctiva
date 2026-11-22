@@ -88,11 +88,42 @@ Kirigami.ScrollablePage {
             }
         }
 
+        Kirigami.AbstractCard {
+            Layout.fillWidth: true
+            visible: isLive
+            contentItem: RowLayout {
+                spacing: Kirigami.Units.largeSpacing
+                Kirigami.Icon {
+                    source: "system-software-install"
+                    Layout.preferredWidth: Kirigami.Units.iconSizes.medium
+                    Layout.preferredHeight: Kirigami.Units.iconSizes.medium
+                    Layout.alignment: Qt.AlignTop
+                }
+                ColumnLayout {
+                    Layout.fillWidth: true
+                    Kirigami.Heading {
+                        level: 3
+                        text: qsTr("Install Arctiva")
+                    }
+                    QQC2.Label {
+                        Layout.fillWidth: true
+                        wrapMode: Text.WordWrap
+                        text: qsTr("Install Arctiva on this computer, next to Windows or on its own. You can also keep trying it first without changing anything.")
+                    }
+                }
+                QQC2.Button {
+                    highlighted: true
+                    text: qsTr("Install Arctiva")
+                    onClicked: welcomeBackend.launchInstaller()
+                }
+            }
+        }
+
         Kirigami.InlineMessage {
             Layout.fillWidth: true
             visible: isLive
             type: Kirigami.MessageType.Information
-            text: qsTr("This is the live session: you can look around, but installing and updating only work once Arctiva is installed.")
+            text: qsTr("This is the live session: you can look around, but updating the system and installing programs only work once Arctiva is installed.")
         }
 
         Step {
@@ -146,6 +177,7 @@ Kirigami.ScrollablePage {
         }
 
         QQC2.CheckBox {
+            visible: !isLive
             text: qsTr("Show this welcome when logging in")
             checked: welcomeBackend.showAtLogin
             onToggled: welcomeBackend.showAtLogin = checked

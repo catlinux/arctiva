@@ -19,7 +19,7 @@ Descarga la ISO y comprueba que es auténtica (ver [publicación](../publicacion
 
 - **Rufus** (Windows): elige la ISO, el esquema de partición **GPT** y el sistema de destino **UEFI**.
 - **balenaEtcher** (Windows, macOS, Linux): elige la ISO y el USB.
-- **Ventoy** (Windows, Linux): copia la ISO al USB ya preparado con Ventoy.
+- **Ventoy** (Windows, Linux): copia la ISO al USB ya preparado con Ventoy. En su menú elige **«Boot in grub2 mode»**: el modo normal se queda en un shell de emergencia y todavía no arranca Arctiva. Si tienes dudas, usa Rufus o Etcher.
 - **dd** (Linux): `sudo dd if=arctiva-X.Y.Z-x86_64.iso of=/dev/sdX bs=4M status=progress oflag=sync` (cuidado: `/dev/sdX` es el USB, no tu disco).
 
 ## 3. Antes de arrancar: Secure Boot y BitLocker
@@ -30,10 +30,10 @@ Descarga la ISO y comprueba que es auténtica (ver [publicación](../publicacion
 
 ## 4. Arrancar e instalar
 
-1. Arranca desde el USB (menú de arranque del firmware, suele ser F12 o F8) y elige «Arctiva (live)». Si la pantalla sale mal, prueba «safe graphics».
-2. Pruébalo sin instalar: es una sesión en vivo completa. Cuando quieras, abre **Instalar Arctiva**.
+1. Arranca desde el USB (menú de arranque del firmware, suele ser F12 o F8) y elige «Arctiva (live)». Si la pantalla sale mal, prueba «safe graphics». Arrancar desde un USB puede tardar uno o dos minutos: espera al escritorio.
+2. Pruébalo sin instalar: es una sesión en vivo completa. Se abre una ventana de bienvenida con el botón **Instalar Arctiva**, y el mismo icono está en el escritorio. No cambia nada en tu disco hasta que ejecutes el instalador.
 3. Sigue el instalador: idioma, zona horaria y teclado; el **perfil** (Básico, Juegos u Oficina; con Ctrl+clic eliges varios); la página **Comprobación**, que avisa de Windows hibernado, BitLocker, batería y red; el **disco** (borrar todo, **instalar junto a otro sistema** o reemplazar una partición); y tu usuario y contraseña.
-4. En la página del disco, **cifrar el sistema** es opcional. Si lo activas, al arrancar GRUB te pedirá la contraseña **en modo texto** antes de mostrar nada más: es normal.
+4. Si particionas a mano, haz la raíz **Btrfs**: las instantáneas (apartado 6) la necesitan y el instalador no te avisa. En la página del disco, **cifrar el sistema** es opcional. Si lo activas, al arrancar GRUB te pedirá la contraseña **en modo texto** antes de mostrar nada más: es normal.
 5. Revisa el **resumen** y pulsa Instalar. Al terminar, reinicia y quita el USB.
 
 ## 5. Primeros pasos
@@ -60,7 +60,7 @@ Instala el extra **Juegos** (Steam con Proton, Lutris, GameMode, MangoHud, Games
 
 ## 8. Programas de Windows
 
-Instala el extra **Programas de Windows** (Bottles). Después, haz doble clic en un `.exe` o `.msi` y Arctiva te explica qué va a pasar y lo abre con Bottles. No todo funciona (consulta [WineHQ AppDB](https://appdb.winehq.org/)). Abre solo programas en los que confíes.
+Instala el extra **Programas de Windows** (Bottles). La primera vez descarga mucho, porque Flatpak también trae sus componentes comunes: Arctiva Center te avisa antes y muestra una barra de progreso, y la descarga puede tardar de unos minutos a más de media hora; no apagues ni suspendas el equipo mientras tanto. Después, haz doble clic en un `.exe` o `.msi` y Arctiva te explica qué va a pasar y lo abre con Bottles. No todo funciona (consulta [WineHQ AppDB](https://appdb.winehq.org/)). Abre solo programas en los que confíes.
 
 ## 9. La tienda y el AUR
 

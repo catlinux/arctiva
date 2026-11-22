@@ -16,6 +16,11 @@ Autolock=false
 LockOnResume=false
 EOF
     chown "$live_user:$live_user" "/home/${live_user}/.config"
+    # «Instalar Arctiva» en el escritorio, solo en la live: se crea aquí y no en /etc/skel para
+    # que no llegue al sistema instalado. Ejecutable para que Plasma lo lance sin preguntar.
+    install -D -m 0755 -o "$live_user" -g "$live_user" \
+        /usr/share/applications/arctiva-installer.desktop \
+        "/home/${live_user}/Desktop/arctiva-installer.desktop"
 fi
 install -m 0440 /dev/stdin /etc/sudoers.d/10-arctiva-live <<<"$live_user ALL=(ALL:ALL) NOPASSWD: ALL"
 

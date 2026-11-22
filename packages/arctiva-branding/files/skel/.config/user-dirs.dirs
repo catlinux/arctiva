@@ -1,0 +1,3 @@
+# Fija el escritorio en ~/Desktop en cualquier idioma: así los iconos de /etc/skel/Desktop
+# se ven aunque xdg-user-dirs-update cree el resto de carpetas con nombres traducidos.
+XDG_DESKTOP_DIR="$HOME/Desktop"

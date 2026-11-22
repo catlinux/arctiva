@@ -19,7 +19,7 @@ Download the ISO and check it is authentic (see [releasing](../releasing.md)). T
 
 - **Rufus** (Windows): pick the ISO, partition scheme **GPT** and target system **UEFI**.
 - **balenaEtcher** (Windows, macOS, Linux): pick the ISO and the USB.
-- **Ventoy** (Windows, Linux): copy the ISO to a USB already prepared with Ventoy.
+- **Ventoy** (Windows, Linux): copy the ISO to a USB already prepared with Ventoy. At its menu choose **"Boot in grub2 mode"**: the normal mode drops to an emergency shell and does not start Arctiva yet. If in doubt, use Rufus or Etcher.
 - **dd** (Linux): `sudo dd if=arctiva-X.Y.Z-x86_64.iso of=/dev/sdX bs=4M status=progress oflag=sync` (careful: `/dev/sdX` is the USB, not your disk).
 
 ## 3. Before booting: Secure Boot and BitLocker
@@ -30,10 +30,10 @@ Download the ISO and check it is authentic (see [releasing](../releasing.md)). T
 
 ## 4. Boot and install
 
-1. Boot from the USB (firmware boot menu, usually F12 or F8) and choose "Arctiva (live)". If the screen looks wrong, try "safe graphics".
-2. Try it without installing: it is a full live session. When you want, open **Install Arctiva**.
+1. Boot from the USB (firmware boot menu, usually F12 or F8) and choose "Arctiva (live)". If the screen looks wrong, try "safe graphics". Starting from a USB stick can take one to two minutes: wait for the desktop.
+2. Try it without installing: it is a full live session. A welcome window opens with an **Install Arctiva** button, and the same icon is on the desktop. Nothing on your disk changes until you run the installer.
 3. Follow the installer: language, time zone and keyboard; the **profile** (Basic, Gaming or Office; Ctrl+click to pick several); the **Check** page, which warns about hibernated Windows, BitLocker, battery and network; the **disk** (erase all, **install alongside another system** or replace a partition); and your user and password.
-4. On the disk page, **encrypting the system** is optional. If you turn it on, GRUB asks for the password **in text mode** at boot before showing anything else: this is normal.
+4. If you partition by hand, make the root **Btrfs**: snapshots (section 6) need it, and the installer does not warn you. On the disk page, **encrypting the system** is optional. If you turn it on, GRUB asks for the password **in text mode** at boot before showing anything else: this is normal.
 5. Review the **summary** and press Install. When it finishes, restart and remove the USB.
 
 ## 5. First steps
@@ -60,7 +60,7 @@ Install the **Gaming** extra (Steam with Proton, Lutris, GameMode, MangoHud, Gam
 
 ## 8. Windows programs
 
-Install the **Windows programs** extra (Bottles). Then double-click a `.exe` or `.msi` and Arctiva explains what will happen and opens it with Bottles. Not everything works (check [WineHQ AppDB](https://appdb.winehq.org/)). Only open programs you trust.
+Install the **Windows programs** extra (Bottles). The first time it downloads a lot, because Flatpak also fetches its shared components: Arctiva Center warns you first and shows a progress bar, and the download can take from minutes to over half an hour; do not turn off or suspend the computer meanwhile. Then double-click a `.exe` or `.msi` and Arctiva explains what will happen and opens it with Bottles. Not everything works (check [WineHQ AppDB](https://appdb.winehq.org/)). Only open programs you trust.
 
 ## 9. The store and the AUR
 

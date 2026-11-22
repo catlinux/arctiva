@@ -4,25 +4,21 @@
 
 Trabajo pendiente agrupado por prioridad. Fases y decisiones: [hoja de ruta](docs/es/hoja-de-ruta.md) · [arquitectura](docs/es/arquitectura.md).
 
-## Media: seguimiento de la fase 1
-
-- [ ] Compilar los paquetes propios (`packages/`) con la misma fecha del Arch Linux Archive que la ISO, para que Calamares no se compile con bibliotecas más nuevas que las incluidas.
-
 ## Media: fase 2 (instalador)
 
 - [ ] ISO live con GRUB en lugar de systemd-boot (`bootmodes=('uefi.grub')`, `iso/grub/` con el tema de Arctiva, quitar `iso/efiboot/`): hace falta una máquina Arch para probar `mkarchiso`; `tests/boot-test.sh` no cambia (arranca el kernel directamente).
 
 - [ ] Al arrancar una instantánea falla `systemd-remount-fs` (fstab pide `subvol=/@` y la raíz es un overlay de grub-btrfs). No impide arrancar; valorar ocultarlo.
-- [ ] Avisar en la página de resumen si la raíz no es Btrfs (modo manual): no habrá instantáneas.
 - [ ] Las páginas QML del instalador llevan sus textos en castellano, catalán e inglés dentro del propio QML; pasarlos a traducciones del branding (`.ts`) para poder añadir más idiomas.
 - [ ] Mapa sin conexión en la página «Idioma y zona»: el de Calamares descarga los mosaicos de Internet, así que de momento la página usa solo listas.
 - [ ] La lista de perfiles necesita Ctrl+clic para elegir varios (Calamares usa selección extendida; la pista va en el texto de «Básico»). Una página QML propia permitiría el clic simple.
 - [ ] Volver a probar «Instalar junto a» con el nuevo requisito de 25 GiB (0.3.13) en un disco de 60 GB con Windows.
 - [ ] ISO más ligera: la base ya es ajustada (instalada 4,3 GiB, ISO 1,76 GiB de los 1,9 permitidos). Lo mayor: `firefox` 307 MiB, `qt6-webengine` 284 MiB (lo pide `purpose`→`kaccounts`, que usan Spectacle y Gwenview), `llvm-libs` 165 MiB (Mesa), `linux-firmware-*` ~430 MiB (Intel 142, NVIDIA 104, Atheros 53, MediaTek 37, AMDGPU 28), `noto-fonts` 107 MiB. La única palanca real es instalar solo el firmware que pida el hardware detectado (fase 3).
-- [ ] Tras cambiar de idioma en la bienvenida, los textos de los requisitos siguen en el idioma en que se comprobaron (Calamares los genera antes de elegir): repetir la comprobación o traducirlos en la página.
 
 ## Media: instalador
 
+- [ ] Ventoy en modo normal se queda en un shell de emergencia (solo arranca el «modo grub2»): probablemente Ventoy reconoce archiso por `/arch/` y Arctiva usa `install_dir="arctiva"`. Comprobarlo en QEMU con un disco de Ventoy; si se confirma, valorar cambiar `install_dir` a `arch` (afecta a `unpackfs`, al instalador y a los scripts).
+- [ ] Arranque lento de la live desde un USB: 1 min 53 s en un portátil con Ventoy (loader 32 s, kernel 49 s porque archiso copia el sistema de 1,7 GiB a la RAM, espacio de usuario 25 s). Valorar `copytoram=n` (arranca antes, programas más lentos) o un mensaje de progreso.
 - [ ] En la página «Perfiles» del instalador, la imagen del perfil toca el borde derecho de la ventana.
 
 ## Media: estudios
@@ -31,12 +27,15 @@ Trabajo pendiente agrupado por prioridad. Fases y decisiones: [hoja de ruta](doc
 
 ## Más adelante
 
+- Página «Juegos» en Arctiva Center sobre los scripts de instalación de lutris.net (intérprete e interfaz propios, sin bifurcar Lutris), después de la beta y de consultar al equipo de Lutris.
 - Fases 2 a 7 según la hoja de ruta.
 - Pruebas en hardware real (USB en el PC con la RTX 4060; portátil con Windows y Manjaro), solo al final, con todo implementado (fase 7). La entrada «safe graphics» ya funciona en VirtualBox.
 - Hibernación: subvolumen `@swap` con un archivo de intercambio además de zram (D-04). Queda fuera de la 1.0, que solo tiene suspensión.
 - ISO reproducible bit a bit: dos construcciones con la misma fecha del Arch Linux Archive tienen los mismos paquetes y tamaño, pero distinta suma (D-02).
 - Cifrado LUKS2 con desbloqueo por TPM2 o FIDO2, cuando Calamares permita elegir el método de derivación de la clave (D-04).
 - Contraseña de cifrado con la distribución de teclado del usuario en GRUB (`grub-kbdcomp`), en lugar de la estadounidense (D-04).
+
+- Compilar los paquetes propios (`packages/`) con la misma fecha del Arch Linux Archive que la ISO: obligaría a bajar de versión el equipo de construcción con `pacman -Syyuu`, algo seguro solo en un contenedor desechable; de momento se compilan con las bibliotecas del día (explicado en `docs/es/desarrollo.md`). Reconsiderar si Calamares deja de arrancar por una biblioteca más nueva que la de la ISO.
 
 ## Descartado
 
@@ -48,3 +47,4 @@ Trabajo pendiente agrupado por prioridad. Fases y decisiones: [hoja de ruta](doc
 - **BIOS heredada en la 1.0:** duplica la matriz de pruebas con muy poco beneficio (D-04).
 - **Partir la ISO en trozos:** las herramientas para grabar USB necesitan un único archivo (D-14).
 - **Paquete nativo de Bottles:** sus desarrolladores solo soportan Flatpak (D-12).
+- **Aviso en el resumen si la raíz no es Btrfs:** Calamares no deja la tabla de particiones en GlobalStorage hasta que se ejecuta la instalación, así que una página QML no puede saberlo; la guía de usuario explica que las instantáneas necesitan una raíz Btrfs.

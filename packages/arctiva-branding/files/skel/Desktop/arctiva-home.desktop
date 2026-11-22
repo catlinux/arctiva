@@ -1,0 +1,12 @@
+[Desktop Entry]
+Type=Application
+Name=Home
+Name[es]=Carpeta personal
+Name[ca]=Carpeta personal
+Comment=Open your personal folder
+Comment[es]=Abre tu carpeta personal
+Comment[ca]=Obre la teva carpeta personal
+Exec=sh -c 'exec xdg-open "$HOME"'
+Icon=user-home
+Terminal=false
+Categories=Utility;

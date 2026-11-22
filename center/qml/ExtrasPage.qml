@@ -15,7 +15,18 @@ Kirigami.ScrollablePage {
     readonly property bool busy: helper.running || extrasBackend.checking || extrasBackend.flatpakBusy
 
     function toggle(extra) {
+        // Instalar puede ser una descarga grande: se avisa antes. Quitar no necesita aviso.
+        if (extra.installed) {
+            start(extra)
+        } else {
+            confirm.extra = extra
+            confirm.open()
+        }
+    }
+
+    function start(extra) {
         log.clear()
+        progress.reset()
         page.lastCode = -2
         page.working = extra.id
         page.lastName = extra.name
@@ -29,9 +40,18 @@ Kirigami.ScrollablePage {
 
     Component.onCompleted: extrasBackend.refresh()
 
+    Kirigami.PromptDialog {
+        id: confirm
+        property var extra: null
+        title: qsTr("Install %1?").arg(extra ? extra.name : "")
+        subtitle: qsTr("The download can be large and take from a few minutes to over half an hour, depending on your connection. You can keep using the computer, but do not turn it off or suspend it until it finishes.")
+        standardButtons: Kirigami.Dialog.Ok | Kirigami.Dialog.Cancel
+        onAccepted: page.start(extra)
+    }
+
     Connections {
         target: helper
-        function onLine(text) { if (page.working !== "") log.append(text) }
+        function onLine(text) { if (page.working !== "") { log.append(text); progress.feed(text) } }
         function onFinished(code) {
             if (page.working === "")
                 return
@@ -43,7 +63,7 @@ Kirigami.ScrollablePage {
 
     Connections {
         target: extrasBackend
-        function onFlatpakLine(text) { if (page.working !== "") log.append(text) }
+        function onFlatpakLine(text) { if (page.working !== "") { log.append(text); progress.feed(text) } }
         function onFlatpakFinished(code) {
             if (page.working === "")
                 return
@@ -75,6 +95,12 @@ Kirigami.ScrollablePage {
                     ? (page.removing ? qsTr("%1 has been removed.") : qsTr("%1 has been installed.")).arg(page.lastName)
                 : (page.lastCode === 126 || page.lastCode === 127) ? qsTr("Authorization cancelled")
                 : qsTr("The operation failed (error code %1). The log below has the details; if it mentions dependencies, another program still needs these packages.").arg(page.lastCode)
+        }
+
+        InstallProgress {
+            id: progress
+            Layout.fillWidth: true
+            active: page.working !== ""
         }
 
         QQC2.Label {

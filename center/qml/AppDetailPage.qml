@@ -25,7 +25,7 @@ Kirigami.ScrollablePage {
     Connections {
         target: backend
         function onChanged() { if (!backend.busy) page.reload() }
-        function onLog(text) { if (page.workingKind !== "") log.append(text) }
+        function onLog(text) { if (page.workingKind !== "") { log.append(text); progress.feed(text) } }
         // Hay actualizaciones pendientes: no se instala hasta actualizar el sistema (D-07).
         function onUpdatesNeeded(id) {
             if (id === page.appId) {
@@ -44,6 +44,7 @@ Kirigami.ScrollablePage {
 
     function run(row) {
         log.clear()
+        progress.reset()
         lastCode = -2
         needsUpdate = false
         workingKind = row.kind
@@ -132,6 +133,12 @@ Kirigami.ScrollablePage {
                 : (page.lastCode === 126 || page.lastCode === 127) ? qsTr("Authorization cancelled")
                 : page.lastCode === 64 ? qsTr("This operation is not allowed: it would touch parts of the system that must stay.")
                 : qsTr("The operation failed (error code %1). The log below has the details.").arg(page.lastCode)
+        }
+
+        InstallProgress {
+            id: progress
+            Layout.fillWidth: true
+            active: page.workingKind !== ""
         }
 
         Kirigami.Heading {

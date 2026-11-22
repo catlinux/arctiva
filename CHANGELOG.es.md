@@ -8,6 +8,29 @@ El formato se basa en [Keep a Changelog](https://keepachangelog.com/es-ES/1.1.0/
 
 ## [Sin publicar]
 
+## [0.8.0] - 2026-11-22
+
+Primera candidata a beta: bienvenida e iconos del escritorio en la live y en el sistema instalado, y correcciones del instalador y de Arctiva Center. Versión menor (paso 7.5 de la fase 7: beta).
+
+### Añadido
+
+- La sesión live abre la bienvenida de Arctiva Center al iniciar, con un botón «Instalar Arctiva», y deja el icono «Instalar Arctiva» en el escritorio del usuario `live` (Arctiva Center 0.7.9).
+- Icono «Carpeta personal» en el escritorio de todos los usuarios nuevos, en la live y en el sistema instalado (`arctiva-branding` 0.6.3, vía `/etc/skel`). El escritorio queda fijado en `~/Desktop` para que el icono se vea también con el sistema en castellano o catalán.
+- Arctiva Center: al instalar un extra avisa antes de que la descarga puede tardar desde minutos hasta más de media hora, y durante la instalación (extras y aplicaciones) muestra una barra de progreso, el paso actual y el tiempo transcurrido. La barra es real con pacman (paquete n de m) e indeterminada con Flatpak, que no da porcentaje.
+
+### Corregido
+
+- Si te conectas a internet después de abrir el instalador, ahora se instalan igualmente `linux-lts` y los perfiles: Calamares comprobaba la red una sola vez al arrancar y `packages` se saltaba la instalación aunque ya hubiera conexión. Un trabajo nuevo (`arctivanet`) la vuelve a comprobar justo antes. La página «Requisitos» sigue mostrando el estado del arranque.
+
+### Cambiado
+
+- La bienvenida de la live ya no se omite; en el sistema instalado sigue saliendo solo hasta que se desmarque.
+- Los textos de los requisitos de la página de bienvenida del instalador están ahora en el idioma elegido (castellano, catalán o inglés) al cambiar de idioma, en lugar de quedarse en el de arranque.
+- La descripción de «Programas de Windows» ya no dice que son solo 0,2 GB: el programa sí, pero la primera vez Flatpak descarga además sus componentes comunes.
+- `release.yml`: comprueba los secretos de firma antes de construir, alinea el contenedor de construcción con la fecha del Archive y publica las notas en inglés y en castellano.
+- Guía de usuario: Ventoy solo arranca en «modo grub2», tiempo de arranque desde USB, bienvenida de la live y raíz Btrfs en particionado manual.
+- `tests/install-test.sh` espera hasta 30 minutos a que termine la instalación y detecta el botón final en dos puntos del botón, fuera de su texto.
+
 ## [0.7.4] - 2026-11-22
 
 Corrección de la prueba de arranque. Versión de parche.

@@ -21,8 +21,11 @@ def test_show_and_hide(tmp_path):
     welcome.set_show_at_login(True, env)  # sin el archivo, no falla
 
 
-def test_never_in_live(tmp_path):
-    assert not welcome.should_show({"XDG_CONFIG_HOME": str(tmp_path)}, str(tmp_path))
+def test_always_in_live(tmp_path):
+    env = {"XDG_CONFIG_HOME": str(tmp_path)}
+    assert welcome.should_show(env, str(tmp_path))
+    welcome.set_show_at_login(False, env)
+    assert welcome.should_show(env, str(tmp_path))  # en la live ofrece instalar siempre
 
 
 def test_welcome_exits_without_window_when_done(tmp_path, monkeypatch):

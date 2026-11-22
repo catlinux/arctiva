@@ -16,8 +16,9 @@ def is_live(marker=LIVE_MARKER):
 
 
 def should_show(env=os.environ, marker=LIVE_MARKER):
-    """El arranque automático (--welcome) sale sin ventana en la live o si ya se desmarcó."""
-    return not is_live(marker) and not done_file(env).exists()
+    """El arranque automático (--welcome) abre siempre la bienvenida en la live (ofrece instalar);
+    en el sistema instalado, solo hasta que se desmarque."""
+    return is_live(marker) or not done_file(env).exists()
 
 
 def set_show_at_login(show, env=os.environ):
