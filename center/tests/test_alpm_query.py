@@ -51,3 +51,11 @@ def test_query():
     assert nano.installed and nano.repo == "core"
     assert q.info("no-existe") is None
     assert set(q.infos(["krita", "x", "nano"])) == {"krita", "nano"}
+
+
+def test_default_db_path(tmp_path):
+    temp = tmp_path / "t"
+    assert aq.default_db_path({"CHECKUPDATES_DB": str(temp)}, "/sys-pacman") == aq.Path("/sys-pacman")
+    (temp / "sync").mkdir(parents=True)
+    (temp / "sync" / "core.db").write_text("x")
+    assert aq.default_db_path({"CHECKUPDATES_DB": str(temp)}, "/sys-pacman") == temp

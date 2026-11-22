@@ -8,6 +8,15 @@ El formato se basa en [Keep a Changelog](https://keepachangelog.com/es-ES/1.1.0/
 
 ## [Sin publicar]
 
+## [0.7.1] - 2026-11-22
+
+Pequeñas correcciones vistas al hacer capturas. Versión de parche.
+
+### Corregido
+
+- Tema de GRUB (`arctiva-branding` 0.6.2): el menú es más ancho y la descripción de las instantáneas ya no se corta.
+- Arctiva Center 0.7.8: la página de detalle de una aplicación muestra la versión y el tamaño de Arch también la primera vez, antes de que exista la base temporal (lee la del sistema, solo lectura).
+
 ## [0.7.0] - 2026-11-22
 
 Fase 6 terminada: aplicaciones y Windows. Probada el 2026-11-22 en un sistema instalado en QEMU (búsqueda en la tienda, instalar y quitar desde Arch y Flathub, AUR con revisión y diff de actualización, diálogo de `.exe` con Bottles, extras de Flatpak) y con la ISO construida en un contenedor. Versión menor (fase terminada, D-16). Sin cambios de código desde la 0.6.7.

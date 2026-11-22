@@ -3,7 +3,7 @@
 # Identidad visual de Arctiva en el sistema instalado: icono de la distribución, «Acerca de» de Plasma y fondos de pantalla,
 # esquema de color, tema global «Arctiva» (escritorio tipo Windows 11) tema de GRUB y temas de Plymouth.
 pkgname=arctiva-branding
-pkgver=0.6.1
+pkgver=0.6.2
 pkgrel=1
 pkgdesc='Logo, fondos e identidad visual de Arctiva'
 arch=(any)

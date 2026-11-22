@@ -14,6 +14,13 @@ def sync_db_path(env=os.environ):
     return Path(env.get("CHECKUPDATES_DB") or Path.home() / ".cache" / "arctiva-center" / "syncdb")
 
 
+def default_db_path(env=os.environ, system="/var/lib/pacman"):
+    """La base temporal de checkupdates si ya existe; si no (primer uso), la del sistema solo
+    para leer versiones y tamaños (nunca se escribe en ella)."""
+    temp = sync_db_path(env)
+    return temp if (temp / "sync" / "core.db").exists() else Path(system)
+
+
 @dataclass(frozen=True)
 class PackageInfo:
     name: str
@@ -34,7 +41,7 @@ class AlpmQuery:
             self._optional = pyalpm.SIG_DATABASE_OPTIONAL
         else:
             self._optional = 0
-        self.handle = handle_factory("/", str(db_path or sync_db_path()))
+        self.handle = handle_factory("/", str(db_path or default_db_path()))
         self.dbs = [self.handle.register_syncdb(r, self._optional) for r in repos]
         self._local = self.handle.get_localdb()
 

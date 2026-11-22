@@ -28,9 +28,9 @@ terminal-font: "Outfit Regular 20"
 }
 
 + boot_menu {
-    left = 50%-320
+    left = 50%-480
     top = 33%
-    width = 640
+    width = 960
     height = 48%
     item_font = "Outfit Regular 20"
     item_color = "#c3cee8"
