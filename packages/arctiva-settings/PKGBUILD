@@ -2,7 +2,7 @@
 # Maintainer: CatLinux
 # Ajustes del sistema de Arctiva: zram, identidad en os-release y mirrors (reflector).
 pkgname=arctiva-settings
-pkgver=0.5.1
+pkgver=0.5.2
 pkgrel=1
 pkgdesc='Ajustes del sistema de Arctiva (zram, os-release, reflector, GRUB)'
 arch=(any)
@@ -33,5 +33,7 @@ package() {
     # Tema global y esquema de color por defecto de los usuarios nuevos (los existentes no cambian).
     install -Dm644 etc/xdg/kdeglobals "$pkgdir/etc/xdg/kdeglobals"
     install -Dm644 etc/xdg/ksplashrc "$pkgdir/etc/xdg/ksplashrc"
+    # Bloq Num activado al iniciar la sesión (0 = activado en KDE), también en la live.
+    install -Dm644 etc/xdg/kcminputrc "$pkgdir/etc/xdg/kcminputrc"
     install -Dm644 usr/lib/systemd/system/reflector.service.d/arctiva.conf         "$pkgdir/usr/lib/systemd/system/reflector.service.d/arctiva.conf"
 }

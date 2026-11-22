@@ -8,6 +8,10 @@ El formato se basa en [Keep a Changelog](https://keepachangelog.com/es-ES/1.1.0/
 
 ## [Sin publicar]
 
+### Cambiado
+
+- El Bloq Num queda activado por defecto al iniciar la sesión, en la live y en el sistema instalado (`arctiva-settings` 0.5.2, `/etc/xdg/kcminputrc`). La pantalla de inicio de sesión también lo pide (`Numlock=on` en Plasma Login), aún sin probar.
+
 ## [0.8.0] - 2026-11-22
 
 Primera candidata a beta: bienvenida e iconos del escritorio en la live y en el sistema instalado, y correcciones del instalador y de Arctiva Center. Versión menor (paso 7.5 de la fase 7: beta).

@@ -8,6 +8,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 
 ## [Unreleased]
 
+### Changed
+
+- Num Lock is now on by default when the session starts, in the live session and the installed system (`arctiva-settings` 0.5.2, `/etc/xdg/kcminputrc`). The login screen also requests it (`Numlock=on` in Plasma Login), still untested.
+
 ## [0.8.0] - 2026-11-22
 
 First beta candidate: welcome and desktop icons in the live session and the installed system, installer and Arctiva Center fixes. Minor version (step 7.5 of phase 7: beta).
