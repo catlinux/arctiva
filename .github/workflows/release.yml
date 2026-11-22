@@ -21,12 +21,20 @@ jobs:
     steps:
       - uses: actions/checkout@v7
 
+      - name: Comprobar que están los secretos de firma
+        env:
+          ARCTIVA_SIGNING_KEY: ${{ secrets.ARCTIVA_SIGNING_KEY }}
+          ARCTIVA_SIGNING_PASSPHRASE: ${{ secrets.ARCTIVA_SIGNING_PASSPHRASE }}
+        run: |
+          [ -n "$ARCTIVA_SIGNING_KEY" ] && [ -n "$ARCTIVA_SIGNING_PASSPHRASE" ] || { echo "Faltan los secretos ARCTIVA_SIGNING_KEY o ARCTIVA_SIGNING_PASSPHRASE: se comprueba antes de la construcción larga." >&2; exit 1; }
+
       - name: La etiqueta coincide con VERSION
         run: |
           set -euo pipefail
           tag="${GITHUB_REF_NAME#v}"
           [ "$tag" = "$(tr -d '[:space:]' < VERSION)" ] || { echo "La etiqueta v$tag no coincide con VERSION ($(cat VERSION))." >&2; exit 1; }
           grep -q "^## \[$tag\]" CHANGELOG.md || { echo "CHANGELOG.md no tiene la sección $tag." >&2; exit 1; }
+          grep -q "^## \[$tag\]" CHANGELOG.es.md || { echo "CHANGELOG.es.md no tiene la sección $tag." >&2; exit 1; }
 
       - name: Liberar espacio en el runner
         run: |
@@ -34,9 +42,17 @@ jobs:
           df -h /
 
       - name: Construir la ISO (fecha fija del Archive, sin alternativa)
+        # El contenedor es desechable: se alinea con la misma fecha del Archive que la ISO
+        # (pacman -Syyuu) para que Calamares y los paquetes propios se compilen con las
+        # bibliotecas que lleva la ISO. Si el Archive no responde, falla y no se publica nada.
         run: |
           docker run --rm --privileged -v "$PWD:/repo" -w /repo archlinux:latest \
-            bash -c 'pacman -Syu --noconfirm --needed archiso && ./build.sh -o /repo/out -w /var/tmp/arctiva-work'
+            bash -c 'set -euo pipefail
+              fecha="$(tr -d "[:space:]" < iso/archive-date)"
+              printf "Server = https://archive.archlinux.org/repos/%s/\$repo/os/\$arch\n" "$fecha" > /etc/pacman.d/mirrorlist
+              pacman -Syyuu --noconfirm
+              pacman -S --noconfirm --needed archiso
+              ./build.sh -o /repo/out -w /var/tmp/arctiva-work'
 
       - name: Prueba de arranque (QEMU, UEFI)
         run: |
@@ -79,8 +95,11 @@ jobs:
         run: |
           set -euo pipefail
           tag="${GITHUB_REF_NAME#v}"
-          awk -v v="$tag" '$0 ~ "^## \\["v"\\]" {f=1; next} f && /^## \[/ {exit} f' CHANGELOG.md > notas.md
           {
+            echo "## English"; echo
+            awk -v v="$tag" '$0 ~ "^## \\["v"\\]" {f=1; next} f && /^## \[/ {exit} f' CHANGELOG.md
+            echo; echo "## Español"; echo
+            awk -v v="$tag" '$0 ~ "^## \\["v"\\]" {f=1; next} f && /^## \[/ {exit} f' CHANGELOG.es.md
             echo
             echo "**Verificar la descarga / Verify the download:** \`sha256sum -c arctiva-$tag-x86_64.iso.sha256\` y \`gpg --verify arctiva-$tag-x86_64.iso.sig arctiva-$tag-x86_64.iso\` (clave pública: \`arctiva.gpg\` del repositorio)."
           } >> notas.md

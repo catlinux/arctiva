@@ -14,7 +14,7 @@ The ISO is published by the `.github/workflows/release.yml` workflow, triggered 
 ## What the workflow does
 
 1. Checks the tag, `VERSION` and the changelog.
-2. Builds the ISO with the pinned Archive date from `iso/archive-date`. **There is no fallback:** if the Archive is down it fails (a published ISO must be rebuildable identically).
+2. Builds the ISO with the pinned Archive date from `iso/archive-date`. **There is no fallback:** if the Archive is down it fails (a published ISO must be rebuildable identically). Before building it checks that the signing secrets exist, and the throwaway container is aligned to that same date (`pacman -Syyuu`) so Calamares and the in-house packages are built with the ISO's libraries. The release notes carry the version section of both `CHANGELOG.md` and `CHANGELOG.es.md`.
 3. Boot test in QEMU (UEFI).
 4. Signs the ISO with the repository's signing subkey (`ARCTIVA_SIGNING_KEY` and `ARCTIVA_SIGNING_PASSPHRASE` secrets, see [signing.md](signing.md)): detached `.sig`, without leaving the key on disk.
 5. Verifies the checksum and signature with the repository's public key.

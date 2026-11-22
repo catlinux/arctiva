@@ -14,7 +14,7 @@ La ISO se publica con el flujo `.github/workflows/release.yml`, que se dispara a
 ## Qué hace el flujo
 
 1. Comprueba etiqueta, `VERSION` y CHANGELOG.
-2. Construye la ISO con la fecha fija del Archive de `iso/archive-date`. **No hay alternativa:** si el Archive no responde, falla (una ISO publicada tiene que poder reconstruirse igual).
+2. Construye la ISO con la fecha fija del Archive de `iso/archive-date`. **No hay alternativa:** si el Archive no responde, falla (una ISO publicada tiene que poder reconstruirse igual). Antes de construir comprueba que están los secretos de firma, y el contenedor desechable se alinea con esa misma fecha (`pacman -Syyuu`) para compilar Calamares y los paquetes propios con las bibliotecas de la ISO. Las notas de la release llevan la sección de la versión de `CHANGELOG.md` y de `CHANGELOG.es.md`.
 3. Prueba de arranque en QEMU (UEFI).
 4. Firma la ISO con la subclave del repositorio (secretos `ARCTIVA_SIGNING_KEY` y `ARCTIVA_SIGNING_PASSPHRASE`, ver [firma.md](firma.md)): firma separada `.sig`, sin dejar la clave en disco.
 5. Verifica la suma y la firma con la clave pública del repositorio.
