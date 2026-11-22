@@ -99,8 +99,8 @@ Estado de cada trabajo: `[x]` hecho (con la versión en que se cerró) y `[ ]` p
 
 - [ ] Steam, Proton y Heroic probados en hardware real con NVIDIA y con AMD o Intel
 - [ ] Matriz de pruebas en hardware real, cuando todo esté implementado: USB en el PC (NVIDIA RTX 4060) y portátil con Windows y Manjaro (sustituir Manjaro por Arctiva conservando Windows y su partición EFI)
-- [ ] Documentación de usuario
-- [ ] Publicación firmada (ISO, `sha256`, firma GPG) con réplica externa
+- [x] Documentación de usuario (primera versión, 0.7.3)
+- [ ] Publicación firmada (ISO, `sha256`, firma GPG) con réplica externa: flujo `release.yml` escrito (0.7.3), falta probarlo con una etiqueta
 - [ ] Beta pública y canales de ayuda propios
 
 ### Estable (1.0.0)

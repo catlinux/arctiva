@@ -76,6 +76,29 @@ if [[ ! -e "${root}/etc/resolv.conf.arctiva-orig" ]]; then
 fi
 cp --remove-destination -L -- /etc/resolv.conf "${root}/etc/resolv.conf"
 
+# Red justo antes de instalar paquetes (el instalador comprobó internet al empezar y puede haberse
+# caído desde entonces). No se aborta: sin red, Calamares salta la instalación de paquetes y sigue
+# con lo que trae la ISO; pero el motivo queda claro en el registro.
+if curl -sI --max-time 10 -o /dev/null https://archlinux.org; then
+    online=1
+else
+    online=0
+    echo "prepare-target: AVISO: sin conexión a internet. Los paquetes que no trae la ISO (linux-lts, perfiles Juegos u Oficina) no se instalarán; se podrán añadir después desde Arctiva Center." >&2
+fi
+
+# Mirrors rápidos para el sistema instalado y para la instalación de paquetes de Calamares. Si
+# reflector falla o tarda, se queda la lista que ya hay (se escribe aparte y solo se usa si es válida).
+if (( online )) && in_target command -v reflector >/dev/null 2>&1; then
+    tmp_ml="${root}/etc/pacman.d/mirrorlist.arctiva-new"
+    if in_target timeout 60 reflector @/etc/arctiva/reflector.conf --save /etc/pacman.d/mirrorlist.arctiva-new >/dev/null 2>&1         && grep -q '^Server' "$tmp_ml"; then
+        mv -f -- "$tmp_ml" "${root}/etc/pacman.d/mirrorlist"
+        echo "Mirrors ordenados por velocidad con reflector."
+    else
+        rm -f -- "$tmp_ml"
+        echo "reflector no ha podido ordenar los mirrors: se mantiene la lista por defecto."
+    fi
+fi
+
 # multilib de serie (D-11): lo necesita el perfil Juegos y packages hace -Syu antes de instalar.
 # Idempotente: descomenta el bloque si está comentado y lo añade si falta.
 pacman_conf="${root}/etc/pacman.conf"

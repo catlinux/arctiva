@@ -8,6 +8,25 @@ El formato se basa en [Keep a Changelog](https://keepachangelog.com/es-ES/1.1.0/
 
 ## [Sin publicar]
 
+## [0.7.3] - 2026-11-22
+
+Flujo de publicación, guía de usuario y matriz de pruebas en hardware (fase 7, pasos 7.2 a 7.4). Versión de parche.
+
+### Añadido
+
+- `.github/workflows/release.yml`: al subir una etiqueta `vX.Y.Z`, construye la ISO con la fecha fija del Archive (sin alternativa), la prueba de arranque, la firma con la subclave del repositorio, verifica suma y firma y crea la release. `docs/es/publicacion.md` lo explica y dice cómo verificar una descarga.
+- Guía de usuario (`docs/es/usuario/`): preparar el USB, Secure Boot y BitLocker, instalar, primeros pasos, instantáneas, juegos, programas de Windows y la tienda.
+- Matriz de pruebas en hardware real (`docs/es/pruebas.md`).
+
+## [0.7.2] - 2026-11-22
+
+Deudas del instalador y alternativa del CI (fase 7, paso 7.0). Versión de parche.
+
+### Añadido
+
+- El instalador ordena los mirrors con `reflector` (límite de 60 s, solo con conexión; si falla se mantiene la lista por defecto) y comprueba la conexión justo antes de instalar paquetes, dejando un aviso claro en el registro si se ha caído.
+- `build.sh`: con `ARCHIVE_FALLBACK_LATEST=1`, si ningún servidor del Arch Linux Archive responde usa los mirrors actuales con un aviso (el flujo de la ISO lo activa para que una construcción de comprobación funcione durante una caída del Archive; una ISO que se publica no debe usarlo).
+
 ## [0.7.1] - 2026-11-22
 
 Pequeñas correcciones vistas al hacer capturas. Versión de parche.

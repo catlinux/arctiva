@@ -21,6 +21,9 @@ Arctiva es un proyecto independiente, sin relación oficial con Arch Linux ni re
 - [Arquitectura y decisiones](docs/es/arquitectura.md)
 - [Hoja de ruta](docs/es/hoja-de-ruta.md)
 - [Guía de desarrollo](docs/es/desarrollo.md)
+- [Guía de usuario](docs/es/usuario/README.md)
+- [Publicar y verificar la ISO](docs/es/publicacion.md)
+- [Pruebas en hardware real](docs/es/pruebas.md)
 - [Tareas pendientes](TODO.es.md) · [Registro de cambios](CHANGELOG.es.md)
 
 ## Requisitos previstos

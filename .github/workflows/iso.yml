@@ -45,7 +45,7 @@ jobs:
 
       - name: Construir la ISO
         run: |
-          docker run --rm --privileged -e ARCHIVE_DATE -v "$PWD:/repo" -w /repo archlinux:latest \
+          docker run --rm --privileged -e ARCHIVE_DATE -e ARCHIVE_FALLBACK_LATEST=1 -v "$PWD:/repo" -w /repo archlinux:latest \
             bash -c 'pacman -Syu --noconfirm --needed archiso && ./build.sh -o /repo/out -w /var/tmp/arctiva-work'
 
       - name: Tamaño

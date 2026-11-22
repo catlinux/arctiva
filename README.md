@@ -21,6 +21,9 @@ Arctiva is an independent project. It is not affiliated with or endorsed by Arch
 - [Architecture and decisions](docs/en/architecture.md)
 - [Roadmap](docs/en/roadmap.md)
 - [Development guide](docs/en/development.md)
+- [User guide](docs/en/user/README.md)
+- [Releasing and verifying the ISO](docs/en/releasing.md)
+- [Real-hardware testing](docs/en/testing.md)
 - [Pending tasks](TODO.md) · [Changelog](CHANGELOG.md)
 
 ## Planned system requirements

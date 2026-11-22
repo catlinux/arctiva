@@ -19,6 +19,8 @@ Uso: sudo ./build.sh [-d AAAA/MM/DD|latest] [-o salida] [-w trabajo]
       «latest» usa los mirrors del equipo, sin fecha fijada.
       Espejos extra del Archive (misma estructura repos/AAAA/MM/DD/), por si
       archive.archlinux.org falla: variable ARCHIVE_MIRRORS, bases separadas por espacios.
+      Si ARCHIVE_FALLBACK_LATEST=1 y ningún servidor responde, se usa «latest» con un aviso
+      (solo para el CI de comprobación: una ISO que se publica debe ser reproducible).
   -o  Directorio de salida de la ISO (por defecto: ./out).
   -w  Directorio de trabajo de mkarchiso; no debe existir
       (por defecto: ${work_dir}). No uses /tmp: está en RAM.
@@ -60,16 +62,12 @@ stage="$(mktemp -d)"
 trap 'rm -rf -- "$stage"' EXIT
 cp -a -- "$profile_src" "${stage}/profile"
 
-if [[ "$archive_date" == latest ]]; then
-    echo "Paquetes: mirrors actuales del equipo (sin fecha fijada)."
-else
+use_archive=1
+[[ "$archive_date" == latest ]] && use_archive=0
+if (( use_archive )); then
     [[ "$archive_date" =~ ^[0-9]{4}/[0-9]{2}/[0-9]{2}$ ]] || die "fecha no válida: ${archive_date} (formato AAAA/MM/DD)."
     # Mismo día en todos los servidores: pacman pasa al siguiente si uno falla, sin mezclar épocas.
     bases=(https://archive.archlinux.org ${ARCHIVE_MIRRORS:-})
-    servers=""
-    for base in "${bases[@]}"; do
-        servers+="Server = ${base%/}/repos/${archive_date}/\$repo/os/\$arch\\n"
-    done
     # Falla pronto y con un mensaje útil si ningún servidor responde, en vez de a mitad de mkarchiso.
     ok=0
     for base in "${bases[@]}"; do
@@ -78,7 +76,23 @@ else
             sleep 10
         done
     done
-    (( ok )) || die "ningún servidor del Arch Linux Archive responde. Reintenta más tarde, define ARCHIVE_MIRRORS o usa -d latest (ISO no reproducible)."
+    if (( ! ok )); then
+        if [[ "${ARCHIVE_FALLBACK_LATEST:-}" == 1 ]]; then
+            echo "AVISO: ningún servidor del Arch Linux Archive responde; se usan los mirrors actuales (ISO NO reproducible, no publicar)." >&2
+            archive_date=latest
+            use_archive=0
+        else
+            die "ningún servidor del Arch Linux Archive responde. Reintenta más tarde, define ARCHIVE_MIRRORS o usa -d latest (ISO no reproducible)."
+        fi
+    fi
+fi
+if (( ! use_archive )); then
+    echo "Paquetes: mirrors actuales del equipo (sin fecha fijada)."
+else
+    servers=""
+    for base in "${bases[@]}"; do
+        servers+="Server = ${base%/}/repos/${archive_date}/\$repo/os/\$arch\n"
+    done
     sed -i "s|^Include = /etc/pacman.d/mirrorlist$|${servers%'\n'}|" "${stage}/profile/pacman.conf"
     SOURCE_DATE_EPOCH="$(date -u -d "${archive_date//\//-}" +%s)"
     export SOURCE_DATE_EPOCH

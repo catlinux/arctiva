@@ -13,11 +13,9 @@ Trabajo pendiente agrupado por prioridad. Fases y decisiones: [hoja de ruta](doc
 - [ ] ISO live con GRUB en lugar de systemd-boot (`bootmodes=('uefi.grub')`, `iso/grub/` con el tema de Arctiva, quitar `iso/efiboot/`): hace falta una máquina Arch para probar `mkarchiso`; `tests/boot-test.sh` no cambia (arranca el kernel directamente).
 
 - [ ] Al arrancar una instantánea falla `systemd-remount-fs` (fstab pide `subvol=/@` y la raíz es un overlay de grub-btrfs). No impide arrancar; valorar ocultarlo.
-- [ ] Que el instalador elija mirrors rápidos (`reflector`) antes de `pacman -Syu`: el sistema instalado se queda con todos los mirrors HTTPS en el orden por defecto.
 - [ ] Avisar en la página de resumen si la raíz no es Btrfs (modo manual): no habrá instantáneas.
 - [ ] Las páginas QML del instalador llevan sus textos en castellano, catalán e inglés dentro del propio QML; pasarlos a traducciones del branding (`.ts`) para poder añadir más idiomas.
 - [ ] Mapa sin conexión en la página «Idioma y zona»: el de Calamares descarga los mosaicos de Internet, así que de momento la página usa solo listas.
-- [ ] Si se cae la conexión después de la bienvenida, el instalador sigue creyendo que hay internet y `packages` falla en `pacman -Sy` con un mensaje poco claro. Comprobarlo otra vez antes de instalar o mostrar un error más claro.
 - [ ] La lista de perfiles necesita Ctrl+clic para elegir varios (Calamares usa selección extendida; la pista va en el texto de «Básico»). Una página QML propia permitiría el clic simple.
 - [ ] Volver a probar «Instalar junto a» con el nuevo requisito de 25 GiB (0.3.13) en un disco de 60 GB con Windows.
 - [ ] ISO más ligera: la base ya es ajustada (instalada 4,3 GiB, ISO 1,76 GiB de los 1,9 permitidos). Lo mayor: `firefox` 307 MiB, `qt6-webengine` 284 MiB (lo pide `purpose`→`kaccounts`, que usan Spectacle y Gwenview), `llvm-libs` 165 MiB (Mesa), `linux-firmware-*` ~430 MiB (Intel 142, NVIDIA 104, Atheros 53, MediaTek 37, AMDGPU 28), `noto-fonts` 107 MiB. La única palanca real es instalar solo el firmware que pida el hardware detectado (fase 3).

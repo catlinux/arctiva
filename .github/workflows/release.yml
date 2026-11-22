@@ -1,0 +1,106 @@
+name: Publicación
+
+# Solo al subir una etiqueta vX.Y.Z (la crea el mantenedor). Construye la ISO con la fecha de
+# iso/archive-date, comprueba que arranca, la firma con la subclave del repositorio y la publica en
+# una release con su suma y su firma. Sin alternativa al Archive: una ISO publicada es reproducible.
+on:
+  push:
+    tags: ['v*']
+
+permissions:
+  contents: write
+
+concurrency:
+  group: release-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  publicar:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 180
+    steps:
+      - uses: actions/checkout@v7
+
+      - name: La etiqueta coincide con VERSION
+        run: |
+          set -euo pipefail
+          tag="${GITHUB_REF_NAME#v}"
+          [ "$tag" = "$(tr -d '[:space:]' < VERSION)" ] || { echo "La etiqueta v$tag no coincide con VERSION ($(cat VERSION))." >&2; exit 1; }
+          grep -q "^## \[$tag\]" CHANGELOG.md || { echo "CHANGELOG.md no tiene la sección $tag." >&2; exit 1; }
+
+      - name: Liberar espacio en el runner
+        run: |
+          sudo rm -rf /usr/share/dotnet /usr/local/lib/android /opt/ghc /opt/hostedtoolcache/CodeQL
+          df -h /
+
+      - name: Construir la ISO (fecha fija del Archive, sin alternativa)
+        run: |
+          docker run --rm --privileged -v "$PWD:/repo" -w /repo archlinux:latest \
+            bash -c 'pacman -Syu --noconfirm --needed archiso && ./build.sh -o /repo/out -w /var/tmp/arctiva-work'
+
+      - name: Prueba de arranque (QEMU, UEFI)
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y --no-install-recommends qemu-system-x86 ovmf
+          sudo tests/boot-test.sh out/arctiva-*-x86_64.iso boot-test.log
+
+      - name: Firmar (GPG, firma separada)
+        env:
+          ARCTIVA_SIGNING_KEY: ${{ secrets.ARCTIVA_SIGNING_KEY }}
+          ARCTIVA_SIGNING_PASSPHRASE: ${{ secrets.ARCTIVA_SIGNING_PASSPHRASE }}
+        run: |
+          set -euo pipefail
+          sudo apt-get install -y --no-install-recommends gnupg
+          export GNUPGHOME="$(mktemp -d)"
+          chmod 700 "$GNUPGHOME"
+          echo 'allow-preset-passphrase' > "$GNUPGHOME/gpg-agent.conf"
+          printf '%s' "$ARCTIVA_SIGNING_KEY" | gpg --batch --quiet --import
+          read -r fpr grip < <(gpg --list-secret-keys --with-colons | awk -F: \
+              '/^ssb/{s=($12 ~ /s/)} s&&/^fpr/{f=$10} s&&/^grp/{print f, $10; exit}')
+          [ -n "${fpr:-}" ] && [ -n "${grip:-}" ] || { echo "No hay subclave de firma." >&2; exit 1; }
+          gpgconf --launch gpg-agent
+          printf '%s' "$ARCTIVA_SIGNING_PASSPHRASE" | /usr/lib/gnupg/gpg-preset-passphrase --preset "$grip"
+          for iso in out/arctiva-*-x86_64.iso; do
+              gpg --batch --yes --detach-sign --no-armor -u "${fpr}!" -o "$iso.sig" "$iso"
+          done
+          gpgconf --kill gpg-agent || true
+          rm -rf "$GNUPGHOME"
+
+      - name: Verificar suma y firma con la clave pública del repositorio
+        run: |
+          set -euo pipefail
+          cd out
+          sha256sum -c ./*.sha256
+          export GNUPGHOME="$(mktemp -d)"
+          gpg --batch --quiet --import ../packages/arctiva-keyring/arctiva.gpg
+          for iso in arctiva-*-x86_64.iso; do gpg --batch --verify "$iso.sig" "$iso"; done
+
+      - name: Notas de la versión
+        run: |
+          set -euo pipefail
+          tag="${GITHUB_REF_NAME#v}"
+          awk -v v="$tag" '$0 ~ "^## \\["v"\\]" {f=1; next} f && /^## \[/ {exit} f' CHANGELOG.md > notas.md
+          {
+            echo
+            echo "**Verificar la descarga / Verify the download:** \`sha256sum -c arctiva-$tag-x86_64.iso.sha256\` y \`gpg --verify arctiva-$tag-x86_64.iso.sig arctiva-$tag-x86_64.iso\` (clave pública: \`arctiva.gpg\` del repositorio)."
+          } >> notas.md
+
+      - name: Crear la release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          pre=""
+          case "$GITHUB_REF_NAME" in v0.*) pre="--prerelease" ;; esac
+          gh release create "$GITHUB_REF_NAME" $pre --title "Arctiva ${GITHUB_REF_NAME#v}" \
+              --notes-file notas.md out/arctiva-*-x86_64.iso out/arctiva-*-x86_64.iso.sha256 out/arctiva-*-x86_64.iso.sig
+
+      - name: Guardar registro
+        if: always()
+        uses: actions/upload-artifact@v7
+        with:
+          name: release-informe
+          path: |
+            out/*.sha256
+            boot-test.log
+          if-no-files-found: ignore

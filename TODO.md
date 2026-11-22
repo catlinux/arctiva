@@ -13,11 +13,9 @@ Pending work grouped by priority. Phases and decisions: [roadmap](docs/en/roadma
 - [ ] Live ISO with GRUB instead of systemd-boot (`bootmodes=('uefi.grub')`, `iso/grub/` with the Arctiva theme, remove `iso/efiboot/`): it needs an Arch machine to test `mkarchiso`; `tests/boot-test.sh` does not change (it boots the kernel directly).
 
 - [ ] Booting a snapshot fails `systemd-remount-fs` (fstab asks for `subvol=/@` and the root is a grub-btrfs overlay). It still boots; consider hiding it.
-- [ ] Have the installer pick fast mirrors (`reflector`) before `pacman -Syu`: the installed system keeps every HTTPS mirror in the default order.
 - [ ] Warn on the summary page when the root is not Btrfs (manual mode): there will be no snapshots.
 - [ ] The installer's QML pages carry their texts in Spanish, Catalan and English inside the QML itself; move them to branding translations (`.ts`) so more languages can be added.
 - [ ] Offline map on the "Language and region" page: Calamares' map downloads tiles from the Internet, so the page currently uses lists only.
-- [ ] If the connection drops after the welcome page, the installer still thinks it is online and `packages` fails at `pacman -Sy` with an obscure message. Re-check before installing or show a clearer error.
 - [ ] The profiles list needs Ctrl+click to pick several (Calamares uses extended selection; the hint is in the "Basic" text). A custom QML page would allow plain clicks.
 - [ ] Re-test "Install alongside" with the new 25 GiB requirement (0.3.13) on a 60 GB disk with Windows.
 - [ ] Lighter ISO: the base is already lean (installed 4.3 GiB, ISO 1.76 GiB of the 1.9 limit). Biggest items: `firefox` 307 MiB, `qt6-webengine` 284 MiB (needed by `purpose`→`kaccounts`, used by Spectacle and Gwenview), `llvm-libs` 165 MiB (Mesa), `linux-firmware-*` ~430 MiB (Intel 142, NVIDIA 104, Atheros 53, MediaTek 37, AMDGPU 28), `noto-fonts` 107 MiB. The only real lever is installing only the firmware that the detected hardware needs (phase 3).

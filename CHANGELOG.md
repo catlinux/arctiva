@@ -8,6 +8,25 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 
 ## [Unreleased]
 
+## [0.7.3] - 2026-11-22
+
+Release workflow, user guide and hardware test matrix (phase 7, steps 7.2 to 7.4). Patch version.
+
+### Added
+
+- `.github/workflows/release.yml`: on a `vX.Y.Z` tag, builds the ISO with the pinned Archive date (no fallback), boot-tests it, signs it with the repository's signing subkey, verifies checksum and signature and creates the release. `docs/en/releasing.md` explains it and how to verify a download.
+- User guide (`docs/en/user/`): preparing the USB, Secure Boot and BitLocker, installing, first steps, snapshots, games, Windows programs and the store.
+- Real-hardware test matrix (`docs/en/testing.md`).
+
+## [0.7.2] - 2026-11-22
+
+Installer debts and a CI fallback (phase 7, step 7.0). Patch version.
+
+### Added
+
+- The installer sorts the mirrors with `reflector` (60 s limit, only with a connection; if it fails the default list stays) and checks the connection right before installing packages, leaving a clear warning in the log when it has dropped.
+- `build.sh`: with `ARCHIVE_FALLBACK_LATEST=1`, if no Arch Linux Archive server answers it uses the current mirrors with a warning (the ISO workflow sets it so a checking build still works during an Archive outage; a published ISO must not).
+
 ## [0.7.1] - 2026-11-22
 
 Small fixes found while taking screenshots. Patch version.
