@@ -20,7 +20,12 @@ El formato se basa en [Keep a Changelog](https://keepachangelog.com/es-ES/1.1.0/
 
 ### Cambiado
 
+- La ISO live incluye `pv`: la copia a la RAM del arranque muestra una barra de progreso en lugar de quedarse en silencio.
 - El Bloq Num queda activado por defecto al iniciar la sesión, en la live y en el sistema instalado (`arctiva-settings` 0.5.2, `/etc/xdg/kcminputrc`). La pantalla de inicio de sesión también lo pide (`Numlock=on` en Plasma Login), aún sin probar.
+
+### Corregido
+
+- Arctiva Center: abrir un paquete del AUR en un sistema sin `git` ya no falla con «No existe el fichero o el directorio: git»: `git` pasa a ser dependencia del paquete.
 
 ## [0.8.0] - 2026-11-22
 

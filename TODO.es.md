@@ -4,10 +4,6 @@
 
 Trabajo pendiente agrupado por prioridad. Fases y decisiones: [hoja de ruta](docs/es/hoja-de-ruta.md) · [arquitectura](docs/es/arquitectura.md).
 
-## Alta: Arctiva Center
-
-- [ ] AUR: al abrir un paquete en un sistema sin `git` falla con «[Errno 2] No existe el fichero o el directorio: 'git'» (visto con `faugus-launcher`). La revisión del PKGBUILD clona con `git` (`aur_backend.py`, `prepare`) antes de que `aur-prepare` instale `git` y `base-devel`, que solo se ejecuta al pulsar «Instalar» (`install`). Ejecutar `aur-prepare` antes de clonar, o comprobar `git` y ofrecer instalarlo.
-
 ## Media: fase 2 (instalador)
 
 - [ ] ISO live con GRUB en lugar de systemd-boot (`bootmodes=('uefi.grub')`, `iso/grub/` con el tema de Arctiva, quitar `iso/efiboot/`): hace falta una máquina Arch para probar `mkarchiso`; `tests/boot-test.sh` no cambia (arranca el kernel directamente).
@@ -31,7 +27,6 @@ Trabajo pendiente agrupado por prioridad. Fases y decisiones: [hoja de ruta](doc
 
 ## Más adelante
 
-- Añadir `pv` a la ISO live para que la copia a la RAM del arranque muestre una barra de progreso (hoy mkinitcpio avisa «pv not found» y usa `cp` sin información). Repetir la prueba de arranque.
 - Arctiva Games (paquete opcional `arctiva-games` y extra, 0.1.0, programado pero **sin probar en hardware real**): hacer una instalación completa de Battle.net en una VM con aceleración o en hardware real y comprobar que el lanzador queda abierto hasta pulsar Continuar; diagnosticar el caso del servidor privado de WoW con `lutris -d` (paso 1 del plan); ajustar el orden de ejecutores Proton por lanzador en hardware real (Battle.net con el `wine` del sistema se cae en su motor de navegador); implementar `extract`, `move`, `merge`, `input_menu` y archivos que aporta el usuario; escribir al equipo de Lutris antes de publicar; prueba manual con scripts populares de lutris.net (paso 9 del plan). Detalles en el plan de juegos.
 - Instalar desde dentro de Windows (asistente que descarga la ISO, la verifica y graba el USB): aparcado por el mantenedor, no planificado.
 - Fases 2 a 7 según la hoja de ruta.

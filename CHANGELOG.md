@@ -20,7 +20,12 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 
 ### Changed
 
+- The live ISO now includes `pv`, so the copy to RAM at boot shows a progress bar instead of staying silent.
 - Num Lock is now on by default when the session starts, in the live session and the installed system (`arctiva-settings` 0.5.2, `/etc/xdg/kcminputrc`). The login screen also requests it (`Numlock=on` in Plasma Login), still untested.
+
+### Fixed
+
+- Arctiva Center: opening an AUR package on a system without `git` no longer fails with "No such file or directory: git": `git` is now a dependency of the package.
 
 ## [0.8.0] - 2026-11-22
 

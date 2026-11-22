@@ -4,10 +4,6 @@
 
 Pending work grouped by priority. Phases and decisions: [roadmap](docs/en/roadmap.md) · [architecture](docs/en/architecture.md).
 
-## High — Arctiva Center
-
-- [ ] AUR: opening a package on a system without `git` fails with "[Errno 2] No such file or directory: 'git'" (seen with `faugus-launcher`). The PKGBUILD review clones with `git` (`aur_backend.py`, `prepare`) before `aur-prepare` installs `git` and `base-devel`, which only runs on "Install" (`install`). Run `aur-prepare` before cloning, or check for `git` and offer to install it.
-
 ## Medium — phase 2 (installer)
 
 - [ ] Live ISO with GRUB instead of systemd-boot (`bootmodes=('uefi.grub')`, `iso/grub/` with the Arctiva theme, remove `iso/efiboot/`): it needs an Arch machine to test `mkarchiso`; `tests/boot-test.sh` does not change (it boots the kernel directly).
@@ -31,7 +27,6 @@ Pending work grouped by priority. Phases and decisions: [roadmap](docs/en/roadma
 
 ## Later
 
-- Add `pv` to the live ISO so the copy to RAM at boot shows a progress bar (today mkinitcpio warns `pv not found` and falls back to `cp` with no feedback). Repeat the boot test.
 - Arctiva Games (optional `arctiva-games` package and extra, 0.1.0, coded but **not tested on real hardware**): run a full Battle.net install in a VM with acceleration or real hardware and check the launcher stays open until Continue; diagnose the WoW private-server case with `lutris -d` (plan step 1); check Proton runner order per launcher on real hardware (Battle.net with the system `wine` crashes in its browser engine); implement `extract`, `move`, `merge`, `input_menu` and user-provided files; ask the Lutris team before publishing; manual test of popular lutris.net scripts (plan step 9). Details in the games plan.
 - Installing from inside Windows (assistant that downloads the ISO, verifies it and writes the USB): parked by the maintainer, not planned.
 - Phases 2 to 7 as described in the roadmap.

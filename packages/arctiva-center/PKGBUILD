@@ -2,13 +2,13 @@
 # Maintainer: CatLinux
 # Arctiva Center: actualizaciones, controladores y extras (D-09). El código está en center/.
 pkgname=arctiva-center
-pkgver=0.7.10
+pkgver=0.7.11
 pkgrel=1
 pkgdesc='Centro de control de Arctiva: actualizaciones, controladores y extras'
 arch=(any)
 url='https://github.com/catlinux/arctiva'
 license=(GPL-3.0-or-later)
-depends=(python pyside6 qt6-declarative kirigami qqc2-desktop-style pacman-contrib fakeroot polkit libnotify
+depends=(python pyside6 qt6-declarative kirigami qqc2-desktop-style pacman-contrib fakeroot polkit libnotify git
          flatpak flatpak-kcm pyalpm archlinux-appstream-data arctiva-branding 'arctiva-hardware>=0.2.0')
 makedepends=(qt6-tools)
 

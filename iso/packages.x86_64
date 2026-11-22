@@ -11,6 +11,8 @@ amd-ucode
 intel-ucode
 mkinitcpio
 mkinitcpio-archiso
+# Barra de progreso al copiar la live a la RAM en el arranque (sin él, mkinitcpio avisa y copia sin información).
+pv
 grub
 grub-btrfs
 # Splash de arranque del sistema instalado (la live no lo activa).

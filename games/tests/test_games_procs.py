@@ -57,7 +57,7 @@ def test_otro_prefijo_no_cuenta(tmp_path):
 def test_prefijo_con_barra_final_y_nombre_de_windows(tmp_path):
     prefix = tmp_path / "p"
     env = dict(os.environ, WINEPREFIX=str(prefix) + "/")
-    p = subprocess.Popen(["sh", "-c", "exec -a 'C:\\\\Games\\\\Battle.net.exe' sleep 30"], env=env)
+    p = subprocess.Popen(["bash", "-c", "exec -a 'C:\\\\Games\\\\Battle.net.exe' sleep 30"], env=env)
     try:
         assert _wait(lambda: any(x.pid == p.pid for x in games_procs.list_processes(prefix)))
         assert next(x for x in games_procs.list_processes(prefix) if x.pid == p.pid).name == "Battle.net.exe"
