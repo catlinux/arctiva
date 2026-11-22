@@ -12,6 +12,8 @@ Arctiva is an independent project. It is not affiliated with or endorsed by Arch
 
 ## Status
 
+**Current version: 0.7.4 (test stage, getting ready for a public beta).** Since 0.7.0 the installer sorts mirrors and warns when the connection is down, the CI has a fallback when the Arch Archive is unreachable, and there are a [user guide](docs/en/user/README.md), a signed-release workflow ([releasing](docs/en/releasing.md)) and a [real-hardware test matrix](docs/en/testing.md). There is still no public ISO: the first beta (0.8.0) is waiting for hardware tests.
+
 **Phase 6 completed (0.7.0):** Arctiva Center has an "Applications" page: search and install programs from Arch Linux and Flathub (and, if you turn it on, the AUR with a mandatory PKGBUILD review), without partial updates; Bottles, Heroic and ProtonPlus as extras; and a dialog that opens `.exe` and `.msi` files with Bottles. Discover is no longer in the live ISO. Tested in a full install in a virtual machine.
 
 **Phase 5 completed (0.6.0):** Arctiva's own look: a Windows-style desktop (centred taskbar, start menu with search), light and dark modes, the "Orbit" wallpaper, a GRUB theme and a Plymouth boot screen, a "Personalization" page in Arctiva Center with "Restore the Arctiva look", the Outfit typeface and snapshot limits. Tested in a full encrypted install in a virtual machine.

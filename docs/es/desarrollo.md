@@ -86,6 +86,10 @@ La configuración de Calamares está en `installer/` (paquete `arctiva-calamares
 - El disco y la NVRAM se guardan en `~/arctiva-vm` (variable `VM_DIR`), fuera del repositorio.
 - Sin aceleración 3D ni sonido: el escritorio funciona, pero los juegos y la gráfica real se prueban en hardware con un USB.
 
+### Prueba de instalación automática
+
+`tests/install-test.sh <iso> [--encrypt] [carpeta-de-capturas]` arranca la ISO en QEMU (UEFI, KVM), recorre el instalador por VNC con coordenadas fijas (pantalla de 1280x800), reinicia desde el disco e inicia sesión, comprobando cada fase por captura. Necesita KVM, OVMF, `socat`, `qemu-img` y `python3` con `venv` (instala `vncdotool` y `pillow` en un entorno temporal). Las contraseñas son de prueba. Es experimental: si una fase falla, deja `fallo.png` en la carpeta de capturas. La construcción del CI usa `ARCHIVE_FALLBACK_LATEST=1` para seguir funcionando si el Archive de Arch no responde; **esa ISO no es reproducible y no se publica**.
+
 ### Arctiva Center
 
 El código de `arctiva-center` está en `center/` (el PKGBUILD de `packages/arctiva-center/` lo recibe como `../center`). La lógica de `arctiva_center/core/` no importa Qt y se prueba sin PySide6 ni Arch: `cd center && python3 -m pytest` (necesita `pytest` y Python 3.11 o superior). La ventana (PySide6 + QML + Kirigami) se prueba en la sesión live o en un sistema instalado: `python3 -m arctiva_center --module updates` desde `center/`, o `pacman -U` del paquete compilado. Traducciones: textos fuente en inglés y catálogos en `center/translations/*.ts`; `lrelease` (`/usr/lib/qt6/bin/`, paquete `qt6-tools`) genera los `.qm` en `build()`.

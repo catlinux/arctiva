@@ -86,6 +86,10 @@ The Calamares configuration lives in `installer/` (package `arctiva-calamares-co
 - The disk and the NVRAM live in `~/arctiva-vm` (`VM_DIR` variable), outside the repository.
 - No 3D acceleration or sound: the desktop works, but games and the real GPU are tested on hardware from a USB stick.
 
+### Automatic installation test
+
+`tests/install-test.sh <iso> [--encrypt] [screenshots-dir]` boots the ISO in QEMU (UEFI, KVM), walks through the installer over VNC with fixed coordinates (1280x800 screen), reboots from the disk and logs in, checking each stage with a screenshot. It needs KVM, OVMF, `socat`, `qemu-img` and `python3` with `venv` (it installs `vncdotool` and `pillow` in a temporary environment). The passwords are test ones. It is experimental: if a stage fails it leaves `fallo.png` in the screenshots directory. The CI build uses `ARCHIVE_FALLBACK_LATEST=1` so it keeps working if the Arch Archive is unreachable; **that ISO is not reproducible and is not published**.
+
 ### Arctiva Center
 
 The code of `arctiva-center` lives in `center/` (the PKGBUILD in `packages/arctiva-center/` receives it as `../center`). The logic in `arctiva_center/core/` does not import Qt and is tested without PySide6 or Arch: `cd center && python3 -m pytest` (needs `pytest` and Python 3.11 or later). The window (PySide6 + QML + Kirigami) is tested in the live session or on an installed system: `python3 -m arctiva_center --module updates` from `center/`, or `pacman -U` on the built package. Translations: sources in English, catalogues in `center/translations/*.ts`; `lrelease` (`/usr/lib/qt6/bin/`, package `qt6-tools`) generates the `.qm` files in `build()`.
