@@ -69,6 +69,7 @@
     <message><source>Log</source><translation>Registro</translation></message>
     <message><source>Open log</source><translation>Abrir el registro</translation></message>
     <message><source>Copy log</source><translation>Copiar el registro</translation></message>
+    <message><source>Show launcher</source><translation>Mostrar el lanzador</translation></message>
     <message><source>Close</source><translation>Cerrar</translation></message>
 </context>
 </TS>

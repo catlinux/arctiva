@@ -276,6 +276,12 @@ Kirigami.ScrollablePage {
             QQC2.Button { text: qsTr("Copy log"); icon.name: "edit-copy"; onClicked: backend.copyLog() }
             QQC2.Button {
                 visible: page.playing
+                text: qsTr("Show launcher")
+                icon.name: "window-new"
+                onClicked: backend.showLauncher()
+            }
+            QQC2.Button {
+                visible: page.playing
                 text: qsTr("Close")
                 onClicked: applicationWindow().pageStack.layers.pop()
             }

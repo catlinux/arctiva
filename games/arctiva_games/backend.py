@@ -6,6 +6,7 @@ hilos y devuelven el resultado por señales (se encolan en el hilo de la interfa
 import json
 import os
 import shutil
+import sys
 import threading
 import time
 from pathlib import Path
@@ -47,7 +48,8 @@ class GamesBackend(QObject):
         self._plan, self._script, self._summary, self._warnings = None, None, {}, []
         self._engine, self._states, self._waiting, self._detailed = None, [], "", False
         self._phase = "idle"     # idle | ready | downloading | installing | done | failed
-        self._procs, self._monitor, self._play = [], None, None
+        self._procs, self._monitor, self._play_slug = [], None, ""
+        self._tail_pos = 0
         self._log_path = ""
         self._timer = QTimer(self)
         self._timer.setInterval(1000)
@@ -329,7 +331,7 @@ class GamesBackend(QObject):
 
     @Slot()
     def stopMonitor(self):
-        if self._play is None and self._phase != "installing":
+        if self._phase != "installing":
             self._timer.stop()
 
     def _poll(self):
@@ -340,47 +342,60 @@ class GamesBackend(QObject):
             self.logLine.emit(f"El proceso {p.name} (pid {p.pid}) ha terminado.")
         self._procs = [{"pid": p.pid, "name": p.name, "uptime": int(p.uptime)} for p in alive]
         self.procsChanged.emit()
+        if self._play_slug and self._phase != "installing":
+            self._tail()
+
+    def _tail(self):
+        """Pasa al registro de la pantalla lo nuevo del registro del juego que escribe el proceso independiente."""
+        path = self._latest_play_log()
+        if not path:
+            return
+        try:
+            with open(path, "rb") as f:
+                f.seek(self._tail_pos)
+                data = f.read()
+                self._tail_pos += len(data)
+        except OSError:
+            return
+        for line in data.decode("utf-8", "replace").splitlines():
+            self.logLine.emit(line)
 
     # --- biblioteca ---
+    @staticmethod
+    def _play_argv(slug):
+        exe = shutil.which("arctiva-games")
+        return [exe, "--play", slug] if exe else [sys.executable, "-m", "arctiva_games", "--play", slug]
+
+    def _launch(self, slug):
+        """Lanza el juego como proceso independiente: cerrar esta ventana no lo cierra."""
+        argv = self._play_argv(slug)
+        return QProcess.startDetached(argv[0], argv[1:])
+
     @Slot(str)
     def play(self, slug):
         game = games_library.get(slug, self._base)
-        if game is None or self._play is not None:
+        if game is None:
             return
-        try:
-            program, args, env = games_library.launch_argv(game, games_runners.find_umu())
-        except games_library.LibraryError as e:
-            self._error = str(e)
-            self.changed.emit()
-            return
-        if not self._detailed:
-            env.setdefault("WINEDEBUG", "-all")
-        logs = self._base / "logs"
-        logs.mkdir(parents=True, exist_ok=True)
-        self._log_path = str(logs / f"{slug}-play-{time.strftime('%Y%m%d-%H%M%S')}.log")
-        proc = QProcess(self)
-        proc.setProcessChannelMode(QProcess.ProcessChannelMode.MergedChannels)
-        proc.setStandardOutputFile(self._log_path)
-        qenv = proc.processEnvironment()
-        for k, v in {**os.environ, **env}.items():
-            qenv.insert(k, v)
-        proc.setProcessEnvironment(qenv)
-        proc.setWorkingDirectory(game.game_dir)
-        proc.finished.connect(lambda *_: self._play_done())
-        proc.errorOccurred.connect(lambda e: self._play_done()
-                                   if e == QProcess.ProcessError.FailedToStart else None)
-        self._play = proc
+        self._play_slug, self._log_path, self._tail_pos = slug, "", 0
         self._monitor = games_procs.PrefixMonitor(game.prefix)
+        self._poll()
+        if self._procs:
+            # Ya está en marcha (un lanzador como Battle.net sigue abierto): no se lanza otra copia.
+            return
         self._timer.start()
+        if not self._launch(slug):
+            self._error = "No se pudo lanzar el juego."
         self.changed.emit()
-        proc.start(program, args)
 
-    def _play_done(self):
-        proc, self._play = self._play, None
-        if proc:
-            proc.deleteLater()
-        self._timer.stop()
-        self.changed.emit()
+    @Slot()
+    def showLauncher(self):
+        """Vuelve a lanzar el programa del juego: un lanzador ya abierto (Battle.net) solo trae su ventana al frente."""
+        if self._play_slug:
+            self._launch(self._play_slug)
+
+    def _latest_play_log(self):
+        logs = sorted((self._base / "logs").glob(f"{self._play_slug}-play-*.log"))
+        return str(logs[-1]) if logs else ""
 
     @Slot(str, result=bool)
     def uninstall(self, slug):
@@ -397,12 +412,13 @@ class GamesBackend(QObject):
     # --- registro ---
     @Slot()
     def openLog(self):
-        if self._log_path:
-            QDesktopServices.openUrl(QUrl.fromLocalFile(self._log_path))
+        path = self._log_path or self._latest_play_log()
+        if path:
+            QDesktopServices.openUrl(QUrl.fromLocalFile(path))
 
     @Slot()
     def copyLog(self):
         try:
-            QGuiApplication.clipboard().setText(Path(self._log_path).read_text(encoding="utf-8", errors="replace"))
+            QGuiApplication.clipboard().setText(Path(self._log_path or self._latest_play_log()).read_text(encoding="utf-8", errors="replace"))
         except OSError:
             pass

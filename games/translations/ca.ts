@@ -69,6 +69,7 @@
     <message><source>Log</source><translation>Registre</translation></message>
     <message><source>Open log</source><translation>Obre el registre</translation></message>
     <message><source>Copy log</source><translation>Copia el registre</translation></message>
+    <message><source>Show launcher</source><translation>Mostra el llançador</translation></message>
     <message><source>Close</source><translation>Tanca</translation></message>
 </context>
 </TS>

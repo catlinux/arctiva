@@ -3,7 +3,7 @@
 # Arctiva Games: instala y ejecuta lanzadores y juegos de Windows con Wine. Opcional: se ofrece como extra en
 # Arctiva Center. El código está en games/.
 pkgname=arctiva-games
-pkgver=0.3.1
+pkgver=0.3.2
 pkgrel=1
 pkgdesc='Arctiva Games: instala y ejecuta lanzadores y juegos de Windows con Wine'
 arch=(any)

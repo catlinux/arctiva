@@ -138,3 +138,21 @@ def test_elige_proton_si_hay_umu(app, tmp_path):
     sin_umu = make(tmp_path, runners=runners, umu=None)
     sin_umu.prepareRecipe("battlenet")
     assert sin_umu.runnerName == "wine" and sin_umu.runnerChoices == ["wine"]
+
+
+def test_jugar_lanza_independiente_y_no_repite(app, tmp_path, monkeypatch):
+    calls = []
+    monkeypatch.setattr(gb.QProcess, "startDetached", staticmethod(lambda prog, args: calls.append((prog, args)) or True))
+    monkeypatch.setattr(gb.shutil, "which", lambda name: "/usr/bin/arctiva-games" if name == "arctiva-games" else None)
+    monkeypatch.setattr(gb.games_library, "get", lambda slug, base: gb.games_library.Game(
+        slug, "J", "/x.exe", str(tmp_path), str(tmp_path / "prefix")))
+    b = make(tmp_path)
+    b.play("demo")
+    assert calls == [("/usr/bin/arctiva-games", ["--play", "demo"])]
+    # Con el juego ya en marcha (procesos en el prefijo) no se lanza otra copia, pero se puede mostrar el lanzador.
+    monkeypatch.setattr(gb.games_procs, "list_processes", lambda prefix, proc_root="/proc": [
+        gb.games_procs.WineProc(1, "Battle.net.exe", 5.0)])
+    b.play("demo")
+    assert len(calls) == 1 and b.procs[0]["name"] == "Battle.net.exe"
+    b.showLauncher()
+    assert len(calls) == 2
