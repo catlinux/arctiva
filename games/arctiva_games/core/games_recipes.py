@@ -14,5 +14,6 @@ def load(data_dir):
     for r in data.get("recipe", []):
         if isinstance(r, dict) and all(isinstance(r.get(k), str) and r[k] for k in ("slug", "name", "script")):
             out.append({"slug": r["slug"], "name": r["name"], "description": r.get("description", ""),
-                        "script": r["script"]})
+                        "script": r["script"],
+                        "runners": [x for x in r.get("runners", []) if isinstance(x, str)]})
     return out

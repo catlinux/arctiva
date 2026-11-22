@@ -61,6 +61,15 @@ Kirigami.ScrollablePage {
                 visible: !!backend.summary.credits
                 text: qsTr("Credits: %1").arg(backend.summary.credits)
             }
+            RowLayout {
+                visible: backend.runnerChoices.length > 0
+                QQC2.Label { text: qsTr("Runner") }
+                QQC2.ComboBox {
+                    model: backend.runnerChoices
+                    currentIndex: backend.runnerChoices.indexOf(backend.runnerName)
+                    onActivated: backend.setRunner(currentText)
+                }
+            }
             QQC2.Label { font.bold: true; text: qsTr("It will download") }
             QQC2.Label { Layout.fillWidth: true; wrapMode: Text.WrapAnywhere; text: page.list(backend.summary.urls || []) }
             QQC2.Label { font.bold: true; text: qsTr("It will run") }

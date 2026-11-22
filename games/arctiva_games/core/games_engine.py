@@ -59,28 +59,41 @@ def accepted_codes(step):
 
 
 def default_command(step, engine):
-    """Orden de Wine para un paso, con el `wine` del sistema."""
-    a, prefix = step.args, engine.plan.prefix
+    """Orden de Wine para un paso, con el ejecutor del motor (`wine` del sistema o Proton con umu)."""
+    a = step.args
     res = engine.resolve
+    runner = engine.runner
+    proton = bool(runner and runner.get("path"))
+    # Con Proton todo pasa por umu-run, que usa WINEPREFIX y PROTONPATH del entorno.
+    wine = (lambda *args, cwd=None: Command(runner["umu"], list(args), {"PROTONPATH": runner["path"],
+                                                                       "GAMEID": "umu-0"}, cwd)) if proton \
+        else (lambda *args, cwd=None: Command("wine", list(args), cwd=cwd))
     if step.kind == "create_prefix":
-        return Command("wineboot", ["--init"])
+        return wine("wineboot", "-u") if proton else Command("wineboot", ["--init"])
     if step.kind == "wineexec":
-        return Command("wine", [res(a["executable"]), *shlex.split(res(_s(a.get("args"))))],
-                       cwd=a.get("working_dir"))
+        return wine(res(a["executable"]), *shlex.split(res(_s(a.get("args")))), cwd=a.get("working_dir"))
     if step.kind == "winetricks":
-        return Command("winetricks", ["-q", *_s(a.get("app")).split()])
+        return wine("winetricks", "-q", *_s(a.get("app")).split()) if proton else \
+            Command("winetricks", ["-q", *_s(a.get("app")).split()])
     if step.kind == "winekill":
-        return Command("wineserver", ["-k"])
+        return stop_command_for(runner)
     if step.kind == "set_regedit":
-        return Command("wine", ["reg", "add", _s(a.get("path")), "/v", _s(a.get("key")), "/t",
-                                _s(a.get("type") or "REG_SZ"), "/d", _s(a.get("value")), "/f"])
+        return wine("reg", "add", _s(a.get("path")), "/v", _s(a.get("key")), "/t",
+                    _s(a.get("type") or "REG_SZ"), "/d", _s(a.get("value")), "/f")
     if step.kind == "delete_registry_key":
-        return Command("wine", ["reg", "delete", _s(a.get("key")), "/f"])
+        return wine("reg", "delete", _s(a.get("key")), "/f")
     if step.kind == "execute":
         if a.get("file"):
             return Command(res(a["file"]), shlex.split(res(_s(a.get("args")))))
         return Command("sh", ["-c", res(_s(a.get("command")))])
     raise StepError(f"la orden «{step.kind}» aún no está implementada")
+
+
+def stop_command_for(runner):
+    """`wineserver -k` del ejecutor: con Proton, el de su carpeta; si no, el del sistema."""
+    if runner and runner.get("path"):
+        return Command(str(Path(runner["path"]) / "files" / "bin" / "wineserver"), ["-k"])
+    return Command("wineserver", ["-k"])
 
 
 def _s(v):
@@ -94,15 +107,17 @@ class GameEngine(QObject):
     finished = Signal(bool)
 
     def __init__(self, plan, base_dir, command_for=None, detailed=False, files=None, stop_command=None,
-                 parent=None):
+                 runner=None, parent=None):
         super().__init__(parent)
         self.plan = plan
         self.base = Path(base_dir)
         self.command_for = command_for or default_command
         self.detailed = detailed
         self.files = dict(files or {})
+        # `{"path": carpeta de Proton, "umu": ruta de umu-run}` o None para el wine del sistema.
+        self.runner = runner
         # Parar deja el prefijo como está pero cierra sus procesos (D-G4).
-        self.stop_command = stop_command if stop_command is not None else Command("wineserver", ["-k"])
+        self.stop_command = stop_command if stop_command is not None else stop_command_for(runner)
         self.states = [PENDING] * len(plan.steps)
         self._i = -1
         self._proc = None          # proceso del paso en curso

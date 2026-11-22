@@ -3,13 +3,13 @@
 # Arctiva Games: instala y ejecuta lanzadores y juegos de Windows con Wine. Opcional: se ofrece como extra en
 # Arctiva Center. El código está en games/.
 pkgname=arctiva-games
-pkgver=0.1.0
+pkgver=0.2.0
 pkgrel=1
 pkgdesc='Arctiva Games: instala y ejecuta lanzadores y juegos de Windows con Wine'
 arch=(any)
 url='https://github.com/catlinux/arctiva'
 license=(GPL-3.0-or-later)
-depends=(python pyside6 qt6-declarative kirigami qqc2-desktop-style python-yaml wine winetricks)
+depends=(python pyside6 qt6-declarative kirigami qqc2-desktop-style python-yaml wine winetricks umu-launcher)
 makedepends=(qt6-tools)
 
 prepare() {

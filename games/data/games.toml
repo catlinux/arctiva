@@ -1,5 +1,5 @@
 # Recetas propias de Arctiva Games (D-G9): mismo formato que los scripts de instalación de Lutris,
-# escritas a mano. Sirven sin lutris.net. Las URL son las descargas oficiales de cada lanzador.
+# escritas a mano. `runners` es la lista de preferencia de ejecutores (nombre de carpeta de Proton o «wine»). Sirven sin lutris.net. Las URL son las descargas oficiales de cada lanzador.
 # Sin probar aún en un equipo real: ver TODO.
 version = 1
 
@@ -7,6 +7,7 @@ version = 1
 slug = "battlenet"
 name = "Battle.net"
 description = "Lanzador de Blizzard"
+runners = ["GE-Proton", "Proton-Wineland", "UMU-Proton", "wine"]
 script = '''
 name: Battle.net
 slug: battlenet
@@ -37,6 +38,7 @@ script:
 slug = "ea-app"
 name = "EA app"
 description = "Lanzador de Electronic Arts"
+runners = ["GE-Proton", "Proton-Wineland", "UMU-Proton", "wine"]
 script = '''
 name: EA app
 slug: ea-app
@@ -68,6 +70,7 @@ script:
 slug = "ubisoft-connect"
 name = "Ubisoft Connect"
 description = "Lanzador de Ubisoft"
+runners = ["GE-Proton", "Proton-Wineland", "UMU-Proton", "wine"]
 script = '''
 name: Ubisoft Connect
 slug: ubisoft-connect
@@ -98,6 +101,7 @@ script:
 slug = "gog-galaxy"
 name = "GOG Galaxy"
 description = "Lanzador de GOG"
+runners = ["GE-Proton", "Proton-Wineland", "UMU-Proton", "wine"]
 script = '''
 name: GOG Galaxy
 slug: gog-galaxy
@@ -128,6 +132,7 @@ script:
 slug = "epic-games"
 name = "Epic Games Launcher"
 description = "Lanzador de Epic Games"
+runners = ["GE-Proton", "Proton-Wineland", "UMU-Proton", "wine"]
 script = '''
 name: Epic Games Launcher
 slug: epic-games

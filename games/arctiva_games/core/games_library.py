@@ -28,7 +28,7 @@ class Game:
     game_dir: str
     prefix: str
     env: dict = field(default_factory=dict)
-    runner: str = "wine"
+    runner: str = "wine"   # «wine» o la carpeta de Proton con la que se instaló
 
 
 def valid_slug(slug):
@@ -77,9 +77,14 @@ def get(slug, base=BASE):
     return _load(Path(base) / f"{slug}.toml") if valid_slug(slug) else None
 
 
-def launch_argv(game):
-    """`(programa, argumentos, entorno)` para jugar con el `wine` del sistema."""
-    return "wine", [game.exe], {"WINEPREFIX": game.prefix, **game.env}
+def launch_argv(game, umu=None):
+    """`(programa, argumentos, entorno)` para jugar con el ejecutor del juego (Proton con `umu`, o `wine`)."""
+    env = {"WINEPREFIX": game.prefix, **game.env}
+    if game.runner != "wine":
+        if not umu:
+            raise LibraryError("falta umu-run (paquete umu-launcher) para jugar con Proton")
+        return umu, [game.exe], {**env, "PROTONPATH": game.runner, "GAMEID": "umu-0"}
+    return "wine", [game.exe], env
 
 
 def remove(slug, base=BASE, root=ROOT):

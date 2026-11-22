@@ -14,7 +14,8 @@ import yaml
 from PySide6.QtCore import Property, QObject, QProcess, QTimer, QUrl, Signal, Slot
 from PySide6.QtGui import QDesktopServices, QGuiApplication
 
-from .core import games_api, games_engine, games_library, games_procs, games_recipes, games_runtime, games_script
+from .core import (games_api, games_engine, games_library, games_procs, games_recipes, games_runners,
+                   games_runtime, games_script)
 
 
 class GamesBackend(QObject):
@@ -27,7 +28,8 @@ class GamesBackend(QObject):
     _installersDone = Signal(list, str)
     _downloaded = Signal(object, str)
 
-    def __init__(self, data_dir, live=False, parent=None, api=None, base=None, root=None, downloads=None):
+    def __init__(self, data_dir, live=False, parent=None, api=None, base=None, root=None, downloads=None,
+                 runners=None):
         super().__init__(parent)
         self._live = live
         self._api = api or games_api.GamesApi()
@@ -35,6 +37,9 @@ class GamesBackend(QObject):
         self._root = Path(root) if root else games_library.ROOT
         self._downloads = Path(downloads) if downloads else games_runtime.DOWNLOADS
         self._recipes = games_recipes.load(data_dir)
+        # `runners()` → (lista de Runner, ruta de umu-run o None); se sustituye en las pruebas.
+        self._scan = runners or (lambda: (games_runners.list_runners(), games_runners.find_umu()))
+        self._runners, self._umu, self._runner, self._pref = [], None, None, None
         self._results, self._searching, self._error = [], False, ""
         self._plan, self._script, self._summary, self._warnings = None, None, {}, []
         self._engine, self._states, self._waiting, self._detailed = None, [], "", False
@@ -71,6 +76,22 @@ class GamesBackend(QObject):
                 for i, s in enumerate(self._plan.steps)]
 
     @Property(list, notify=changed)
+    def runnerChoices(self):
+        return [r.name for r in self._runners if self._umu or not r.is_proton]
+
+    @Property(str, notify=changed)
+    def runnerName(self):
+        return self._runner.name if self._runner else ""
+
+    @Slot(str)
+    def setRunner(self, name):
+        runner = games_runners.by_name(name, self._runners)
+        if runner and self._phase == "ready" and (self._umu or not runner.is_proton):
+            self._runner = runner
+            self._refresh_warnings()
+            self.changed.emit()
+
+    @Property(list, notify=changed)
     def library(self):
         return [{"slug": g.slug, "name": g.name} for g in games_library.list_games(self._base)]
 
@@ -103,7 +124,7 @@ class GamesBackend(QObject):
     def prepareRecipe(self, slug):
         recipe = next((r for r in self._recipes if r["slug"] == slug), None)
         if recipe:
-            self._prepare(recipe["script"])
+            self._prepare(recipe["script"], recipe.get("runners"))
 
     @Slot(str)
     def prepareOnline(self, slug):
@@ -132,7 +153,7 @@ class GamesBackend(QObject):
                 pass
         self._prepare(json.dumps({k: v for k, v in item.items() if k != "content"}, default=str))
 
-    def _prepare(self, text):
+    def _prepare(self, text, preference=None):
         try:
             script = games_script.parse(text)
             plan = games_script.plan(script, games_library.game_dir(script.slug or "juego", self._root))
@@ -146,15 +167,22 @@ class GamesBackend(QObject):
             return
         self._script, self._plan, self._error = script, plan, ""
         self._summary = games_script.summary(plan)
-        self._warnings = games_runtime.unsupported_steps(plan)
-        if shutil.which("wine") is None:
-            self._warnings.append("falta el paquete wine (pacman -S wine)")
-        if self._summary["winetricks"] and shutil.which("winetricks") is None:
-            self._warnings.append("falta el paquete winetricks (pacman -S winetricks)")
+        self._runners, self._umu = self._scan()
+        self._runner = games_runners.choose(preference, self._runners, self._umu is not None)
+        self._refresh_warnings()
         self._states = ["pending"] * len(plan.steps)
         self._phase = "ready"
         self.changed.emit()
         self.stepsChanged.emit()
+
+    def _refresh_warnings(self):
+        warnings = games_runtime.unsupported_steps(self._plan)
+        if self._runner is None:
+            warnings.append("no hay ningún ejecutor de Wine: instala wine o un Proton (GE-Proton) con ProtonPlus"
+                            + ("" if self._umu else " y el paquete umu-launcher"))
+        elif not self._runner.is_proton and self._summary["winetricks"] and shutil.which("winetricks") is None:
+            warnings.append("falta el paquete winetricks (pacman -S winetricks)")
+        self._warnings = warnings
 
     # --- instalación ---
     @Slot()
@@ -178,7 +206,9 @@ class GamesBackend(QObject):
             self.logLine.emit(error)
             self.changed.emit()
             return
-        engine = games_engine.GameEngine(self._plan, self._base, detailed=self._detailed, files=files, parent=self)
+        runner = {"path": self._runner.path, "umu": self._umu} if self._runner and self._runner.is_proton else None
+        engine = games_engine.GameEngine(self._plan, self._base, detailed=self._detailed, files=files,
+                                         runner=runner, parent=self)
         self._engine = engine
         engine.stepChanged.connect(self._on_step)
         engine.logLine.connect(self.logLine)
@@ -215,7 +245,8 @@ class GamesBackend(QObject):
         exe = str(plan.game.get("exe") or "")
         env = {k: v for k, v in plan.env.items()}
         games_library.save(games_library.Game(plan.slug, plan.name or plan.slug, exe, plan.game_dir,
-                                              plan.prefix, env), self._base)
+                                              plan.prefix, env, self._runner.path if self._runner and self._runner.is_proton else "wine"),
+                            self._base)
 
     @Slot()
     def retry(self):
@@ -273,7 +304,12 @@ class GamesBackend(QObject):
         game = games_library.get(slug, self._base)
         if game is None or self._play is not None:
             return
-        program, args, env = games_library.launch_argv(game)
+        try:
+            program, args, env = games_library.launch_argv(game, games_runners.find_umu())
+        except games_library.LibraryError as e:
+            self._error = str(e)
+            self.changed.emit()
+            return
         if not self._detailed:
             env.setdefault("WINEDEBUG", "-all")
         logs = self._base / "logs"

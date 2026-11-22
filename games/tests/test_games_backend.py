@@ -8,6 +8,7 @@ from PySide6.QtCore import QCoreApplication
 from arctiva_games import backend as gb
 from arctiva_games.core import games_engine as ge
 from arctiva_games.core import games_runtime
+from arctiva_games.core.games_runners import Runner
 
 DATA = Path(__file__).resolve().parents[1] / "data"
 
@@ -20,6 +21,9 @@ class FakeApi:
         return [{"slug": slug, "name": "Ejemplo", "runner": "wine", "user": "alguien",
                  "script": {"game": {"exe": "$WINEPREFIX/Ej.exe"},
                             "installer": [{"execute": {"command": "echo hola"}}]}}]
+
+
+WINE = [Runner("wine")]
 
 
 @pytest.fixture(autouse=True)
@@ -40,9 +44,10 @@ def wait_for(cond, timeout=10):
         assert time.time() < end, "tiempo agotado"
 
 
-def make(tmp_path, live=False):
+def make(tmp_path, live=False, runners=None, umu=None):
+    scan = (lambda: (WINE if runners is None else runners, umu))
     return gb.GamesBackend(DATA, live, api=FakeApi(), base=tmp_path / "base", root=tmp_path / "Games",
-                           downloads=tmp_path / "dl")
+                           downloads=tmp_path / "dl", runners=scan)
 
 
 def test_busqueda_filtra_slugs_malos(app, tmp_path):
@@ -86,7 +91,7 @@ def test_orden_no_soportada_se_nombra(app, tmp_path):
     class Api(FakeApi):
         def installers(self, slug):
             return [{"slug": slug, "runner": "wine", "script": {"installer": [{"copy": {"src": "a", "dst": "b"}}]}}]
-    b = gb.GamesBackend(DATA, False, api=Api(), base=tmp_path / "b", root=tmp_path / "G")
+    b = gb.GamesBackend(DATA, False, api=Api(), base=tmp_path / "b", root=tmp_path / "G", runners=lambda: (WINE, None))
     b.prepareOnline("x")
     wait_for(lambda: b.error != "")
     assert "copy" in b.error and b.phase == "idle"
@@ -107,6 +112,21 @@ def test_sin_wine_no_se_instala(app, tmp_path, monkeypatch):
     monkeypatch.setattr(gb.shutil, "which", lambda name: None)
     b = make(tmp_path)
     b.prepareRecipe("ea-app")
-    assert any("wine" in w for w in b.warnings) and any("winetricks" in w for w in b.warnings)
+    assert any("winetricks" in w for w in b.warnings)
     b.install()
     assert b.phase == "ready"
+    b2 = make(tmp_path, runners=[])
+    b2.prepareRecipe("ea-app")
+    assert any("ningún ejecutor" in w for w in b2.warnings) and b2.runnerName == ""
+
+
+def test_elige_proton_si_hay_umu(app, tmp_path):
+    runners = [Runner("GE-Proton10-1", "/p/ge"), Runner("Proton-Wineland", "/p/wl"), Runner("wine")]
+    b = make(tmp_path, runners=runners, umu="/usr/bin/umu-run")
+    b.prepareRecipe("battlenet")
+    assert b.runnerName == "GE-Proton10-1" and b.runnerChoices == ["GE-Proton10-1", "Proton-Wineland", "wine"]
+    b.setRunner("wine")
+    assert b.runnerName == "wine"
+    sin_umu = make(tmp_path, runners=runners, umu=None)
+    sin_umu.prepareRecipe("battlenet")
+    assert sin_umu.runnerName == "wine" and sin_umu.runnerChoices == ["wine"]

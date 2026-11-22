@@ -11,6 +11,7 @@ El formato se basa en [Keep a Changelog](https://keepachangelog.com/es-ES/1.1.0/
 ### Añadido
 
 - Arctiva Games 0.1.0: nuevo paquete opcional (`arctiva-games`, con su propia ventana y entrada de menú) que instala lanzadores de juegos de Windows (Battle.net, EA app, Ubisoft Connect, GOG Galaxy, Epic Games) con recetas propias, o cualquier instalador de lutris.net, paso a paso: resumen de lo que se descargará y ejecutará antes de empezar, registro en directo guardado en disco, reintentar / saltar / parar en cualquier paso, botón «Continuar» en los lanzadores donde hay que iniciar sesión (no se cierran), lista de los procesos de Wine del juego y biblioteca con Jugar y Desinstalar. Usa el `wine` y el `winetricks` del sistema (dependencias). Aún sin probar en hardware real.
+- Arctiva Games 0.2.0: instala y ejecuta con Proton mediante `umu-run` (GE-Proton, Proton-Wineland, UMU-Proton, buscados en las carpetas de herramientas de Steam y Lutris) y no solo con el `wine` del sistema; cada receta lista sus ejecutores preferidos, se usa el primero instalado, se puede cambiar en la pantalla de resumen y la elección se guarda por juego. Añade la dependencia `umu-launcher`.
 - Arctiva Center 0.7.10: nuevo extra «Arctiva Games» en Extras, que instala ese paquete.
 
 ### Cambiado

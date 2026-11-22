@@ -22,6 +22,7 @@
 </context>
 <context>
     <name>GameInstallPage</name>
+    <message><source>Runner</source><translation>Ejecutor</translation></message>
     <message><source>Playing</source><translation>Jugando</translation></message>
     <message><source>Install</source><translation>Instalar</translation></message>
     <message><source>In progress</source><translation>En curso</translation></message>
