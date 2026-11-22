@@ -16,7 +16,8 @@ def test_lista_y_elige_la_mas_nueva(tmp_path):
     proton_dirs(tmp_path, ["GE-Proton9-2", "GE-Proton10-4", "Proton-Wineland Latest", "UMU-Proton-9.0"])
     runners = gr.list_runners([tmp_path], which=lambda n: "/usr/bin/wine")
     assert [r.name for r in runners][-1] == "wine" and "otra" not in [r.name for r in runners]
-    assert gr.choose(gr.DEFAULT_PREFERENCE, runners).name == "GE-Proton10-4"
+    assert gr.choose(gr.DEFAULT_PREFERENCE, runners).name == "Proton-Wineland Latest"
+    assert gr.choose(["GE-Proton", "wine"], runners).name == "GE-Proton10-4"
     assert gr.choose(["proton-wineland", "wine"], runners).name == "Proton-Wineland Latest"
     assert gr.choose(["wine"], runners).path == ""
     assert gr.choose(["GE-Proton"], runners, umu=False) is None
@@ -42,7 +43,10 @@ def test_ordenes_con_proton(tmp_path):
     assert all(c.program == "/usr/bin/umu-run" for c in cmds[:4])
     assert cmds[0].args == ["wineboot", "-u"] and cmds[1].args == ["/dl/a.exe", "/S"]
     assert cmds[2].args == ["winetricks", "-q", "corefonts", "win10"] and cmds[3].args[:2] == ["reg", "add"]
-    assert cmds[1].env == {"PROTONPATH": "/p/ge", "GAMEID": "umu-0"}
+    assert cmds[1].env["PROTONPATH"] == "/p/ge" and cmds[1].env["GAMEID"].startswith("umu-arctiva")
+    assert cmds[1].env["UMU_CONTAINER_NSENTER"] == "1" and cmds[1].env["PROTON_ENABLE_WAYLAND"] == "0"
+    wl = gr.umu_env("/p/Proton-Wineland Latest", "x")
+    assert "PROTON_ENABLE_WAYLAND" not in wl and wl["GAMEID"] == gr.umu_env("/q/ge", "x")["GAMEID"]
     assert cmds[4].program == "/p/ge/files/bin/wineserver" and e.stop_command.program == cmds[4].program
 
 
@@ -56,7 +60,7 @@ def test_jugar_con_proton(tmp_path):
     g = lib.Game("x", "X", "/g/x.exe", "/g", "/g/prefix", {"A": "1"}, "/p/ge")
     assert lib.launch_argv(g, "/usr/bin/umu-run") == (
         "/usr/bin/umu-run", ["/g/x.exe"],
-        {"WINEPREFIX": "/g/prefix", "A": "1", "PROTONPATH": "/p/ge", "GAMEID": "umu-0"})
+        {"WINEPREFIX": "/g/prefix", "A": "1", **gr.umu_env("/p/ge", "x")})
     try:
         lib.launch_argv(g, None)
         assert False

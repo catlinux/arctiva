@@ -15,7 +15,7 @@ from PySide6.QtCore import Property, QObject, QProcess, QTimer, QUrl, Signal, Sl
 from PySide6.QtGui import QDesktopServices, QGuiApplication
 
 from .core import (games_api, games_engine, games_library, games_procs, games_recipes, games_runners,
-                   games_runtime, games_script)
+                   games_runtime, games_script, games_shortcuts)
 
 
 class GamesBackend(QObject):
@@ -29,7 +29,7 @@ class GamesBackend(QObject):
     _downloaded = Signal(object, str)
 
     def __init__(self, data_dir, live=False, parent=None, api=None, base=None, root=None, downloads=None,
-                 runners=None):
+                 runners=None, menu_dir=None, desk_dir=None):
         super().__init__(parent)
         self._live = live
         self._api = api or games_api.GamesApi()
@@ -40,6 +40,9 @@ class GamesBackend(QObject):
         # `runners()` → (lista de Runner, ruta de umu-run o None); se sustituye en las pruebas.
         self._scan = runners or (lambda: (games_runners.list_runners(), games_runners.find_umu()))
         self._runners, self._umu, self._runner, self._pref = [], None, None, None
+        self._menu_dir = Path(menu_dir) if menu_dir else games_shortcuts.MENU_DIR
+        self._desk_dir = Path(desk_dir) if desk_dir else None
+        self._opt_menu, self._opt_desktop = True, False
         self._results, self._searching, self._error = [], False, ""
         self._plan, self._script, self._summary, self._warnings = None, None, {}, []
         self._engine, self._states, self._waiting, self._detailed = None, [], "", False
@@ -91,9 +94,48 @@ class GamesBackend(QObject):
             self._refresh_warnings()
             self.changed.emit()
 
+    @Property(bool, notify=changed)
+    def shortcutMenu(self):
+        return self._opt_menu
+
+    @shortcutMenu.setter
+    def shortcutMenu(self, value):
+        self._opt_menu = bool(value)
+        self.changed.emit()
+
+    @Property(bool, notify=changed)
+    def shortcutDesktop(self):
+        return self._opt_desktop
+
+    @shortcutDesktop.setter
+    def shortcutDesktop(self, value):
+        self._opt_desktop = bool(value)
+        self.changed.emit()
+
     @Property(list, notify=changed)
     def library(self):
-        return [{"slug": g.slug, "name": g.name} for g in games_library.list_games(self._base)]
+        out = []
+        for g in games_library.list_games(self._base):
+            st = games_shortcuts.status(g.slug, self._menu_dir, self._desk_dir)
+            out.append({"slug": g.slug, "name": g.name, "runner": Path(g.runner).name if g.runner != "wine" else "wine",
+                        "menu": st["menu"], "desktop": st["desktop"]})
+        return out
+
+    @Slot(str, str, bool)
+    def setShortcut(self, slug, kind, enabled):
+        game = games_library.get(slug, self._base)
+        if game is None or kind not in ("menu", "desktop"):
+            return
+        if enabled:
+            games_shortcuts.create(game, kind == "menu", kind == "desktop", self._menu_dir, self._desk_dir)
+        else:
+            current = games_shortcuts.status(slug, self._menu_dir, self._desk_dir)
+            games_shortcuts.remove(slug, self._menu_dir, self._desk_dir)
+            if kind == "menu" and current["desktop"]:
+                games_shortcuts.create(game, False, True, self._menu_dir, self._desk_dir)
+            if kind == "desktop" and current["menu"]:
+                games_shortcuts.create(game, True, False, self._menu_dir, self._desk_dir)
+        self.changed.emit()
 
     def _set_detailed(self, value):
         self._detailed = bool(value)
@@ -244,9 +286,10 @@ class GamesBackend(QObject):
         plan = self._plan
         exe = str(plan.game.get("exe") or "")
         env = {k: v for k, v in plan.env.items()}
-        games_library.save(games_library.Game(plan.slug, plan.name or plan.slug, exe, plan.game_dir,
-                                              plan.prefix, env, self._runner.path if self._runner and self._runner.is_proton else "wine"),
-                            self._base)
+        game = games_library.Game(plan.slug, plan.name or plan.slug, exe, plan.game_dir,
+                                   plan.prefix, env, self._runner.path if self._runner and self._runner.is_proton else "wine")
+        games_library.save(game, self._base)
+        games_shortcuts.create(game, self._opt_menu, self._opt_desktop, self._menu_dir, self._desk_dir)
 
     @Slot()
     def retry(self):
@@ -343,6 +386,7 @@ class GamesBackend(QObject):
     def uninstall(self, slug):
         try:
             games_library.remove(slug, self._base, self._root)
+            games_shortcuts.remove(slug, self._menu_dir, self._desk_dir)
         except games_library.LibraryError as e:
             self._error = str(e)
             self.changed.emit()

@@ -11,6 +11,8 @@ import tomllib
 from dataclasses import dataclass, field
 from pathlib import Path
 
+from . import games_runners
+
 ROOT = Path.home() / "Games"
 BASE = Path.home() / ".local" / "share" / "arctiva-games"
 SLUG_RE = re.compile(r"^[a-z0-9][a-z0-9._-]{0,63}$")
@@ -83,7 +85,7 @@ def launch_argv(game, umu=None):
     if game.runner != "wine":
         if not umu:
             raise LibraryError("falta umu-run (paquete umu-launcher) para jugar con Proton")
-        return umu, [game.exe], {**env, "PROTONPATH": game.runner, "GAMEID": "umu-0"}
+        return umu, [game.exe], {**env, **games_runners.umu_env(game.runner, game.slug)}
     return "wine", [game.exe], env
 
 

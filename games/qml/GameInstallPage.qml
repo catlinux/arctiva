@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Instalación de un juego: resumen de seguridad, lista de pasos, registro en directo y procesos del prefijo.
+// Instalación de un juego: resumen y opciones, lista de pasos, registro en directo y procesos del prefijo.
 import QtQuick
 import QtQuick.Controls as QQC2
 import QtQuick.Layouts
@@ -13,6 +13,7 @@ Kirigami.ScrollablePage {
     readonly property bool failed: backend.steps.some(s => s.state === "failed")
     readonly property bool installing: backend.phase === "installing"
     readonly property bool ready: backend.phase === "ready" && !page.playing
+    readonly property int doneCount: backend.steps.filter(s => s.state === "done" || s.state === "skipped").length
 
     title: page.playing ? qsTr("Playing") : (backend.summary.name || qsTr("Install"))
 
@@ -31,6 +32,16 @@ Kirigami.ScrollablePage {
         }
     }
 
+    function stateIcon(state) {
+        switch (state) {
+        case "running": return "media-playback-start"
+        case "done": return "emblem-ok-symbolic"
+        case "failed": return "dialog-error"
+        case "skipped": return "media-skip-forward"
+        default: return "chronometer"
+        }
+    }
+
     function list(items) { return items.length > 0 ? items.join("\n") : qsTr("none") }
 
     Component.onCompleted: backend.startMonitor()
@@ -44,11 +55,11 @@ Kirigami.ScrollablePage {
     ColumnLayout {
         spacing: Kirigami.Units.largeSpacing
 
-        // Resumen de seguridad (antes de empezar).
+        // Resumen de seguridad y opciones (antes de empezar).
         ColumnLayout {
             Layout.fillWidth: true
             visible: page.ready
-            spacing: Kirigami.Units.smallSpacing
+            spacing: Kirigami.Units.largeSpacing
 
             Kirigami.InlineMessage {
                 Layout.fillWidth: true
@@ -56,45 +67,81 @@ Kirigami.ScrollablePage {
                 type: Kirigami.MessageType.Warning
                 text: qsTr("This installer needs something Arctiva Games does not support yet, so it cannot be installed: %1").arg(backend.warnings.join("; "))
             }
-            QQC2.Label { text: qsTr("Author: %1").arg(backend.summary.author || qsTr("unknown")) }
-            QQC2.Label {
-                visible: !!backend.summary.credits
-                text: qsTr("Credits: %1").arg(backend.summary.credits)
-            }
-            RowLayout {
-                visible: backend.runnerChoices.length > 0
-                QQC2.Label { text: qsTr("Runner") }
-                QQC2.ComboBox {
-                    model: backend.runnerChoices
-                    currentIndex: backend.runnerChoices.indexOf(backend.runnerName)
-                    onActivated: backend.setRunner(currentText)
+
+            Kirigami.AbstractCard {
+                Layout.fillWidth: true
+                header: Kirigami.Heading { level: 3; text: qsTr("Options") }
+                contentItem: ColumnLayout {
+                    RowLayout {
+                        visible: backend.runnerChoices.length > 0
+                        QQC2.Label { text: qsTr("Runner") }
+                        QQC2.ComboBox {
+                            model: backend.runnerChoices
+                            currentIndex: backend.runnerChoices.indexOf(backend.runnerName)
+                            onActivated: backend.setRunner(currentText)
+                        }
+                    }
+                    QQC2.CheckBox {
+                        text: qsTr("Add to the application menu")
+                        checked: backend.shortcutMenu
+                        onToggled: backend.shortcutMenu = checked
+                    }
+                    QQC2.CheckBox {
+                        text: qsTr("Add to the desktop")
+                        checked: backend.shortcutDesktop
+                        onToggled: backend.shortcutDesktop = checked
+                    }
+                    QQC2.CheckBox {
+                        text: qsTr("Detailed log")
+                        checked: backend.detailed
+                        onToggled: backend.detailed = checked
+                    }
                 }
             }
-            QQC2.Label { font.bold: true; text: qsTr("It will download") }
-            QQC2.Label { Layout.fillWidth: true; wrapMode: Text.WrapAnywhere; text: page.list(backend.summary.urls || []) }
-            QQC2.Label { font.bold: true; text: qsTr("It will run") }
-            QQC2.Label { Layout.fillWidth: true; wrapMode: Text.WrapAnywhere; text: page.list(backend.summary.executables || []) }
-            QQC2.Label { font.bold: true; text: qsTr("It will change in the Wine registry") }
-            QQC2.Label { Layout.fillWidth: true; wrapMode: Text.WrapAnywhere; text: page.list(backend.summary.registry_keys || []) }
-            QQC2.Label { font.bold: true; text: qsTr("It will install with winetricks") }
-            QQC2.Label { Layout.fillWidth: true; wrapMode: Text.WrapAnywhere; text: page.list(backend.summary.winetricks || []) }
-        }
 
-        RowLayout {
-            visible: page.ready
-            QQC2.Button {
-                text: qsTr("Install")
-                icon.name: "run-install"
-                enabled: !isLive && backend.warnings.length === 0
-                onClicked: backend.install()
+            Kirigami.AbstractCard {
+                Layout.fillWidth: true
+                header: Kirigami.Heading { level: 3; text: qsTr("What it will do") }
+                contentItem: ColumnLayout {
+                    QQC2.Label { text: qsTr("Author: %1").arg(backend.summary.author || qsTr("unknown")) }
+                    QQC2.Label {
+                        visible: !!backend.summary.credits
+                        text: qsTr("Credits: %1").arg(backend.summary.credits)
+                    }
+                    QQC2.Label { font.bold: true; text: qsTr("It will download") }
+                    QQC2.Label { Layout.fillWidth: true; wrapMode: Text.WrapAnywhere; text: page.list(backend.summary.urls || []) }
+                    QQC2.Label { font.bold: true; text: qsTr("It will run") }
+                    QQC2.Label { Layout.fillWidth: true; wrapMode: Text.WrapAnywhere; text: page.list(backend.summary.executables || []) }
+                    QQC2.Label { font.bold: true; text: qsTr("It will change in the Wine registry") }
+                    QQC2.Label { Layout.fillWidth: true; wrapMode: Text.WrapAnywhere; text: page.list(backend.summary.registry_keys || []) }
+                    QQC2.Label { font.bold: true; text: qsTr("It will install with winetricks") }
+                    QQC2.Label { Layout.fillWidth: true; wrapMode: Text.WrapAnywhere; text: page.list(backend.summary.winetricks || []) }
+                }
             }
-            QQC2.Button {
-                text: qsTr("Cancel")
-                onClicked: page.back()
+
+            RowLayout {
+                QQC2.Button {
+                    text: qsTr("Install")
+                    icon.name: "run-install"
+                    highlighted: true
+                    enabled: !isLive && backend.warnings.length === 0
+                    onClicked: backend.install()
+                }
+                QQC2.Button {
+                    text: qsTr("Cancel")
+                    onClicked: page.back()
+                }
             }
         }
 
         // Pasos.
+        QQC2.ProgressBar {
+            Layout.fillWidth: true
+            visible: !page.playing && !page.ready && backend.steps.length > 0
+            from: 0
+            to: Math.max(1, backend.steps.length)
+            value: page.doneCount
+        }
         Kirigami.Heading {
             level: 2
             visible: !page.playing && !page.ready
@@ -107,8 +154,19 @@ Kirigami.ScrollablePage {
                 required property var modelData
                 required property int index
                 Layout.fillWidth: true
-                QQC2.Label { text: (stepRow.index + 1) + "." }
-                QQC2.Label { Layout.fillWidth: true; wrapMode: Text.WordWrap; text: stepRow.modelData.description }
+                spacing: Kirigami.Units.largeSpacing
+                Kirigami.Icon {
+                    source: page.stateIcon(stepRow.modelData.state)
+                    implicitWidth: Kirigami.Units.iconSizes.smallMedium
+                    implicitHeight: Kirigami.Units.iconSizes.smallMedium
+                    opacity: stepRow.modelData.state === "pending" ? 0.5 : 1
+                }
+                QQC2.Label {
+                    Layout.fillWidth: true
+                    wrapMode: Text.WordWrap
+                    text: stepRow.modelData.description
+                    font.bold: stepRow.modelData.state === "running"
+                }
                 QQC2.Label {
                     text: page.stateText(stepRow.modelData.state)
                     opacity: 0.7

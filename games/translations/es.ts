@@ -7,14 +7,23 @@
 </context>
 <context>
     <name>GamesPage</name>
+    <message><source>Arctiva Games</source><translation>Arctiva Games</translation></message>
     <message><source>Uninstall game</source><translation>Desinstalar juego</translation></message>
     <message><source>The game folder, including its saves inside the Wine prefix, will be deleted. This cannot be undone.</source><translation>Se borrará la carpeta del juego, incluidas las partidas guardadas dentro del prefijo de Wine. No se puede deshacer.</translation></message>
+    <message><source>Your Windows games on Linux</source><translation>Tus juegos de Windows en Linux</translation></message>
+    <message><source>Install a launcher, sign in, and play. Every step is shown and logged, and you choose how it runs.</source><translation>Instala un lanzador, inicia sesión y juega. Cada paso se muestra y se registra, y tú eliges cómo se ejecuta.</translation></message>
     <message><source>This is the live session: games can be browsed here, but installing only works once Arctiva is installed.</source><translation>Esta es la sesión live: aquí se pueden explorar los juegos, pero instalar solo funciona cuando Arctiva está instalado.</translation></message>
     <message><source>Installed games</source><translation>Juegos instalados</translation></message>
+    <message><source>No games installed yet</source><translation>Aún no hay juegos instalados</translation></message>
+    <message><source>Pick a launcher below to get started.</source><translation>Elige un lanzador de abajo para empezar.</translation></message>
+    <message><source>Runner: %1</source><translation>Ejecutor: %1</translation></message>
     <message><source>Play</source><translation>Jugar</translation></message>
+    <message><source>Add to the application menu</source><translation>Añadir al menú de aplicaciones</translation></message>
+    <message><source>Add to the desktop</source><translation>Añadir al escritorio</translation></message>
     <message><source>Uninstall</source><translation>Desinstalar</translation></message>
     <message><source>Launchers</source><translation>Lanzadores</translation></message>
-    <message><source>Install a launcher first, then use it to download your games.</source><translation>Instala primero un lanzador y úsalo para descargar tus juegos.</translation></message>
+    <message><source>Reinstall</source><translation>Reinstalar</translation></message>
+    <message><source>Install</source><translation>Instalar</translation></message>
     <message><source>Search installers</source><translation>Buscar instaladores</translation></message>
     <message><source>Installers come from lutris.net, written by its community. Check the summary before installing.</source><translation>Los instaladores vienen de lutris.net y los escribe su comunidad. Revisa el resumen antes de instalar.</translation></message>
     <message><source>Search games…</source><translation>Buscar juegos…</translation></message>
@@ -22,7 +31,6 @@
 </context>
 <context>
     <name>GameInstallPage</name>
-    <message><source>Runner</source><translation>Ejecutor</translation></message>
     <message><source>Playing</source><translation>Jugando</translation></message>
     <message><source>Install</source><translation>Instalar</translation></message>
     <message><source>In progress</source><translation>En curso</translation></message>
@@ -32,6 +40,12 @@
     <message><source>Pending</source><translation>Pendiente</translation></message>
     <message><source>none</source><translation>ninguno</translation></message>
     <message><source>This installer needs something Arctiva Games does not support yet, so it cannot be installed: %1</source><translation>Este instalador necesita algo que Arctiva Games aún no soporta, así que no se puede instalar: %1</translation></message>
+    <message><source>Options</source><translation>Opciones</translation></message>
+    <message><source>Runner</source><translation>Ejecutor</translation></message>
+    <message><source>Add to the application menu</source><translation>Añadir al menú de aplicaciones</translation></message>
+    <message><source>Add to the desktop</source><translation>Añadir al escritorio</translation></message>
+    <message><source>Detailed log</source><translation>Registro detallado</translation></message>
+    <message><source>What it will do</source><translation>Qué hará</translation></message>
     <message><source>Author: %1</source><translation>Autor: %1</translation></message>
     <message><source>unknown</source><translation>desconocido</translation></message>
     <message><source>Credits: %1</source><translation>Créditos: %1</translation></message>
@@ -53,7 +67,6 @@
     <message><source>No Wine processes are running.</source><translation>No hay procesos de Wine en marcha.</translation></message>
     <message><source>%1 s running</source><translation>%1 s en marcha</translation></message>
     <message><source>Log</source><translation>Registro</translation></message>
-    <message><source>Detailed log</source><translation>Registro detallado</translation></message>
     <message><source>Open log</source><translation>Abrir el registro</translation></message>
     <message><source>Copy log</source><translation>Copiar el registro</translation></message>
     <message><source>Close</source><translation>Cerrar</translation></message>

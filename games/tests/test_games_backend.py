@@ -47,7 +47,8 @@ def wait_for(cond, timeout=10):
 def make(tmp_path, live=False, runners=None, umu=None):
     scan = (lambda: (WINE if runners is None else runners, umu))
     return gb.GamesBackend(DATA, live, api=FakeApi(), base=tmp_path / "base", root=tmp_path / "Games",
-                           downloads=tmp_path / "dl", runners=scan)
+                           downloads=tmp_path / "dl", runners=scan, menu_dir=tmp_path / "menu",
+                           desk_dir=tmp_path / "desk")
 
 
 def test_busqueda_filtra_slugs_malos(app, tmp_path):
@@ -76,8 +77,15 @@ def test_instalar_registrar_y_desinstalar(app, tmp_path, monkeypatch):
     wait_for(lambda: b.phase in ("done", "failed"))
     assert b.phase == "done"
     assert [g["slug"] for g in b.library] == ["ejemplo"]
+    assert b.library[0]["menu"] and not b.library[0]["desktop"]  # por defecto: solo el menú
+    assert (tmp_path / "menu" / "arctiva-games-ejemplo.desktop").is_file()
+    b.setShortcut("ejemplo", "desktop", True)
+    assert (tmp_path / "desk" / "arctiva-games-ejemplo.desktop").is_file()
+    b.setShortcut("ejemplo", "menu", False)
+    assert not (tmp_path / "menu" / "arctiva-games-ejemplo.desktop").exists() and b.library[0]["desktop"]
     assert Path(b.logPath).is_file()
     assert b.uninstall("ejemplo") and b.library == []
+    assert not list((tmp_path / "desk").glob("*.desktop"))
 
 
 def test_live_no_instala(app, tmp_path):
@@ -124,7 +132,7 @@ def test_elige_proton_si_hay_umu(app, tmp_path):
     runners = [Runner("GE-Proton10-1", "/p/ge"), Runner("Proton-Wineland", "/p/wl"), Runner("wine")]
     b = make(tmp_path, runners=runners, umu="/usr/bin/umu-run")
     b.prepareRecipe("battlenet")
-    assert b.runnerName == "GE-Proton10-1" and b.runnerChoices == ["GE-Proton10-1", "Proton-Wineland", "wine"]
+    assert b.runnerName == "Proton-Wineland" and b.runnerChoices == ["GE-Proton10-1", "Proton-Wineland", "wine"]
     b.setRunner("wine")
     assert b.runnerName == "wine"
     sin_umu = make(tmp_path, runners=runners, umu=None)

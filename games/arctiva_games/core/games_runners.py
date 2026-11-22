@@ -6,10 +6,12 @@ se lanza con `umu-run`. Cada receta trae una lista de preferencia de nombres (pr
 mayúsculas); se usa el primero que esté instalado y, entre varias versiones del mismo nombre, la más nueva."""
 import re
 import shutil
+import zlib
 from dataclasses import dataclass
 from pathlib import Path
 
-DEFAULT_PREFERENCE = ("GE-Proton", "Proton-Wineland", "UMU-Proton", "wine")
+# Proton-Wineland primero: usa el driver nativo de Wayland y es el que funcionó con Battle.net en Plasma Wayland.
+DEFAULT_PREFERENCE = ("Proton-Wineland", "GE-Proton", "UMU-Proton", "wine")
 SEARCH_DIRS = (
     Path.home() / ".local" / "share" / "Steam" / "compatibilitytools.d",
     Path.home() / ".steam" / "root" / "compatibilitytools.d",
@@ -67,6 +69,18 @@ def choose(preference, runners, umu=True):
         if match:
             return match[0]
     return None
+
+
+def umu_env(proton_path, slug):
+    """Variables de umu-run para un juego. Como Faugus (que con ellas enlaza bien Battle.net):
+    un GAMEID propio por juego, `UMU_CONTAINER_NSENTER=1` (los `umu-run` del mismo juego comparten el
+    contenedor y, con él, el wineserver y la comunicación entre el lanzador y el juego) y Wayland
+    desactivado salvo en Proton-Wineland, que lo trae pensado."""
+    env = {"PROTONPATH": proton_path, "GAMEID": f"umu-arctiva{zlib.crc32(slug.encode()):08x}",
+           "UMU_CONTAINER_NSENTER": "1"}
+    if "wineland" not in proton_path.lower():
+        env["PROTON_ENABLE_WAYLAND"] = "0"
+    return env
 
 
 def by_name(name, runners):

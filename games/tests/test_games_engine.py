@@ -137,8 +137,9 @@ def test_resume_from_saved_state(app, tmp_path):
     e2.start()
     wait_for(lambda: e2.result)
     assert e2.result == [True]
-    # Si los dos registros caen en el mismo segundo comparten archivo: el paso 1 aparece solo de la 1.ª vez.
-    assert e2.log_path.read_text().count("=== [1/3]") == 1
+    # El paso 1 se ejecutó solo en la primera vez, tanto si los dos registros comparten archivo como si no.
+    logs = "".join(f.read_text() for f in (tmp_path / "games" / "logs").glob("*.log"))
+    assert logs.count("=== [1/3]") == 1
     assert e2.states == [ge.DONE] * 3
 
 

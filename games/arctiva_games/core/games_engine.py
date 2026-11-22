@@ -22,6 +22,8 @@ from pathlib import Path
 
 from PySide6.QtCore import QObject, QProcess, Signal
 
+from . import games_runners
+
 PENDING, RUNNING, DONE, FAILED, SKIPPED = "pending", "running", "done", "failed", "skipped"
 NATIVE = ("write_file", "write_json", "chmodx")
 
@@ -65,8 +67,9 @@ def default_command(step, engine):
     runner = engine.runner
     proton = bool(runner and runner.get("path"))
     # Con Proton todo pasa por umu-run, que usa WINEPREFIX y PROTONPATH del entorno.
-    wine = (lambda *args, cwd=None: Command(runner["umu"], list(args), {"PROTONPATH": runner["path"],
-                                                                       "GAMEID": "umu-0"}, cwd)) if proton \
+    wine = (lambda *args, cwd=None: Command(runner["umu"], list(args),
+                                            games_runners.umu_env(runner["path"], engine.plan.slug or "juego"),
+                                            cwd)) if proton \
         else (lambda *args, cwd=None: Command("wine", list(args), cwd=cwd))
     if step.kind == "create_prefix":
         return wine("wineboot", "-u") if proton else Command("wineboot", ["--init"])
