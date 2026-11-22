@@ -1,0 +1,53 @@
+#!/bin/bash
+# SPDX-License-Identifier: GPL-3.0-or-later
+# Crea una copia de la barra inferior en cada pantalla que no tenga ninguna: Plasma no repite los paneles
+# en un segundo monitor. Plasma guarda el panel creado y lo vuelve a mostrar al reconectar ese monitor,
+# así que esto solo actúa la primera vez que ve una pantalla nueva. Sin efecto si no hay sesión de Plasma.
+busctl --user --quiet status org.kde.plasmashell >/dev/null 2>&1 || exit 0
+
+read -r -d '' script <<'JS'
+var reference = null;
+panels().forEach(function (p) {
+    if (reference === null && p.location === "bottom") {
+        p.widgetIds.forEach(function (id) {
+            if (p.widgetById(id).type === "org.kde.plasma.icontasks") { reference = p; }
+        });
+    }
+});
+if (reference !== null) {
+    var launchers = "";
+    reference.widgetIds.forEach(function (id) {
+        var w = reference.widgetById(id);
+        if (w.type === "org.kde.plasma.icontasks") {
+            w.currentConfigGroup = ["General"];
+            launchers = w.readConfig("launchers", "");
+        }
+    });
+    for (var s = 0; s < screenCount; s++) {
+        var has = panels().some(function (p) { return p.location === "bottom" && p.screen === s; });
+        if (has) { continue; }
+        var panel = new Panel();
+        panel.location = "bottom";
+        panel.screen = s;
+        panel.height = reference.height;
+        panel.floating = reference.floating;
+        panel.hiding = reference.hiding;
+        var left = panel.addWidget("org.kde.plasma.panelspacer");
+        left.currentConfigGroup = ["General"];
+        left.writeConfig("expanding", true);
+        panel.addWidget("org.kde.plasma.kickoff");
+        var tasks = panel.addWidget("org.kde.plasma.icontasks");
+        tasks.currentConfigGroup = ["General"];
+        if (launchers !== "") { tasks.writeConfig("launchers", launchers); }
+        // En el segundo monitor, la barra de tareas solo muestra las ventanas de esa pantalla.
+        tasks.writeConfig("showOnlyCurrentScreen", true);
+        var right = panel.addWidget("org.kde.plasma.panelspacer");
+        right.currentConfigGroup = ["General"];
+        right.writeConfig("expanding", true);
+        panel.addWidget("org.kde.plasma.digitalclock");
+        panel.addWidget("org.kde.plasma.showdesktop");
+    }
+}
+JS
+
+busctl --user --quiet call org.kde.plasmashell /PlasmaShell org.kde.PlasmaShell evaluateScript s "$script" >/dev/null

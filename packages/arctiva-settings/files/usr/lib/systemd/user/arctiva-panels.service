@@ -1,0 +1,8 @@
+# SPDX-License-Identifier: GPL-3.0-or-later
+[Unit]
+Description=Copy the Arctiva taskbar to every connected screen
+ConditionPathExists=!/run/archiso
+
+[Service]
+Type=oneshot
+ExecStart=/usr/lib/arctiva/ensure-panels

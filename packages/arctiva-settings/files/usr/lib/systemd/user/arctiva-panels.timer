@@ -1,0 +1,12 @@
+# SPDX-License-Identifier: GPL-3.0-or-later
+[Unit]
+Description=Check for screens without an Arctiva taskbar
+ConditionPathExists=!/run/archiso
+
+[Timer]
+# OnStartupSec cuenta desde el inicio de la sesión del usuario: deja tiempo a que arranque Plasma.
+OnStartupSec=30s
+OnUnitActiveSec=1min
+
+[Install]
+WantedBy=timers.target

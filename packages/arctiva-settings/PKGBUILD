@@ -1,8 +1,8 @@
 # SPDX-License-Identifier: GPL-3.0-or-later
 # Maintainer: CatLinux
-# Ajustes del sistema de Arctiva: zram, identidad en os-release y mirrors (reflector).
+# Ajustes del sistema de Arctiva: zram, identidad en os-release, mirrors (reflector) y barra en varios monitores.
 pkgname=arctiva-settings
-pkgver=0.5.2
+pkgver=0.6.0
 pkgrel=1
 pkgdesc='Ajustes del sistema de Arctiva (zram, os-release, reflector, GRUB)'
 arch=(any)
@@ -36,4 +36,9 @@ package() {
     # Bloq Num activado al iniciar la sesión (0 = activado en KDE), también en la live.
     install -Dm644 etc/xdg/kcminputrc "$pkgdir/etc/xdg/kcminputrc"
     install -Dm644 usr/lib/systemd/system/reflector.service.d/arctiva.conf         "$pkgdir/usr/lib/systemd/system/reflector.service.d/arctiva.conf"
+    # Barra inferior también en los monitores adicionales (activada para todos los usuarios).
+    install -Dm755 usr/lib/arctiva/ensure-panels "$pkgdir/usr/lib/arctiva/ensure-panels"
+    install -Dm644 -t "$pkgdir/usr/lib/systemd/user" usr/lib/systemd/user/arctiva-panels.{service,timer}
+    install -d -- "$pkgdir/usr/lib/systemd/user/timers.target.wants"
+    ln -s ../arctiva-panels.timer "$pkgdir/usr/lib/systemd/user/timers.target.wants/arctiva-panels.timer"
 }
