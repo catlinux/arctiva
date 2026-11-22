@@ -67,6 +67,7 @@ jobs:
         run: |
           set -euo pipefail
           sudo apt-get install -y --no-install-recommends gnupg
+          sudo chown -R "$(id -u):$(id -g)" out  # lo creó Docker como root
           export GNUPGHOME="$(mktemp -d)"
           chmod 700 "$GNUPGHOME"
           echo 'allow-preset-passphrase' > "$GNUPGHOME/gpg-agent.conf"

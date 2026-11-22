@@ -27,6 +27,8 @@ Pending work grouped by priority. Phases and decisions: [roadmap](docs/en/roadma
 
 ## Later
 
+- Add `pv` to the live ISO so the copy to RAM at boot shows a progress bar (today mkinitcpio warns `pv not found` and falls back to `cp` with no feedback). Repeat the boot test.
+
 - "Games" page in Arctiva Center on top of the lutris.net installer scripts (own interpreter and interface, no Lutris fork), after the beta and after asking the Lutris team.
 - Phases 2 to 7 as described in the roadmap.
 - Real-hardware tests (USB stick on the PC with the RTX 4060; laptop with Windows and Manjaro), only at the end, with everything implemented (phase 7). The "safe graphics" entry already works in VirtualBox.

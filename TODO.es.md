@@ -27,6 +27,8 @@ Trabajo pendiente agrupado por prioridad. Fases y decisiones: [hoja de ruta](doc
 
 ## Más adelante
 
+- Añadir `pv` a la ISO live para que la copia a la RAM del arranque muestre una barra de progreso (hoy mkinitcpio avisa «pv not found» y usa `cp` sin información). Repetir la prueba de arranque.
+
 - Página «Juegos» en Arctiva Center sobre los scripts de instalación de lutris.net (intérprete e interfaz propios, sin bifurcar Lutris), después de la beta y de consultar al equipo de Lutris.
 - Fases 2 a 7 según la hoja de ruta.
 - Pruebas en hardware real (USB en el PC con la RTX 4060; portátil con Windows y Manjaro), solo al final, con todo implementado (fase 7). La entrada «safe graphics» ya funciona en VirtualBox.
