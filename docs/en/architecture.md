@@ -94,11 +94,11 @@ Requirements:
 
 - A graphical store to search, install, update and remove software from **three sources**: the official repositories (pacman), Flathub (Flatpak) and the AUR.
 - The origin of every application is always visible, with a distinct badge per source. If an application exists in several sources, they are shown as separate options with one marked as recommended.
-- **AUR:** disabled by default. When enabling it, and before every installation, a clear warning that it is unreviewed community software, with a viewable PKGBUILD. Packages are built without root through a helper (`paru`) from `[arctiva]`.
+- **AUR:** disabled by default. When enabling it, and before every installation, a clear warning that it is unreviewed community software, with a viewable PKGBUILD. Packages are built as the user with `makepkg`, without `paru`: `paru` asks for `sudo` in a terminal and the store has no terminal, and `makepkg` plus the helper (which only installs what is already built, from a copy made by root) cover the same with fewer pieces. The dependency chain is resolved before building (repository ones through `aur-deps`; AUR ones go through the same review) and AUR updates are manual, with the diff of the PKGBUILD and `.install` files since the installed commit.
 - **pacman integrity:** no operation refreshes the databases without upgrading the whole system. Installing a repository package on an outdated system requires upgrading first.
 - Flatpak permissions visible and adjustable. Understandable errors, with the original text available.
 
-Decision: **an in-house store as the "Applications" module of Arctiva Center** (D-09). The installed system does not ship Discover, to avoid two stores and PackageKit's periodic refresh. The live ISO uses Discover with Flathub only until phase 6.
+Decision: **an in-house store as the "Applications" module of Arctiva Center** (D-09). The installed system does not ship Discover, to avoid two stores and PackageKit's periodic refresh. Neither does the live ISO: there the "Applications" page shows the catalogue with its actions disabled.
 
 - **Catalogue:** AppStream data from the repositories (`archlinux-appstream-data`) and from Flathub, read with libappstream. An application available from several sources is shown once, with one option per source. The AUR only appears when enabled, as a list of packages searched through its RPC API.
 - **Recommended source:** the official repositories before Flathub, except for the exceptions set in `arctiva-settings` (for example Bottles, D-12). The AUR is never the recommended one.
@@ -107,7 +107,7 @@ Decision: **an in-house store as the "Applications" module of Arctiva Center** (
 - **AUR:** before installing, the full PKGBUILD and `.install`, votes, popularity, last update and maintainer are shown, with a stronger warning if the package is orphaned, has changed maintainer or is recent. On every update, a diff of the PKGBUILD and `.install` against the installed version, with confirmation: in June 2026 Arch warned of a wave of malicious AUR packages and advised reviewing all changes. Packages are built as the user with `paru`; only installing the built package goes through the helper. AUR updates run after `pacman -Syu`.
 - **Errors:** the same message translator as D-08.
 - Rejected: Discover's PackageKit back-end, because of the risk of partial upgrades (section 2); Discover with a custom back-end for pacman and the AUR (none exists and Discover's back-end interface is not stable, so C++ code would have to keep pace with Plasma); Pamac (AUR only, tied to Manjaro and GTK); Bauh (no development since 2024, Qt5); and Octopi (a package manager without Flatpak or AppStream).
-- Before phase 6, a proof of concept in the VM validates the catalogue, the temporary-database queries, installation through the helper, Flatpak and the AUR flow. The decision will be reconsidered if KDE adds a pacman back-end to Discover.
+- Proof of concept done on 2026-11-22 (results in the store study): catalogue read with `xml.etree` plus a cache, Flatpak through its command line (no polkit dialog for the session user, and `flatpak-kcm` as a dependency), and the AUR needs `base-devel` and `git` (the helper's `aur-prepare` operation). Before phase 6, a proof of concept in the VM validated the catalogue, the temporary-database queries, installation through the helper, Flatpak and the AUR flow. The decision will be reconsidered if KDE adds a pacman back-end to Discover.
 
 ### D-08 Updates (**Approved**)
 
@@ -148,12 +148,12 @@ Detection with `lspci` and a mapping file (family → packages), shared by the i
 - `multilib` enabled by default, also on the installed system (`prepare-target` enables it).
 - Native Steam (`steam`, from multilib), `gamemode`, `mangohud`, `gamescope`; Proton is managed from Steam.
 - Heroic (Epic/GOG) and ProtonPlus or ProtonUp-Qt as Flatpaks; Lutris from `extra`.
-- Installed as a "Gaming" profile during installation (Steam, Lutris, GameMode, MangoHud, Gamescope and the 32-bit Mesa and Vulkan libraries) or from Arctiva Center. Heroic, ProtonPlus and Bottles will be offered by Arctiva Center (phase 6); NVIDIA drivers, by GPU detection (phase 3).
+- Installed as a "Gaming" profile during installation (Steam, Lutris, GameMode, MangoHud, Gamescope and the 32-bit Mesa and Vulkan libraries) or from Arctiva Center. Heroic, ProtonPlus and Bottles are offered by Arctiva Center as Flatpak extras (`flatpaks` in `extras.toml`, without the helper); NVIDIA drivers, by GPU detection (phase 3).
 
 ### D-12 Windows software (**Approved**)
 
 - **Bottles** as the main tool, **Flatpak only**: it is the only format its developers support.
-- Opening an `.exe` or `.msi` shows our own dialog that explains what will happen, offers to open it with Bottles and links to the compatibility databases (WineHQ AppDB, ProtonDB).
+- Opening an `.exe` or `.msi` (double-click in Dolphin, which first asks "Would you like to launch this file?") shows our own dialog (`arctiva-center --windows-app`, the default application for `application/x-msdownload`, `x-ms-dos-executable`, `vnd.microsoft.portable-executable` and `x-msi` through `mimeapps.list`) that explains what will happen, offers to open it with Bottles and links to the compatibility databases (WineHQ AppDB, ProtonDB).
 - Limitations that are communicated clearly: games with kernel-level anti-cheat (see "Are We Anti-Cheat Yet?"), suites such as recent Adobe and Microsoft Office, Windows drivers and hardware utilities.
 - `wine` and `winetricks` from the repositories, for advanced users.
 
@@ -206,8 +206,8 @@ To stay under 2 GiB: a selection of Plasma packages instead of every meta-packag
 | In-house (small) | Integrated, no own code |
 |---|---|
 | archiso profile and build scripts | Arch Linux (core, extra, multilib), pacman |
-| Calamares QML interface, configuration and branding | Calamares, KDE Plasma, Discover (live only), Flatpak/Flathub |
-| Store: the "Applications" module of Arctiva Center (D-07) | pyalpm, paru, libflatpak, AppStream, flatpak-kcm |
+| Calamares QML interface, configuration and branding | Calamares, KDE Plasma, Flatpak/Flathub |
+| Store: the "Applications" module of Arctiva Center (D-07) | pyalpm, makepkg, flatpak (command line), AppStream (XML), flatpak-kcm |
 | `arctiva-settings` (defaults) | Btrfs, Snapper, snap-pac, grub-btrfs, zram-generator |
 | `arctiva-branding` (logo, wallpapers, Plymouth, global theme) | Mesa, NVIDIA open, Vulkan, firmware, fwupd |
 | `arctiva-keyring` and the `[arctiva]` repository | Steam, Proton, Lutris, Heroic, Bottles, gamemode, MangoHud |

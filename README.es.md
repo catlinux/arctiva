@@ -12,6 +12,8 @@ Arctiva es un proyecto independiente, sin relación oficial con Arch Linux ni re
 
 ## Estado
 
+**Fase 6 terminada (0.7.0):** Arctiva Center tiene una página «Aplicaciones»: busca e instala programas de Arch Linux y de Flathub (y, si lo activas, del AUR con revisión obligatoria del PKGBUILD), sin actualizaciones parciales; Bottles, Heroic y ProtonPlus como extras; y un diálogo que abre los `.exe` y `.msi` con Bottles. Discover ya no está en la ISO live. Probada con una instalación completa en una máquina virtual.
+
 **Fase 5 terminada (0.6.0):** aspecto propio de Arctiva: escritorio al estilo de Windows (barra de tareas centrada, menú de inicio con buscador), modos claro y oscuro, fondo «Órbita», tema de GRUB y pantalla de arranque con Plymouth, página «Personalización» en Arctiva Center con «Restaurar el aspecto de Arctiva», tipografía Outfit y límite de instantáneas. Probada con una instalación cifrada completa en una máquina virtual.
 
 **Fase 4 terminada (0.5.0):** una ISO live con KDE Plasma y un instalador gráfico (Calamares) con perfiles Básico, Juegos y Oficina, Btrfs con instantáneas arrancables, cifrado opcional e instalación junto a Windows, probado en máquinas virtuales. El sistema instalado se actualiza desde un repositorio propio firmado (`[arctiva]`) e instala los controladores de la gráfica. Arctiva Center tiene bienvenida, actualizaciones, controladores y extras, probados con una instalación cifrada completa. Aún no hay ISO para descargar: se puede construir desde el código (ver la guía de desarrollo). La arquitectura está aprobada (decisiones D-01…D-16).

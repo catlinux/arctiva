@@ -1,0 +1,8 @@
+# Aplicaciones destacadas de la página de inicio de la tienda. Solo se muestran las que existen
+# en el catálogo cargado.
+[featured]
+ids = [
+  "org.mozilla.firefox", "org.kde.krita", "org.gimp.gimp", "org.libreoffice.libreoffice",
+  "org.videolan.vlc", "org.kde.kdenlive", "org.blender.blender", "com.obsproject.studio",
+  "org.audacityteam.audacity", "org.inkscape.inkscape", "org.kde.okular", "com.valvesoftware.steam",
+]

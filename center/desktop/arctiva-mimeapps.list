@@ -1,0 +1,5 @@
+[Default Applications]
+application/x-ms-dos-executable=arctiva-windows-app.desktop
+application/x-msdownload=arctiva-windows-app.desktop
+application/vnd.microsoft.portable-executable=arctiva-windows-app.desktop
+application/x-msi=arctiva-windows-app.desktop

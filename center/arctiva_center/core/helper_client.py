@@ -10,9 +10,12 @@ HELPER = "/usr/lib/arctiva-center/arctiva-helper"
 PKEXEC = "/usr/bin/pkexec"
 
 ID_RE = re.compile(r"[a-z0-9-]{1,40}")
+APP_PKG_RE = re.compile(r"[a-z0-9@_+][a-z0-9@._+-]{0,99}")
+PKGFILE_RE = re.compile(r"/[^\0]*\.pkg\.tar\.zst")
 
 # Códigos de salida que no son de pacman.
 EX_USAGE = 64
+EX_UPDATES_PENDING = 65
 EX_UNAVAILABLE = 69
 EX_TEMPFAIL = 75
 PKEXEC_DISMISSED = 126
@@ -25,7 +28,16 @@ _ARGS = {
     "drivers-apply": lambda a: a == [],
     "pacnew-keep": lambda a: len(a) == 1 and a[0].startswith("/etc/") and a[0].endswith(".pacnew"),
     "pacnew-use": lambda a: len(a) == 1 and a[0].startswith("/etc/") and a[0].endswith(".pacnew"),
+    "app-install": lambda a: _packages(a),
+    "app-remove": lambda a: _packages(a),
+    "aur-prepare": lambda a: a == [],
+    "aur-deps": lambda a: _packages(a),
+    "aur-install": lambda a: 1 <= len(a) <= 40 and all(PKGFILE_RE.fullmatch(p) for p in a),
 }
+
+
+def _packages(args):
+    return 1 <= len(args) <= 20 and all(APP_PKG_RE.fullmatch(p) for p in args)
 
 
 def build_argv(operation, args=()):

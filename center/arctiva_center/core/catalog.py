@@ -13,9 +13,13 @@ class Extra:
     description: str
     icon: str
     packages: tuple
+    flatpaks: tuple = ()
 
-    def installed(self, installed_packages):
-        return all(p in installed_packages for p in self.packages)
+    def installed(self, installed_packages, installed_flatpaks=frozenset()):
+        if not self.packages and not self.flatpaks:
+            return False
+        return (all(p in installed_packages for p in self.packages)
+                and all(f in installed_flatpaks for f in self.flatpaks))
 
 
 def load(path, languages=("en",)):
@@ -23,7 +27,7 @@ def load(path, languages=("en",)):
         data = tomllib.load(f)
     return [Extra(e["id"], _pick(e.get("name", {}), languages, e["id"]),
                   _pick(e.get("description", {}), languages, ""), e.get("icon", "package-x-generic"),
-                  tuple(e["packages"]))
+                  tuple(e.get("packages", [])), tuple(e.get("flatpaks", [])))
             for e in data.get("extra", [])]
 
 

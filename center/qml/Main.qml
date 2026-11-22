@@ -16,6 +16,7 @@ Kirigami.ApplicationWindow {
         { title: qsTr("Welcome"), icon: "help-about" },
         { title: qsTr("Personalization"), icon: "preferences-desktop-theme" },
         { title: qsTr("Updates"), icon: "system-software-update" },
+        { title: qsTr("Applications"), icon: "applications-all" },
         { title: qsTr("Drivers"), icon: "computer" },
         { title: qsTr("Extras"), icon: "package-x-generic" }
     ]
@@ -28,8 +29,9 @@ Kirigami.ApplicationWindow {
         const page = index === 0 ? Qt.resolvedUrl("WelcomePage.qml")
             : index === 1 ? Qt.resolvedUrl("PersonalizationPage.qml")
             : index === 2 ? Qt.resolvedUrl("UpdatesPage.qml")
-            : index === 3 ? Qt.resolvedUrl("DriversPage.qml")
-            : index === 4 ? Qt.resolvedUrl("ExtrasPage.qml")
+            : index === 3 ? Qt.resolvedUrl("AppsPage.qml")
+            : index === 4 ? Qt.resolvedUrl("DriversPage.qml")
+            : index === 5 ? Qt.resolvedUrl("ExtrasPage.qml")
             : modulePage
         const props = { title: modules[index].title }
         if (pageStack.depth === 0)
@@ -85,6 +87,13 @@ Kirigami.ApplicationWindow {
                 checkable: true
                 checked: root.current === 4
                 onTriggered: root.show(4)
+            },
+            Kirigami.Action {
+                text: root.modules[5].title
+                icon.name: root.modules[5].icon
+                checkable: true
+                checked: root.current === 5
+                onTriggered: root.show(5)
             }
         ]
     }

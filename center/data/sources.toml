@@ -1,0 +1,7 @@
+# Fuente recomendada de cada aplicación cuando no es la de siempre (Arch > Flathub; el AUR nunca).
+# Clave: id de AppStream sin «.desktop»; valor: «arch» o «flathub». Solo vale si la aplicación
+# existe en esa fuente.
+[recommended]
+"com.usebottles.bottles" = "flathub"   # D-12: Bottles va por Flatpak
+"com.heroicgameslauncher.hgl" = "flathub"
+"com.vysp3r.protonplus" = "flathub"

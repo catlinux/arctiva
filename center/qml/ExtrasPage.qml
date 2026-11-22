@@ -12,7 +12,7 @@ Kirigami.ScrollablePage {
     property bool removing: false
     property int lastCode: -2
     property string lastName: ""
-    readonly property bool busy: helper.running || extrasBackend.checking
+    readonly property bool busy: helper.running || extrasBackend.checking || extrasBackend.flatpakBusy
 
     function toggle(extra) {
         log.clear()
@@ -20,7 +20,11 @@ Kirigami.ScrollablePage {
         page.working = extra.id
         page.lastName = extra.name
         page.removing = extra.installed
-        helper.run(extra.installed ? "extra-remove" : "extra-install", [extra.id])
+        // Los extras de Flathub no pasan por el ayudante: Flatpak tiene sus propias acciones de polkit.
+        if (extra.flatpak)
+            extrasBackend.runFlatpak(extra.id, !extra.installed)
+        else
+            helper.run(extra.installed ? "extra-remove" : "extra-install", [extra.id])
     }
 
     Component.onCompleted: extrasBackend.refresh()
@@ -29,6 +33,18 @@ Kirigami.ScrollablePage {
         target: helper
         function onLine(text) { if (page.working !== "") log.append(text) }
         function onFinished(code) {
+            if (page.working === "")
+                return
+            page.working = ""
+            page.lastCode = code
+            extrasBackend.refresh()
+        }
+    }
+
+    Connections {
+        target: extrasBackend
+        function onFlatpakLine(text) { if (page.working !== "") log.append(text) }
+        function onFlatpakFinished(code) {
             if (page.working === "")
                 return
             page.working = ""

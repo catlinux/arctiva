@@ -1,0 +1,10 @@
+# Paquetes que la tienda nunca quita (operación app-remove del ayudante). Patrones de fnmatch.
+# Quitar uno de estos puede dejar el sistema sin arrancar, sin escritorio o sin Arctiva Center.
+version = 1
+patterns = [
+  "base", "base-devel", "filesystem", "glibc", "gcc-libs", "bash", "coreutils", "shadow", "util-linux*",
+  "systemd*", "linux", "linux-*", "mkinitcpio*", "grub*", "efibootmgr", "pacman*", "archlinux-keyring",
+  "btrfs-progs", "snapper*", "snap-pac", "cryptsetup", "sudo", "polkit*", "networkmanager*",
+  "plasma-*", "kwin*", "plasma-login-manager", "sddm*", "mesa", "nvidia*", "xorg-xwayland",
+  "arctiva-*", "flatpak", "pyalpm", "python",
+]

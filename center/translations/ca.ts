@@ -27,6 +27,10 @@
         <source>Personalization</source>
         <translation>Personalització</translation>
     </message>
+    <message>
+        <source>Applications</source>
+        <translation>Aplicacions</translation>
+    </message>
 </context>
 <context>
     <name>UpdatesPage</name>
@@ -411,6 +415,18 @@
         <source>Open Personalization</source>
         <translation>Obrir Personalització</translation>
     </message>
+    <message>
+        <source>Applications</source>
+        <translation>Aplicacions</translation>
+    </message>
+    <message>
+        <source>Search and install programs from Arch Linux and Flathub, and remove them when you no longer need them.</source>
+        <translation>Cerca i instal·la programes d&apos;Arch Linux i de Flathub, i treu-los quan ja no els necessitis.</translation>
+    </message>
+    <message>
+        <source>Open Applications</source>
+        <translation>Obrir Aplicacions</translation>
+    </message>
 </context>
 <context>
     <name>PersonalizationPage</name>
@@ -521,6 +537,370 @@
     <message>
         <source>Advanced settings</source>
         <translation>Configuració avançada</translation>
+    </message>
+</context>
+<context>
+    <name>AppsPage</name>
+    <message>
+        <source>Audio and video</source>
+        <translation>Àudio i vídeo</translation>
+    </message>
+    <message>
+        <source>Development</source>
+        <translation>Desenvolupament</translation>
+    </message>
+    <message>
+        <source>Education</source>
+        <translation>Educació</translation>
+    </message>
+    <message>
+        <source>Games</source>
+        <translation>Jocs</translation>
+    </message>
+    <message>
+        <source>Graphics</source>
+        <translation>Gràfics</translation>
+    </message>
+    <message>
+        <source>Internet</source>
+        <translation>Internet</translation>
+    </message>
+    <message>
+        <source>Office</source>
+        <translation>Oficina</translation>
+    </message>
+    <message>
+        <source>Science</source>
+        <translation>Ciència</translation>
+    </message>
+    <message>
+        <source>System</source>
+        <translation>Sistema</translation>
+    </message>
+    <message>
+        <source>Utilities</source>
+        <translation>Utilitats</translation>
+    </message>
+    <message>
+        <source>Installed</source>
+        <translation>Instal·lada</translation>
+    </message>
+    <message>
+        <source>This is the live session: you can browse the applications, but installing only works once Arctiva is installed.</source>
+        <translation>Aquesta és la sessió live: pots explorar les aplicacions, però instal·lar només funciona quan Arctiva està instal·lat.</translation>
+    </message>
+    <message>
+        <source>Your system has updates. To avoid a partial update, update first and then install.</source>
+        <translation>El teu sistema té actualitzacions. Per evitar una actualització parcial, actualitza primer i després instal·la.</translation>
+    </message>
+    <message>
+        <source>Update the system first</source>
+        <translation>Actualitzar el sistema primer</translation>
+    </message>
+    <message>
+        <source>Pending installation: %1</source>
+        <translation>Instal·lació pendent: %1</translation>
+    </message>
+    <message>
+        <source>Install now</source>
+        <translation>Instal·lar ara</translation>
+    </message>
+    <message>
+        <source>Cancel</source>
+        <translation>Cancel·lar</translation>
+    </message>
+    <message>
+        <source>The catalogue could not be loaded: %1</source>
+        <translation>No s&apos;ha pogut carregar el catàleg: %1</translation>
+    </message>
+    <message>
+        <source>Search applications…</source>
+        <translation>Cercar aplicacions…</translation>
+    </message>
+    <message>
+        <source>Back to start</source>
+        <translation>Tornar a l&apos;inici</translation>
+    </message>
+    <message>
+        <source>Loading the catalogue… the first time it can take a while.</source>
+        <translation>Carregant el catàleg… la primera vegada pot trigar.</translation>
+    </message>
+    <message>
+        <source>Results for “%1”</source>
+        <translation>Resultats de «%1»</translation>
+    </message>
+    <message>
+        <source>Featured</source>
+        <translation>Destacades</translation>
+    </message>
+    <message>
+        <source>Nothing found. Try another word or a category.</source>
+        <translation>No s&apos;ha trobat res. Prova una altra paraula o una categoria.</translation>
+    </message>
+    <message>
+        <source>Turn on the AUR?</source>
+        <translation>Activar l&apos;AUR?</translation>
+    </message>
+    <message>
+        <source>Turn on</source>
+        <translation>Activar</translation>
+    </message>
+    <message>
+        <source>The AUR is a collection of recipes written by the community. Nobody at Arctiva or Arch Linux reviews them, they are built on your computer and they can run anything. Before every installation you will be shown the PKGBUILD so you can read it. An update of the system never touches them: you update them yourself, after reading what changed.</source>
+        <translation>L&apos;AUR és una col·lecció de receptes escrites per la comunitat. Ningú d&apos;Arctiva ni d&apos;Arch Linux les revisa, es compilen al teu equip i poden executar qualsevol cosa. Abans de cada instal·lació se&apos;t mostrarà el PKGBUILD perquè el llegeixis. Una actualització del sistema mai les toca: les actualitzes tu, després de llegir què ha canviat.</translation>
+    </message>
+    <message>
+        <source>I understand the risk</source>
+        <translation>Entenc el risc</translation>
+    </message>
+    <message>
+        <source>From the AUR (community, not reviewed)</source>
+        <translation>De l&apos;AUR (comunitat, sense revisar)</translation>
+    </message>
+    <message>
+        <source>Searching the AUR…</source>
+        <translation>Cercant a l&apos;AUR…</translation>
+    </message>
+    <message>
+        <source>Nothing found in the AUR.</source>
+        <translation>No s&apos;ha trobat res a l&apos;AUR.</translation>
+    </message>
+    <message>
+        <source>%1 votes</source>
+        <translation>%1 vots</translation>
+    </message>
+    <message>
+        <source>AUR</source>
+        <translation>AUR</translation>
+    </message>
+    <message>
+        <source>Show packages from the AUR (community, not reviewed)</source>
+        <translation>Mostrar paquets de l&apos;AUR (comunitat, sense revisar)</translation>
+    </message>
+    <message>
+        <source>Check for AUR updates</source>
+        <translation>Cercar actualitzacions de l&apos;AUR</translation>
+    </message>
+    <message>
+        <source>Review and update</source>
+        <translation>Revisar i actualitzar</translation>
+    </message>
+</context>
+<context>
+    <name>AppDetailPage</name>
+    <message>
+        <source>License: %1</source>
+        <translation>Llicència: %1</translation>
+    </message>
+    <message>
+        <source>Website</source>
+        <translation>Lloc web</translation>
+    </message>
+    <message>
+        <source>This is the live session: installing only works once Arctiva is installed.</source>
+        <translation>Aquesta és la sessió live: instal·lar només funciona quan Arctiva està instal·lat.</translation>
+    </message>
+    <message>
+        <source>Removing…</source>
+        <translation>Treient…</translation>
+    </message>
+    <message>
+        <source>Installing…</source>
+        <translation>Instal·lant…</translation>
+    </message>
+    <message>
+        <source>The application has been removed.</source>
+        <translation>L&apos;aplicació s&apos;ha tret.</translation>
+    </message>
+    <message>
+        <source>The application has been installed.</source>
+        <translation>L&apos;aplicació s&apos;ha instal·lat.</translation>
+    </message>
+    <message>
+        <source>Authorization cancelled</source>
+        <translation>Autorització cancel·lada</translation>
+    </message>
+    <message>
+        <source>This operation is not allowed: it would touch parts of the system that must stay.</source>
+        <translation>Aquesta operació no està permesa: tocaria parts del sistema que s&apos;han de quedar.</translation>
+    </message>
+    <message>
+        <source>The operation failed (error code %1). The log below has the details.</source>
+        <translation>L&apos;operació ha fallat (codi d&apos;error %1). El registre de sota té els detalls.</translation>
+    </message>
+    <message>
+        <source>Where to get it</source>
+        <translation>On aconseguir-la</translation>
+    </message>
+    <message>
+        <source>Recommended</source>
+        <translation>Recomanada</translation>
+    </message>
+    <message>
+        <source>Installed</source>
+        <translation>Instal·lada</translation>
+    </message>
+    <message>
+        <source>Permissions</source>
+        <translation>Permisos</translation>
+    </message>
+    <message>
+        <source>Remove</source>
+        <translation>Treure</translation>
+    </message>
+    <message>
+        <source>Install</source>
+        <translation>Instal·lar</translation>
+    </message>
+    <message>
+        <source>Screenshots</source>
+        <translation>Captures de pantalla</translation>
+    </message>
+    <message>
+        <source>Screenshot not available</source>
+        <translation>Captura no disponible</translation>
+    </message>
+    <message>
+        <source>Your system has updates. To avoid a partial update, update first and then install.</source>
+        <translation>El teu sistema té actualitzacions. Per evitar una actualització parcial, actualitza primer i després instal·la.</translation>
+    </message>
+    <message>
+        <source>Update the system first</source>
+        <translation>Actualitzar el sistema primer</translation>
+    </message>
+</context>
+<context>
+    <name>AurReviewPage</name>
+    <message>
+        <source>It has no maintainer: nobody is looking after it.</source>
+        <translation>No té mantenidor: ningú se n&apos;ocupa.</translation>
+    </message>
+    <message>
+        <source>It was published less than 30 days ago.</source>
+        <translation>Es va publicar fa menys de 30 dies.</translation>
+    </message>
+    <message>
+        <source>It is flagged as out of date.</source>
+        <translation>Està marcat com a desactualitzat.</translation>
+    </message>
+    <message>
+        <source>It has fewer than 10 votes: few people use it.</source>
+        <translation>Té menys de 10 vots: el fa servir poca gent.</translation>
+    </message>
+    <message>
+        <source>AUR packages are made by the community and nobody at Arctiva or Arch Linux has reviewed them. They are built on your computer and can run anything. Read the PKGBUILD before installing.</source>
+        <translation>Els paquets de l&apos;AUR els fa la comunitat i ningú d&apos;Arctiva ni d&apos;Arch Linux els ha revisat. Es compilen al teu equip i poden executar qualsevol cosa. Llegeix el PKGBUILD abans d&apos;instal·lar.</translation>
+    </message>
+    <message>
+        <source>Downloading and preparing the package for review…</source>
+        <translation>Descarregant i preparant el paquet per revisar-lo…</translation>
+    </message>
+    <message>
+        <source>These dependencies could not be found, so it cannot be installed: %1</source>
+        <translation>No s&apos;han trobat aquestes dependències, així que no es pot instal·lar: %1</translation>
+    </message>
+    <message>
+        <source>It will also install from the Arch repositories: %1</source>
+        <translation>També s&apos;instal·larà des dels repositoris d&apos;Arch: %1</translation>
+    </message>
+    <message>
+        <source>It needs %1 packages from the AUR, built in this order (each one is shown below): %2</source>
+        <translation>Necessita %1 paquets de l&apos;AUR, que es compilen en aquest ordre (cadascun es mostra a sota): %2</translation>
+    </message>
+    <message>
+        <source>Maintainer: %1 · Votes: %2 · Popularity: %3 · First published: %4 · Last updated: %5</source>
+        <translation>Mantenidor: %1 · Vots: %2 · Popularitat: %3 · Publicat: %4 · Última actualització: %5</translation>
+    </message>
+    <message>
+        <source>none</source>
+        <translation>cap</translation>
+    </message>
+    <message>
+        <source>Changes since the version you have</source>
+        <translation>Canvis des de la versió que tens</translation>
+    </message>
+    <message>
+        <source>I have reviewed the changes and the PKGBUILD</source>
+        <translation>He revisat els canvis i el PKGBUILD</translation>
+    </message>
+    <message>
+        <source>I have reviewed the PKGBUILD</source>
+        <translation>He revisat el PKGBUILD</translation>
+    </message>
+    <message>
+        <source>Update</source>
+        <translation>Actualitzar</translation>
+    </message>
+    <message>
+        <source>Install</source>
+        <translation>Instal·lar</translation>
+    </message>
+    <message>
+        <source>Building and installing… this can take a few minutes.</source>
+        <translation>Compilant i instal·lant… pot trigar uns minuts.</translation>
+    </message>
+    <message>
+        <source>Installed.</source>
+        <translation>Instal·lat.</translation>
+    </message>
+    <message>
+        <source>Authorization cancelled</source>
+        <translation>Autorització cancel·lada</translation>
+    </message>
+    <message>
+        <source>It failed (error code %1). The log below has the details.</source>
+        <translation>Ha fallat (codi d&apos;error %1). El registre de sota té els detalls.</translation>
+    </message>
+</context>
+<context>
+    <name>WindowsAppDialog</name>
+    <message>
+        <source>Open a Windows program</source>
+        <translation>Obrir un programa de Windows</translation>
+    </message>
+    <message>
+        <source>This file cannot be opened: it does not exist or it is not a Windows program.</source>
+        <translation>Aquest fitxer no es pot obrir: no existeix o no és un programa de Windows.</translation>
+    </message>
+    <message>
+        <source>This is the live session: installing Bottles only works once Arctiva is installed.</source>
+        <translation>Aquesta és la sessió live: instal·lar Bottles només funciona quan Arctiva està instal·lat.</translation>
+    </message>
+    <message>
+        <source>This is a program made for Windows. Arctiva can run many of them with Bottles, which keeps each program in its own separate “bottle”, so it does not touch your files or the system.</source>
+        <translation>Aquest és un programa fet per a Windows. Arctiva en pot executar molts amb Bottles, que desa cada programa en la seva pròpia «ampolla» separada, de manera que no toca els teus fitxers ni el sistema.</translation>
+    </message>
+    <message>
+        <source>What to expect</source>
+        <translation>Què esperar</translation>
+    </message>
+    <message>
+        <source>Many programs and games work, some need a little tuning, and some do not work at all: games with anti-cheat, for example, usually refuse to run. Only open programs you trust.</source>
+        <translation>Molts programes i jocs funcionen, alguns necessiten algun ajust i d&apos;altres no funcionen: els jocs amb anti-trampes, per exemple, solen negar-se a executar-se. Obre només programes en què confiïs.</translation>
+    </message>
+    <message>
+        <source>Open with Bottles</source>
+        <translation>Obrir amb Bottles</translation>
+    </message>
+    <message>
+        <source>Install Bottles</source>
+        <translation>Instal·lar Bottles</translation>
+    </message>
+    <message>
+        <source>Cancel</source>
+        <translation>Cancel·lar</translation>
+    </message>
+    <message>
+        <source>Bottles is installed. Now you can open the program.</source>
+        <translation>Bottles està instal·lat. Ja pots obrir el programa.</translation>
+    </message>
+    <message>
+        <source>Bottles could not be installed (error code %1). The log below has the details.</source>
+        <translation>No s&apos;ha pogut instal·lar Bottles (codi d&apos;error %1). El registre de sota té els detalls.</translation>
+    </message>
+    <message>
+        <source>Check if it works first</source>
+        <translation>Comprova abans si funciona</translation>
     </message>
 </context>
 </TS>

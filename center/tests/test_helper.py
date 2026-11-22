@@ -47,10 +47,17 @@ services = ["-H root@host"]
 
 FAKE = """#!/bin/sh
 if [ "$1" = "-Qq" ]; then cat "$ARCTIVA_FAKE_INSTALLED"; exit 0; fi
+if [ "$1" = "-Qqe" ]; then cat "$ARCTIVA_FAKE_INSTALLED.explicit"; exit 0; fi
+if [ "$1" = "-Rs" ]; then cat "$ARCTIVA_FAKE_INSTALLED.print" 2>/dev/null; fi
 echo "$(basename "$0") $*" >>"$ARCTIVA_FAKE_LOG"
 echo "LC_ALL=$LC_ALL LANGUAGE=$LANGUAGE" >>"$ARCTIVA_FAKE_LOG.env"
 echo "salida de $(basename "$0")"
 exit "${ARCTIVA_FAKE_RC:-0}"
+"""
+
+FAKE_CHECKUPDATES = """#!/bin/sh
+echo "checkupdates CHECKUPDATES_DB=$CHECKUPDATES_DB" >>"$ARCTIVA_FAKE_LOG"
+exit "${ARCTIVA_FAKE_CHECK_RC:-2}"
 """
 
 
@@ -65,14 +72,26 @@ def root(tmp_path):
         f = r / "usr/bin" / name
         f.write_text(FAKE)
         f.chmod(0o755)
+    (r / "usr/bin/checkupdates").write_text(FAKE_CHECKUPDATES)
+    (r / "usr/bin/checkupdates").chmod(0o755)
+    (r / "installed.explicit").write_text("")
+    (r / "usr/share/arctiva-center/protected.toml").write_text(PROTECTED)
     return r
 
 
-def helper(root, *args, rc=0):
+PROTECTED = """
+version = 1
+patterns = ["base", "linux", "linux-*", "plasma-*", "arctiva-*", "glibc"]
+"""
+
+
+def helper(root, *args, rc=0, check_rc=2, uid=None):
     log = root.parent / "calls.log"
     env = dict(os.environ, ARCTIVA_HELPER_TEST_ROOT=str(root), ARCTIVA_FAKE_LOG=str(log),
                ARCTIVA_FAKE_RC=str(rc), LANGUAGE="es", LC_ALL="es_ES.UTF-8",
-               ARCTIVA_FAKE_INSTALLED=str(root / "installed"))
+               ARCTIVA_FAKE_INSTALLED=str(root / "installed"), ARCTIVA_FAKE_CHECK_RC=str(check_rc))
+    if uid is not None:
+        env["PKEXEC_UID"] = str(uid)
     p = subprocess.run([sys.executable, "-I", str(HELPER), *args], env=env,
                        capture_output=True, text=True)
     calls = log.read_text().splitlines() if log.exists() else []
@@ -306,3 +325,212 @@ def test_client_and_helper_agree_on_operations():
     text = HELPER.read_text(encoding="utf-8")
     for op in helper_client._ARGS:
         assert f'"{op}": op_' in text
+
+
+# --- operaciones de la tienda (fase 6) ---
+
+BAD_NAMES = ["-x", "--overwrite=*", "../x", "a b", "A", "x" * 101, "", "a;id", "$(id)", "-Syu"]
+
+
+@pytest.mark.parametrize("op", ["app-install", "app-remove", "aur-deps"])
+@pytest.mark.parametrize("bad", BAD_NAMES)
+def test_store_ops_reject_bad_names(root, op, bad):
+    rc, calls, _ = helper(root, op, "krita", bad)
+    assert rc == 64 and calls == []
+
+
+@pytest.mark.parametrize("op", ["app-install", "app-remove", "aur-deps"])
+def test_store_ops_reject_count(root, op):
+    assert helper(root, op)[0] == 64
+    names = [f"pkg{i}" for i in range(21)]
+    rc, calls, _ = helper(root, op, *names)
+    assert rc == 64 and calls == []
+
+
+def test_app_install(root):
+    rc, calls, _ = helper(root, "app-install", "krita", "gimp", "krita")
+    assert rc == 0
+    assert calls == ["pacman -Syu --needed --noconfirm -- krita gimp"]
+
+
+def test_app_install_locked(root):
+    (root / "var/lib/pacman/db.lck").write_text("")
+    rc, calls, _ = helper(root, "app-install", "krita")
+    assert rc == 75 and calls == []
+
+
+def test_app_remove(root):
+    (root / "installed.explicit").write_text("gimp\nkrita\n")
+    (root / "installed.print").write_text("gimp\ngegl\n")
+    rc, calls, _ = helper(root, "app-remove", "gimp")
+    assert rc == 0
+    assert calls == ["pacman -Rs --print --print-format %n -- gimp", "pacman -Rns --noconfirm -- gimp"]
+
+
+@pytest.mark.parametrize("name", ["base", "linux", "linux-lts", "plasma-desktop", "arctiva-center", "glibc"])
+def test_app_remove_protected_runs_nothing(root, name):
+    (root / "installed.explicit").write_text(name + "\n")
+    rc, calls, out = helper(root, "app-remove", name)
+    assert rc == 64 and calls == [] and "protegidos" in out
+
+
+def test_app_remove_not_explicit(root):
+    (root / "installed.explicit").write_text("krita\n")
+    rc, calls, out = helper(root, "app-remove", "gimp")
+    assert rc == 64 and calls == [] and "explícita" in out
+
+
+def test_app_remove_would_drag_protected(root):
+    (root / "installed.explicit").write_text("gimp\n")
+    (root / "installed.print").write_text("gimp\nplasma-nm\n")
+    rc, calls, out = helper(root, "app-remove", "gimp")
+    assert rc == 64 and "arrastraría" in out
+    assert calls == ["pacman -Rs --print --print-format %n -- gimp"]   # solo la simulación
+
+
+def test_app_remove_pacman_refuses(root):
+    (root / "installed.explicit").write_text("gimp\n")
+    rc, calls, _ = helper(root, "app-remove", "gimp", rc=1)
+    assert rc == 1 and calls == ["pacman -Rs --print --print-format %n -- gimp"]
+
+
+def test_app_remove_unreadable_protected_list(root):
+    (root / "usr/share/arctiva-center/protected.toml").unlink()
+    (root / "installed.explicit").write_text("gimp\n")
+    rc, calls, _ = helper(root, "app-remove", "gimp")
+    assert rc == 70 and calls == []
+
+
+def test_aur_prepare(root):
+    rc, calls, _ = helper(root, "aur-prepare")
+    assert rc == 0 and calls == ["pacman -Syu --needed --noconfirm -- base-devel git"]
+    assert helper(root, "aur-prepare", "x")[0] == 64
+
+
+def test_aur_deps_with_pending_updates(root):
+    rc, calls, out = helper(root, "aur-deps", "libfoo", check_rc=0)
+    assert rc == 65 and "actualizaciones pendientes" in out
+    assert len(calls) == 1 and calls[0].startswith("checkupdates CHECKUPDATES_DB=")
+    assert "/var/cache/arctiva-center/checkupdates" in calls[0]
+
+
+def test_aur_deps_up_to_date(root):
+    rc, calls, _ = helper(root, "aur-deps", "libfoo", check_rc=2)
+    assert rc == 0 and calls[-1] == "pacman -S --needed --asdeps --noconfirm -- libfoo"
+
+
+def test_aur_deps_check_failure_stops(root):
+    rc, calls, _ = helper(root, "aur-deps", "libfoo", check_rc=1)
+    assert rc == 75 and not any(c.startswith("pacman") for c in calls)
+
+
+@pytest.fixture
+def build(root):
+    d = root / "home/user/.cache/arctiva-center/aur/build/yay"
+    d.mkdir(parents=True)
+    return d
+
+
+def test_aur_install_copies_and_cleans(root, build):
+    pkg = build / "yay-1-1-x86_64.pkg.tar.zst"
+    pkg.write_bytes(b"contenido")
+    rc, calls, _ = helper(root, "aur-install", str(pkg), uid=os.getuid())
+    assert rc == 0
+    assert len(calls) == 1 and calls[0].startswith("pacman -U --needed --noconfirm -- ")
+    copy = calls[0].split("-- ")[1]
+    assert "/var/tmp/arctiva-aur-" in copy and copy.endswith("yay-1-1-x86_64.pkg.tar.zst")
+    assert not os.path.exists(copy)                      # la copia temporal se borra
+    assert pkg.read_bytes() == b"contenido"
+
+
+def test_aur_install_needs_caller(root, build):
+    pkg = build / "a-1-1-any.pkg.tar.zst"
+    pkg.write_bytes(b"x")
+    for env_uid in (None, "x"):
+        rc, calls, _ = helper(root, "aur-install", str(pkg), uid=env_uid)
+        assert rc == 64 and calls == []
+
+
+def test_aur_install_rejects_outside_build_dir(root, build, tmp_path):
+    other = root / "home/user/otra"
+    other.mkdir(parents=True)
+    pkg = other / "a-1-1-any.pkg.tar.zst"
+    pkg.write_bytes(b"x")
+    assert helper(root, "aur-install", str(pkg), uid=os.getuid())[0] == 64
+    outside = tmp_path / "b-1-1-any.pkg.tar.zst"
+    outside.write_bytes(b"x")
+    rc, calls, _ = helper(root, "aur-install", str(outside), uid=os.getuid())
+    assert rc == 64 and calls == []
+
+
+@pytest.mark.parametrize("name", ["a.tar.zst", "a.pkg.tar.xz", "-a.pkg.tar.zst", "a b.pkg.tar.zst"])
+def test_aur_install_rejects_bad_names(root, build, name):
+    pkg = build / name
+    pkg.write_bytes(b"x")
+    rc, calls, _ = helper(root, "aur-install", str(pkg), uid=os.getuid())
+    assert rc == 64 and calls == []
+
+
+def test_aur_install_rejects_symlink(root, build, tmp_path):
+    target = tmp_path / "real.pkg.tar.zst"
+    target.write_bytes(b"x")
+    link = build / "link-1-1-any.pkg.tar.zst"
+    link.symlink_to(target)
+    rc, calls, _ = helper(root, "aur-install", str(link), uid=os.getuid())
+    assert rc == 64 and calls == []
+
+
+def test_aur_install_rejects_symlinked_build_dir(root, tmp_path):
+    real = tmp_path / "real"
+    real.mkdir()
+    (real / "a-1-1-any.pkg.tar.zst").write_bytes(b"x")
+    base = root / "home/user/.cache/arctiva-center/aur"
+    base.mkdir(parents=True)
+    (base / "build").symlink_to(real)
+    rc, calls, _ = helper(root, "aur-install", str(base / "build/a-1-1-any.pkg.tar.zst"), uid=os.getuid())
+    assert rc == 64 and calls == []
+
+
+def test_aur_install_rejects_other_owner(root, build):
+    pkg = build / "a-1-1-any.pkg.tar.zst"
+    pkg.write_bytes(b"x")
+    rc, calls, _ = helper(root, "aur-install", str(pkg), uid=os.getuid() + 1)
+    assert rc == 64 and calls == []
+
+
+def test_aur_install_rejects_directory_and_missing(root, build):
+    (build / "d-1-1-any.pkg.tar.zst").mkdir()
+    for name in ("d-1-1-any.pkg.tar.zst", "no-1-1-any.pkg.tar.zst"):
+        rc, calls, _ = helper(root, "aur-install", str(build / name), uid=os.getuid())
+        assert rc == 64 and calls == []
+
+
+def test_aur_install_too_many_files(root, build):
+    files = []
+    for i in range(41):
+        f = build / f"p{i}-1-1-any.pkg.tar.zst"
+        f.write_bytes(b"x")
+        files.append(str(f))
+    rc, calls, _ = helper(root, "aur-install", *files, uid=os.getuid())
+    assert rc == 64 and calls == []
+
+
+def test_client_store_arguments():
+    from arctiva_center.core.helper_client import build_argv
+    assert build_argv("app-install", ["krita"])[-2:] == ["app-install", "krita"]
+    assert build_argv("aur-prepare")[-1] == "aur-prepare"
+    assert build_argv("aur-install", ["/home/u/.cache/x/a-1-any.pkg.tar.zst"])
+    for op, args in (("app-install", []), ("app-remove", ["-x"]), ("aur-deps", ["A"]),
+                     ("aur-prepare", ["x"]), ("aur-install", ["relativo.pkg.tar.zst"]),
+                     ("aur-install", ["/a/b.tar.zst"]), ("app-install", ["x"] * 21)):
+        with pytest.raises(ValueError):
+            build_argv(op, args)
+
+
+def test_aur_deps_refuses_untrusted_check_dir(root, tmp_path):
+    cache = root / "var/cache/arctiva-center"
+    cache.mkdir(parents=True)
+    (cache / "checkupdates").symlink_to(tmp_path)            # enlace plantado por otro
+    rc, calls, out = helper(root, "aur-deps", "libfoo", check_rc=2)
+    assert rc == 75 and "no es de confianza" in out
+    assert not any(c.startswith("pacman") or c.startswith("checkupdates") for c in calls)

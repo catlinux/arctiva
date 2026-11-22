@@ -2,14 +2,14 @@
 # Maintainer: CatLinux
 # Arctiva Center: actualizaciones, controladores y extras (D-09). El código está en center/.
 pkgname=arctiva-center
-pkgver=0.7.2
+pkgver=0.7.7
 pkgrel=1
 pkgdesc='Centro de control de Arctiva: actualizaciones, controladores y extras'
 arch=(any)
 url='https://github.com/catlinux/arctiva'
 license=(GPL-3.0-or-later)
 depends=(python pyside6 qt6-declarative kirigami qqc2-desktop-style pacman-contrib fakeroot polkit libnotify
-         flatpak arctiva-branding 'arctiva-hardware>=0.2.0')
+         flatpak flatpak-kcm pyalpm archlinux-appstream-data arctiva-branding 'arctiva-hardware>=0.2.0')
 makedepends=(qt6-tools)
 
 prepare() {
@@ -50,6 +50,10 @@ package() {
     install -Dm644 -t "$share" data/*.toml
     install -Dm644 -t "$share/translations" translations/*.qm
     install -Dm644 -t "$pkgdir/usr/share/applications" desktop/arctiva-center.desktop
+    # Doble clic en un .exe o .msi: diálogo para abrirlo con Bottles (D-12). El .desktop es
+    # oculto y mimeapps.list lo deja como aplicación por defecto de esos tipos.
+    install -Dm644 -t "$pkgdir/usr/share/applications" desktop/arctiva-windows-app.desktop
+    install -Dm644 desktop/arctiva-mimeapps.list "$pkgdir/usr/share/applications/mimeapps.list"
     # Bienvenida al iniciar sesión: arctiva-center --welcome sale sin ventana si ya no toca.
     install -Dm644 -t "$pkgdir/etc/xdg/autostart" desktop/arctiva-center-welcome.desktop
     # Sustituye el lanzador de Discover del panel (el sistema instalado no lo lleva).

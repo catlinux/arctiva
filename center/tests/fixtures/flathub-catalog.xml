@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<components version="0.8" origin="flatpak">
+  <component type="desktop-application">
+    <id>org.ejemplo.pintor</id>
+    <name>Pintor</name>
+    <summary>Pictures, on Flathub</summary>
+    <launchable type="desktop-id">org.ejemplo.pintor.desktop</launchable>
+    <bundle type="flatpak">app/org.ejemplo.pintor/x86_64/stable</bundle>
+    <categories><category>Graphics</category></categories>
+  </component>
+  <component type="desktop-application">
+    <id>org.ejemplo.bottles</id>
+    <name>Botellas</name>
+    <summary>Run foreign programs</summary>
+    <launchable type="desktop-id">org.ejemplo.bottles.desktop</launchable>
+    <bundle type="flatpak">app/org.ejemplo.bottles/x86_64/stable</bundle>
+    <categories><category>Utility</category></categories>
+  </component>
+  <component type="desktop-application">
+    <id>org.ejemplo.soloflathub</id>
+    <name>Solo en Flathub</name>
+    <summary>Juego de cartas</summary>
+    <launchable type="desktop-id">org.ejemplo.soloflathub.desktop</launchable>
+    <bundle type="flatpak">app/org.ejemplo.soloflathub/x86_64/stable</bundle>
+    <categories><category>Game</category></categories>
+    <keywords><keyword>naipes</keyword></keywords>
+  </component>
+</components>

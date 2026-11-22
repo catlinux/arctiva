@@ -63,8 +63,7 @@ CONF
 echo "Tema de Plymouth: ${ply_theme}"
 
 # Paquetes que solo sirven en la live. -s quita también sus dependencias huérfanas (kpmcore, ckbcomp…).
-# Discover tampoco va en el sistema instalado (D-07): la tienda será la de Arctiva Center.
-live_only=(arctiva-calamares-config calamares mkinitcpio-archiso discover)
+live_only=(arctiva-calamares-config calamares mkinitcpio-archiso)
 mapfile -t installed < <(in_target pacman -Qq "${live_only[@]}" 2>/dev/null || true)
 if (( ${#installed[@]} )); then
     in_target pacman -Rns --noconfirm -- "${installed[@]}"

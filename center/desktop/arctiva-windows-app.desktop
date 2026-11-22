@@ -1,0 +1,13 @@
+[Desktop Entry]
+Type=Application
+Name=Windows program
+Name[es]=Programa de Windows
+Name[ca]=Programa de Windows
+Comment=Open a Windows program with Arctiva
+Comment[es]=Abrir un programa de Windows con Arctiva
+Comment[ca]=Obrir un programa de Windows amb Arctiva
+Exec=arctiva-center --windows-app %f
+Icon=application-x-executable
+Terminal=false
+NoDisplay=true
+MimeType=application/x-ms-dos-executable;application/x-msdownload;application/vnd.microsoft.portable-executable;application/x-msi;

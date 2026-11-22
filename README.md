@@ -12,6 +12,8 @@ Arctiva is an independent project. It is not affiliated with or endorsed by Arch
 
 ## Status
 
+**Phase 6 completed (0.7.0):** Arctiva Center has an "Applications" page: search and install programs from Arch Linux and Flathub (and, if you turn it on, the AUR with a mandatory PKGBUILD review), without partial updates; Bottles, Heroic and ProtonPlus as extras; and a dialog that opens `.exe` and `.msi` files with Bottles. Discover is no longer in the live ISO. Tested in a full install in a virtual machine.
+
 **Phase 5 completed (0.6.0):** Arctiva's own look: a Windows-style desktop (centred taskbar, start menu with search), light and dark modes, the "Orbit" wallpaper, a GRUB theme and a Plymouth boot screen, a "Personalization" page in Arctiva Center with "Restore the Arctiva look", the Outfit typeface and snapshot limits. Tested in a full encrypted install in a virtual machine.
 
 **Phase 4 completed (0.5.0):** a live ISO with KDE Plasma and a graphical installer (Calamares) with Basic, Gaming and Office profiles, Btrfs with bootable snapshots, optional encryption and installation alongside Windows, tested in virtual machines. The installed system updates from a signed in-house repository (`[arctiva]`) and installs the graphics drivers. Arctiva Center has the welcome screen, updates, drivers and extras, tested with a full encrypted install. There is no ISO to download yet: it can be built from the source (see the development guide). The architecture is approved (decisions D-01…D-16).

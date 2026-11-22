@@ -27,6 +27,10 @@
         <source>Personalization</source>
         <translation>Personalización</translation>
     </message>
+    <message>
+        <source>Applications</source>
+        <translation>Aplicaciones</translation>
+    </message>
 </context>
 <context>
     <name>UpdatesPage</name>
@@ -411,6 +415,18 @@
         <source>Open Personalization</source>
         <translation>Abrir Personalización</translation>
     </message>
+    <message>
+        <source>Applications</source>
+        <translation>Aplicaciones</translation>
+    </message>
+    <message>
+        <source>Search and install programs from Arch Linux and Flathub, and remove them when you no longer need them.</source>
+        <translation>Busca e instala programas de Arch Linux y de Flathub, y quítalos cuando ya no los necesites.</translation>
+    </message>
+    <message>
+        <source>Open Applications</source>
+        <translation>Abrir Aplicaciones</translation>
+    </message>
 </context>
 <context>
     <name>PersonalizationPage</name>
@@ -521,6 +537,370 @@
     <message>
         <source>Advanced settings</source>
         <translation>Configuración avanzada</translation>
+    </message>
+</context>
+<context>
+    <name>AppsPage</name>
+    <message>
+        <source>Audio and video</source>
+        <translation>Audio y vídeo</translation>
+    </message>
+    <message>
+        <source>Development</source>
+        <translation>Desarrollo</translation>
+    </message>
+    <message>
+        <source>Education</source>
+        <translation>Educación</translation>
+    </message>
+    <message>
+        <source>Games</source>
+        <translation>Juegos</translation>
+    </message>
+    <message>
+        <source>Graphics</source>
+        <translation>Gráficos</translation>
+    </message>
+    <message>
+        <source>Internet</source>
+        <translation>Internet</translation>
+    </message>
+    <message>
+        <source>Office</source>
+        <translation>Oficina</translation>
+    </message>
+    <message>
+        <source>Science</source>
+        <translation>Ciencia</translation>
+    </message>
+    <message>
+        <source>System</source>
+        <translation>Sistema</translation>
+    </message>
+    <message>
+        <source>Utilities</source>
+        <translation>Utilidades</translation>
+    </message>
+    <message>
+        <source>Installed</source>
+        <translation>Instalada</translation>
+    </message>
+    <message>
+        <source>This is the live session: you can browse the applications, but installing only works once Arctiva is installed.</source>
+        <translation>Esta es la sesión live: puedes explorar las aplicaciones, pero instalar solo funciona cuando Arctiva está instalado.</translation>
+    </message>
+    <message>
+        <source>Your system has updates. To avoid a partial update, update first and then install.</source>
+        <translation>Tu sistema tiene actualizaciones. Para evitar una actualización parcial, actualiza primero y después instala.</translation>
+    </message>
+    <message>
+        <source>Update the system first</source>
+        <translation>Actualizar el sistema primero</translation>
+    </message>
+    <message>
+        <source>Pending installation: %1</source>
+        <translation>Instalación pendiente: %1</translation>
+    </message>
+    <message>
+        <source>Install now</source>
+        <translation>Instalar ahora</translation>
+    </message>
+    <message>
+        <source>Cancel</source>
+        <translation>Cancelar</translation>
+    </message>
+    <message>
+        <source>The catalogue could not be loaded: %1</source>
+        <translation>No se ha podido cargar el catálogo: %1</translation>
+    </message>
+    <message>
+        <source>Search applications…</source>
+        <translation>Buscar aplicaciones…</translation>
+    </message>
+    <message>
+        <source>Back to start</source>
+        <translation>Volver al inicio</translation>
+    </message>
+    <message>
+        <source>Loading the catalogue… the first time it can take a while.</source>
+        <translation>Cargando el catálogo… la primera vez puede tardar.</translation>
+    </message>
+    <message>
+        <source>Results for “%1”</source>
+        <translation>Resultados de «%1»</translation>
+    </message>
+    <message>
+        <source>Featured</source>
+        <translation>Destacadas</translation>
+    </message>
+    <message>
+        <source>Nothing found. Try another word or a category.</source>
+        <translation>No se ha encontrado nada. Prueba otra palabra o una categoría.</translation>
+    </message>
+    <message>
+        <source>Turn on the AUR?</source>
+        <translation>¿Activar el AUR?</translation>
+    </message>
+    <message>
+        <source>Turn on</source>
+        <translation>Activar</translation>
+    </message>
+    <message>
+        <source>The AUR is a collection of recipes written by the community. Nobody at Arctiva or Arch Linux reviews them, they are built on your computer and they can run anything. Before every installation you will be shown the PKGBUILD so you can read it. An update of the system never touches them: you update them yourself, after reading what changed.</source>
+        <translation>El AUR es una colección de recetas escritas por la comunidad. Nadie de Arctiva ni de Arch Linux las revisa, se compilan en tu equipo y pueden ejecutar cualquier cosa. Antes de cada instalación se te mostrará el PKGBUILD para que lo leas. Una actualización del sistema nunca las toca: las actualizas tú, después de leer qué ha cambiado.</translation>
+    </message>
+    <message>
+        <source>I understand the risk</source>
+        <translation>Entiendo el riesgo</translation>
+    </message>
+    <message>
+        <source>From the AUR (community, not reviewed)</source>
+        <translation>Del AUR (comunidad, sin revisar)</translation>
+    </message>
+    <message>
+        <source>Searching the AUR…</source>
+        <translation>Buscando en el AUR…</translation>
+    </message>
+    <message>
+        <source>Nothing found in the AUR.</source>
+        <translation>No se ha encontrado nada en el AUR.</translation>
+    </message>
+    <message>
+        <source>%1 votes</source>
+        <translation>%1 votos</translation>
+    </message>
+    <message>
+        <source>AUR</source>
+        <translation>AUR</translation>
+    </message>
+    <message>
+        <source>Show packages from the AUR (community, not reviewed)</source>
+        <translation>Mostrar paquetes del AUR (comunidad, sin revisar)</translation>
+    </message>
+    <message>
+        <source>Check for AUR updates</source>
+        <translation>Buscar actualizaciones del AUR</translation>
+    </message>
+    <message>
+        <source>Review and update</source>
+        <translation>Revisar y actualizar</translation>
+    </message>
+</context>
+<context>
+    <name>AppDetailPage</name>
+    <message>
+        <source>License: %1</source>
+        <translation>Licencia: %1</translation>
+    </message>
+    <message>
+        <source>Website</source>
+        <translation>Sitio web</translation>
+    </message>
+    <message>
+        <source>This is the live session: installing only works once Arctiva is installed.</source>
+        <translation>Esta es la sesión live: instalar solo funciona cuando Arctiva está instalado.</translation>
+    </message>
+    <message>
+        <source>Removing…</source>
+        <translation>Quitando…</translation>
+    </message>
+    <message>
+        <source>Installing…</source>
+        <translation>Instalando…</translation>
+    </message>
+    <message>
+        <source>The application has been removed.</source>
+        <translation>La aplicación se ha quitado.</translation>
+    </message>
+    <message>
+        <source>The application has been installed.</source>
+        <translation>La aplicación se ha instalado.</translation>
+    </message>
+    <message>
+        <source>Authorization cancelled</source>
+        <translation>Autorización cancelada</translation>
+    </message>
+    <message>
+        <source>This operation is not allowed: it would touch parts of the system that must stay.</source>
+        <translation>Esta operación no está permitida: tocaría partes del sistema que deben quedarse.</translation>
+    </message>
+    <message>
+        <source>The operation failed (error code %1). The log below has the details.</source>
+        <translation>La operación ha fallado (código de error %1). El registro de abajo tiene los detalles.</translation>
+    </message>
+    <message>
+        <source>Where to get it</source>
+        <translation>Dónde conseguirla</translation>
+    </message>
+    <message>
+        <source>Recommended</source>
+        <translation>Recomendada</translation>
+    </message>
+    <message>
+        <source>Installed</source>
+        <translation>Instalada</translation>
+    </message>
+    <message>
+        <source>Permissions</source>
+        <translation>Permisos</translation>
+    </message>
+    <message>
+        <source>Remove</source>
+        <translation>Quitar</translation>
+    </message>
+    <message>
+        <source>Install</source>
+        <translation>Instalar</translation>
+    </message>
+    <message>
+        <source>Screenshots</source>
+        <translation>Capturas de pantalla</translation>
+    </message>
+    <message>
+        <source>Screenshot not available</source>
+        <translation>Captura no disponible</translation>
+    </message>
+    <message>
+        <source>Your system has updates. To avoid a partial update, update first and then install.</source>
+        <translation>Tu sistema tiene actualizaciones. Para evitar una actualización parcial, actualiza primero y después instala.</translation>
+    </message>
+    <message>
+        <source>Update the system first</source>
+        <translation>Actualizar el sistema primero</translation>
+    </message>
+</context>
+<context>
+    <name>AurReviewPage</name>
+    <message>
+        <source>It has no maintainer: nobody is looking after it.</source>
+        <translation>No tiene mantenedor: nadie se ocupa de él.</translation>
+    </message>
+    <message>
+        <source>It was published less than 30 days ago.</source>
+        <translation>Se publicó hace menos de 30 días.</translation>
+    </message>
+    <message>
+        <source>It is flagged as out of date.</source>
+        <translation>Está marcado como desactualizado.</translation>
+    </message>
+    <message>
+        <source>It has fewer than 10 votes: few people use it.</source>
+        <translation>Tiene menos de 10 votos: lo usa poca gente.</translation>
+    </message>
+    <message>
+        <source>AUR packages are made by the community and nobody at Arctiva or Arch Linux has reviewed them. They are built on your computer and can run anything. Read the PKGBUILD before installing.</source>
+        <translation>Los paquetes del AUR los hace la comunidad y nadie de Arctiva ni de Arch Linux los ha revisado. Se compilan en tu equipo y pueden ejecutar cualquier cosa. Lee el PKGBUILD antes de instalar.</translation>
+    </message>
+    <message>
+        <source>Downloading and preparing the package for review…</source>
+        <translation>Descargando y preparando el paquete para revisarlo…</translation>
+    </message>
+    <message>
+        <source>These dependencies could not be found, so it cannot be installed: %1</source>
+        <translation>No se han encontrado estas dependencias, así que no se puede instalar: %1</translation>
+    </message>
+    <message>
+        <source>It will also install from the Arch repositories: %1</source>
+        <translation>También se instalará desde los repositorios de Arch: %1</translation>
+    </message>
+    <message>
+        <source>It needs %1 packages from the AUR, built in this order (each one is shown below): %2</source>
+        <translation>Necesita %1 paquetes del AUR, que se compilan en este orden (cada uno se muestra abajo): %2</translation>
+    </message>
+    <message>
+        <source>Maintainer: %1 · Votes: %2 · Popularity: %3 · First published: %4 · Last updated: %5</source>
+        <translation>Mantenedor: %1 · Votos: %2 · Popularidad: %3 · Publicado: %4 · Última actualización: %5</translation>
+    </message>
+    <message>
+        <source>none</source>
+        <translation>ninguno</translation>
+    </message>
+    <message>
+        <source>Changes since the version you have</source>
+        <translation>Cambios desde la versión que tienes</translation>
+    </message>
+    <message>
+        <source>I have reviewed the changes and the PKGBUILD</source>
+        <translation>He revisado los cambios y el PKGBUILD</translation>
+    </message>
+    <message>
+        <source>I have reviewed the PKGBUILD</source>
+        <translation>He revisado el PKGBUILD</translation>
+    </message>
+    <message>
+        <source>Update</source>
+        <translation>Actualizar</translation>
+    </message>
+    <message>
+        <source>Install</source>
+        <translation>Instalar</translation>
+    </message>
+    <message>
+        <source>Building and installing… this can take a few minutes.</source>
+        <translation>Compilando e instalando… puede tardar unos minutos.</translation>
+    </message>
+    <message>
+        <source>Installed.</source>
+        <translation>Instalado.</translation>
+    </message>
+    <message>
+        <source>Authorization cancelled</source>
+        <translation>Autorización cancelada</translation>
+    </message>
+    <message>
+        <source>It failed (error code %1). The log below has the details.</source>
+        <translation>Ha fallado (código de error %1). El registro de abajo tiene los detalles.</translation>
+    </message>
+</context>
+<context>
+    <name>WindowsAppDialog</name>
+    <message>
+        <source>Open a Windows program</source>
+        <translation>Abrir un programa de Windows</translation>
+    </message>
+    <message>
+        <source>This file cannot be opened: it does not exist or it is not a Windows program.</source>
+        <translation>Este archivo no se puede abrir: no existe o no es un programa de Windows.</translation>
+    </message>
+    <message>
+        <source>This is the live session: installing Bottles only works once Arctiva is installed.</source>
+        <translation>Esta es la sesión live: instalar Bottles solo funciona cuando Arctiva está instalado.</translation>
+    </message>
+    <message>
+        <source>This is a program made for Windows. Arctiva can run many of them with Bottles, which keeps each program in its own separate “bottle”, so it does not touch your files or the system.</source>
+        <translation>Este es un programa hecho para Windows. Arctiva puede ejecutar muchos con Bottles, que guarda cada programa en su propia «botella» separada, de modo que no toca tus archivos ni el sistema.</translation>
+    </message>
+    <message>
+        <source>What to expect</source>
+        <translation>Qué esperar</translation>
+    </message>
+    <message>
+        <source>Many programs and games work, some need a little tuning, and some do not work at all: games with anti-cheat, for example, usually refuse to run. Only open programs you trust.</source>
+        <translation>Muchos programas y juegos funcionan, algunos necesitan algún ajuste y otros no funcionan: los juegos con anti-trampas, por ejemplo, suelen negarse a ejecutarse. Abre solo programas en los que confíes.</translation>
+    </message>
+    <message>
+        <source>Open with Bottles</source>
+        <translation>Abrir con Bottles</translation>
+    </message>
+    <message>
+        <source>Install Bottles</source>
+        <translation>Instalar Bottles</translation>
+    </message>
+    <message>
+        <source>Cancel</source>
+        <translation>Cancelar</translation>
+    </message>
+    <message>
+        <source>Bottles is installed. Now you can open the program.</source>
+        <translation>Bottles está instalado. Ya puedes abrir el programa.</translation>
+    </message>
+    <message>
+        <source>Bottles could not be installed (error code %1). The log below has the details.</source>
+        <translation>No se ha podido instalar Bottles (código de error %1). El registro de abajo tiene los detalles.</translation>
+    </message>
+    <message>
+        <source>Check if it works first</source>
+        <translation>Comprueba antes si funciona</translation>
     </message>
 </context>
 </TS>

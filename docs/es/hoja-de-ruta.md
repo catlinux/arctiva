@@ -87,9 +87,13 @@ Estado de cada trabajo: `[x]` hecho (con la versión en que se cerró) y `[ ]` p
 
 ### Fase 6: aplicaciones y Windows (0.7.0)
 
+- [x] Tienda: catálogo, búsqueda y página «Aplicaciones» para Arch y Flathub (0.6.2–0.6.4)
+- [x] AUR en la tienda (0.6.5)
+- [x] Bottles y diálogo para abrir `.exe` y `.msi`; extras Heroic y ProtonPlus (0.6.6)
+
 - [ ] Tienda «Aplicaciones» con repositorios, Flathub y AUR diferenciados (D-07)
 - [ ] Bottles y diálogo para abrir `.exe` y `.msi` (D-12)
-- [ ] Quitar Discover de la ISO live
+- [x] Quitar Discover de la ISO live (0.6.7)
 
 ### Fase 7: beta (0.8.0–0.9.x)
 

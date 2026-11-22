@@ -94,20 +94,20 @@ Requisitos:
 
 - Una tienda gráfica para buscar, instalar, actualizar y desinstalar desde **tres fuentes**: repositorios oficiales (pacman), Flathub (Flatpak) y AUR.
 - El origen de cada aplicación siempre visible, con un distintivo propio por fuente. Si una aplicación existe en varias fuentes, se muestran como opciones separadas y una de ellas aparece como recomendada.
-- **AUR:** desactivado por defecto. Al activarlo, y antes de cada instalación, un aviso claro de que es software de la comunidad sin revisar, con el PKGBUILD consultable. Se compila sin root mediante un asistente (`paru`) de `[arctiva]`.
+- **AUR:** desactivado por defecto. Al activarlo, y antes de cada instalación, un aviso claro de que es software de la comunidad sin revisar, con el PKGBUILD consultable. Se compila como el usuario con `makepkg`, sin `paru`: `paru` pide `sudo` en una terminal y la tienda no tiene terminal, y `makepkg` más el ayudante (que solo instala lo ya compilado, desde una copia hecha por root) cubren lo mismo con menos piezas. Antes de compilar se resuelve la cadena de dependencias (las de los repos, con `aur-deps`; las del AUR pasan por la misma revisión) y las actualizaciones del AUR son manuales, con el diff del PKGBUILD y los `.install` desde el commit instalado.
 - **Integridad de pacman:** ninguna operación refresca las bases de datos sin actualizar todo el sistema. Para instalar un paquete de los repositorios con el sistema desactualizado, primero hay que actualizar.
 - Permisos de Flatpak visibles y modificables. Errores comprensibles, con el texto original disponible.
 
-Decisión: **tienda propia como módulo «Aplicaciones» de Arctiva Center** (D-09). El sistema instalado no lleva Discover, para no tener dos tiendas ni el refresco periódico de PackageKit. La ISO live usa Discover solo con Flathub hasta la fase 6.
+Decisión: **tienda propia como módulo «Aplicaciones» de Arctiva Center** (D-09). El sistema instalado no lleva Discover, para no tener dos tiendas ni el refresco periódico de PackageKit. Tampoco la ISO live: allí la página «Aplicaciones» muestra el catálogo con las acciones desactivadas.
 
 - **Catálogo:** datos AppStream de los repositorios (`archlinux-appstream-data`) y de Flathub, leídos con libappstream. Una aplicación disponible en varias fuentes se muestra una sola vez, con una opción por fuente. El AUR solo aparece si está activado, como lista de paquetes buscada en su API RPC.
 - **Fuente recomendada:** los repositorios oficiales antes que Flathub, salvo las excepciones que fija `arctiva-settings` (por ejemplo Bottles, D-12). El AUR nunca es la recomendada.
-- **pacman:** las consultas se hacen con `pyalpm` sobre una copia temporal de las bases de datos, como `checkupdates`; la base real no se toca fuera de una actualización. Instalar es `pacman -Syu --needed <paquetes>` a través del ayudante polkit; si hay actualizaciones pendientes, antes se pasa por el flujo de D-08 (noticias, instantánea, paquetes delicados).
+- **pacman:** las consultas se hacen con `pyalpm` sobre una copia temporal de las bases de datos, como `checkupdates`; la base real no se toca fuera de una actualización. Instalar es `pacman -Syu --needed <paquetes>` (operación `app-install`) y desinstalar `pacman -Rns` (`app-remove`) a través del ayudante polkit; `app-remove` rechaza los paquetes de `protected.toml` (sistema, arranque, escritorio, `arctiva-*`), los que no se instalaron de forma explícita y cualquier desinstalación que arrastre uno protegido; si hay actualizaciones pendientes, antes se pasa por el flujo de D-08 (noticias, instantánea, paquetes delicados).
 - **Flatpak:** libflatpak, o la orden `flatpak` si la prueba de concepto lo aconseja. Los permisos se gestionan abriendo `flatpak-kcm`, el módulo de Plasma que ya existe.
 - **AUR:** antes de instalar se muestran el PKGBUILD y el `.install` completos, los votos, la popularidad, la última actualización y el mantenedor, con un aviso reforzado si el paquete es huérfano, ha cambiado de mantenedor o es reciente. En cada actualización, diff del PKGBUILD y del `.install` respecto a lo instalado, con confirmación: en junio de 2026 Arch avisó de una oleada de paquetes maliciosos en el AUR y recomendó revisar todos los cambios. Se compila como usuario con `paru`; solo la instalación del paquete construido pasa por el ayudante. Las actualizaciones del AUR van después de `pacman -Syu`.
 - **Errores:** el mismo traductor de mensajes que D-08.
 - Descartados: el motor PackageKit de Discover, por el riesgo de actualizaciones parciales (sección 2); Discover con un motor propio para pacman y AUR (no existe ninguno y la interfaz de motores de Discover no es estable, así que habría que mantener código C++ al ritmo de Plasma); Pamac (solo en el AUR, ligado a Manjaro y en GTK); Bauh (sin desarrollo desde 2024 y en Qt5), y Octopi (gestor de paquetes sin Flatpak ni AppStream).
-- Antes de la fase 6, una prueba de concepto en la VM valida el catálogo, las consultas con base temporal, la instalación a través del ayudante, Flatpak y el flujo del AUR. La decisión se reconsiderará si KDE incorpora a Discover un motor para pacman.
+- Prueba de concepto hecha el 2026-11-22 (resultados en el estudio de la tienda): catálogo con `xml.etree` y caché, Flatpak por su línea de órdenes (sin diálogo de polkit para el usuario de la sesión, y `flatpak-kcm` como dependencia), y el AUR necesita `base-devel` y `git` (operación `aur-prepare` del ayudante). Antes de la fase 6, una prueba de concepto en la VM validaba el catálogo, las consultas con base temporal, la instalación a través del ayudante, Flatpak y el flujo del AUR. La decisión se reconsiderará si KDE incorpora a Discover un motor para pacman.
 
 ### D-08 Actualizaciones (**Aprobada**)
 
@@ -148,12 +148,12 @@ Detección con `lspci` y un archivo de correspondencias (familia → paquetes), 
 - `multilib` activado de serie, también en el sistema instalado (lo activa `prepare-target`).
 - Steam nativo (`steam`, de multilib), `gamemode`, `mangohud`, `gamescope`; Proton se gestiona desde Steam.
 - Heroic (Epic/GOG) y ProtonPlus o ProtonUp-Qt como Flatpak; Lutris desde `extra`.
-- Se instalan como perfil «Juegos» durante la instalación (Steam, Lutris, GameMode, MangoHud, Gamescope y las bibliotecas de 32 bits de Mesa y Vulkan) o desde Arctiva Center. Heroic, ProtonPlus y Bottles los ofrecerá Arctiva Center (fase 6); los controladores NVIDIA, la detección de gráficas (fase 3).
+- Se instalan como perfil «Juegos» durante la instalación (Steam, Lutris, GameMode, MangoHud, Gamescope y las bibliotecas de 32 bits de Mesa y Vulkan) o desde Arctiva Center. Heroic, ProtonPlus y Bottles los ofrece Arctiva Center como extras de Flatpak (`flatpaks` en `extras.toml`, sin el ayudante); los controladores NVIDIA, la detección de gráficas (fase 3).
 
 ### D-12 Programas de Windows (**Aprobada**)
 
 - **Bottles** como herramienta principal, **solo en Flatpak**: es el único formato que sus desarrolladores soportan.
-- Al abrir un `.exe` o `.msi`, un diálogo propio explica qué va a pasar, ofrece abrirlo con Bottles y enlaza a la base de datos de compatibilidad (WineHQ AppDB, ProtonDB).
+- Al abrir un `.exe` o `.msi` (doble clic en Dolphin, que antes pregunta «¿Lanzar este archivo?»), un diálogo propio (`arctiva-center --windows-app`, asociado a `application/x-msdownload`, `x-ms-dos-executable`, `vnd.microsoft.portable-executable` y `x-msi` por `mimeapps.list`) explica qué va a pasar, ofrece abrirlo con Bottles y enlaza a la base de datos de compatibilidad (WineHQ AppDB, ProtonDB).
 - Limitaciones que se comunican claramente: juegos con antitrampas a nivel de kernel (consultar «Are We Anti-Cheat Yet?»), suites como Adobe y Microsoft Office recientes, controladores y utilidades de hardware de Windows.
 - `wine` y `winetricks` de los repos, para usuarios avanzados.
 
@@ -206,8 +206,8 @@ Para mantenerla por debajo de 2 GiB: Plasma con una selección de paquetes en lu
 | Desarrollo propio (pequeño) | Integración sin código propio |
 |---|---|
 | Perfil archiso y scripts de construcción | Arch Linux (core, extra, multilib), pacman |
-| Interfaz QML, configuración y branding de Calamares | Calamares, KDE Plasma, Discover (solo en la live), Flatpak/Flathub |
-| Tienda: módulo «Aplicaciones» de Arctiva Center (D-07) | pyalpm, paru, libflatpak, AppStream, flatpak-kcm |
+| Interfaz QML, configuración y branding de Calamares | Calamares, KDE Plasma, Flatpak/Flathub |
+| Tienda: módulo «Aplicaciones» de Arctiva Center (D-07) | pyalpm, makepkg, flatpak (línea de órdenes), AppStream (XML), flatpak-kcm |
 | `arctiva-settings` (valores por defecto) | Btrfs, Snapper, snap-pac, grub-btrfs, zram-generator |
 | `arctiva-branding` (logo, fondos, Plymouth, tema global) | Mesa, NVIDIA open, Vulkan, firmware, fwupd |
 | `arctiva-keyring` y el repositorio `[arctiva]` | Steam, Proton, Lutris, Heroic, Bottles, gamemode, MangoHud |

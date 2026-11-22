@@ -111,7 +111,7 @@ Kirigami.ScrollablePage {
                     ? qsTr("Some drivers for your graphics card are missing, probably because Arctiva was installed without an internet connection.")
                     : qsTr("Your graphics card is ready.")
             stepButton: qsTr("Open Drivers")
-            module: 3
+            module: 4
         }
 
         Step {
@@ -123,11 +123,19 @@ Kirigami.ScrollablePage {
         }
 
         Step {
+            stepIcon: "applications-all"
+            stepTitle: qsTr("Applications")
+            stepText: qsTr("Search and install programs from Arch Linux and Flathub, and remove them when you no longer need them.")
+            stepButton: qsTr("Open Applications")
+            module: 3
+        }
+
+        Step {
             stepIcon: "package-x-generic"
             stepTitle: qsTr("Extras")
             stepText: qsTr("Add Gaming, Office or a second kernel whenever you want, with a switch.")
             stepButton: qsTr("Open Extras")
-            module: 4
+            module: 5
         }
 
         Step {

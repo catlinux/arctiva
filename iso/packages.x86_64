@@ -88,8 +88,7 @@ breeze-gtk
 xdg-desktop-portal-kde
 print-manager
 
-# Tienda en la live: Discover solo con Flathub (D-07)
-discover
+# La tienda es Arctiva Center (D-07): la live no lleva Discover.
 flatpak
 flatpak-kcm
 archlinux-appstream-data

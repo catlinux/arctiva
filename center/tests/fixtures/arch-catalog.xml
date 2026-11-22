@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<components version="1.0" origin="prueba-arch">
+  <component type="desktop-application">
+    <id>org.ejemplo.pintor</id>
+    <name>Pintor</name>
+    <name xml:lang="es">Pintor digital</name>
+    <summary>Dibuja y retoca imágenes</summary>
+    <summary xml:lang="en">Draw and touch up pictures</summary>
+    <project_license>GPL-3.0-or-later</project_license>
+    <description><p>Primer párrafo.</p><ul><li>Capas</li><li>Pinceles</li></ul></description>
+    <pkgname>pintor</pkgname>
+    <categories><category>Graphics</category><category>Qt</category></categories>
+    <keywords><keyword>dibujo</keyword><keyword>paint</keyword></keywords>
+    <url type="homepage">https://ejemplo.org/pintor</url>
+    <icon type="cached" width="64" height="64">org.ejemplo.pintor.png</icon>
+    <screenshots><screenshot type="default"><image type="source">https://ejemplo.org/a.png</image></screenshot></screenshots>
+  </component>
+  <component type="desktop-application">
+    <id>editor.desktop</id>
+    <name>Editor de texto</name>
+    <summary>Escribe texto plano</summary>
+    <pkgname>editor</pkgname>
+    <categories><category>Utility</category></categories>
+    <icon type="stock">accessories-text-editor</icon>
+  </component>
+  <component type="desktop-application">
+    <id>org.ejemplo.bottles</id>
+    <name>Botellas</name>
+    <summary>Ejecuta programas ajenos</summary>
+    <pkgname>botellas</pkgname>
+    <categories><category>Utility</category></categories>
+  </component>
+  <component type="addon">
+    <id>org.ejemplo.complemento</id>
+    <name>Complemento</name>
+    <pkgname>complemento</pkgname>
+  </component>
+</components>

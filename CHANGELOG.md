@@ -8,6 +8,72 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 
 ## [Unreleased]
 
+## [0.7.0] - 2026-11-22
+
+Phase 6 closed: applications and Windows. Tested on 2026-11-22 on an installed system in QEMU (store search, installs and removals from Arch and Flathub, AUR with review and update diff, `.exe` dialog with Bottles, Flatpak extras) and with the ISO built in a container. Minor version (phase completed, D-16). No code changes since 0.6.7.
+
+## [0.6.7] - 2026-11-22
+
+Discover out of the live ISO (phase 6, step 6.6). Patch version.
+
+### Removed
+
+- The live ISO no longer includes Discover: the store is Arctiva Center's "Applications" page, which in the live session shows the catalogue with its actions disabled.
+
+## [0.6.6] - 2026-11-22
+
+Windows programs and Flatpak extras (phase 6, step 6.5). Patch version.
+
+### Added
+
+- Arctiva Center 0.7.7: "Windows programs" (Bottles), "Heroic Games Launcher" and "ProtonPlus" extras, installed from Flathub with Flatpak (`flatpaks` field in `extras.toml`).
+- Double-clicking a `.exe` or `.msi` (Dolphin asks first whether to launch it) opens a dialog (`arctiva-center --windows-app <file>`) that explains what will happen, installs Bottles if it is missing, opens the file with Bottles and links to WineHQ AppDB, ProtonDB and Are We Anti-Cheat Yet?. It is the default application for those file types.
+
+## [0.6.5] - 2026-11-22
+
+AUR in the store (phase 6, step 6.4). Patch version.
+
+### Added
+
+- Arctiva Center 0.7.6: AUR support, off by default and turned on in Applications after a warning. Search through the AUR RPC, a mandatory review (PKGBUILD and `.install` of every package to build, votes, maintainer, dates and reinforced warnings for orphaned, recent, out-of-date or barely voted packages), dependency chain, build as the user with `makepkg` and installation through the helper. AUR updates are manual and show the diff since the installed commit.
+
+### Changed
+
+- D-07: the AUR is built with `makepkg` instead of `paru`.
+
+## [0.6.4] - 2026-11-22
+
+"Applications" page in Arctiva Center (phase 6, step 6.3). Patch version.
+
+### Added
+
+- Arctiva Center 0.7.5: "Applications" module after Updates, with search, categories, featured applications and a detail page with one row per source (Arch, Flathub), version, size, the recommended source and screenshots. Arch applications are installed and removed through the helper; Flathub ones with Flatpak (system installation, with a log), with a "Permissions" button. If updates are pending, installing from Arch first takes you to Updates (no partial updates) and the installation waits for you.
+
+## [0.6.3] - 2026-11-22
+
+Store operations in the privileged helper (phase 6, step 6.2). Patch version.
+
+### Added
+
+- Arctiva Center 0.7.4, helper: `app-install` (`pacman -Syu --needed`), `app-remove` (refuses protected packages, packages not installed explicitly and removals that would drag a protected one, with a dry run first), `aur-prepare` (`base-devel` and `git`), `aur-deps` (only when no updates are pending) and `aur-install` (only packages already built by the user in `~/.cache/arctiva-center/aur/build/`, installed from a root-made copy). The list of protected packages is `data/protected.toml`.
+
+## [0.6.2] - 2026-11-22
+
+Store catalogue and queries (phase 6, step 6.1). Patch version.
+
+### Added
+
+- Arctiva Center 0.7.3: application catalogue (`core/appstream.py`) read from the Arch and Flathub AppStream files, merged by application, with accent-insensitive search, categories, the recommended source (Arch over Flathub, never the AUR, with exceptions in `data/sources.toml`), the featured list (`data/featured.toml`) and a cache; read-only pacman queries with `pyalpm` on the temporary database (`core/alpm_query.py`).
+- New dependencies: `pyalpm`, `archlinux-appstream-data` and `flatpak-kcm`.
+
+## [0.6.1] - 2026-11-22
+
+Store proof of concept (phase 6, step 6.0). Documentation only; patch version.
+
+### Changed
+
+- Design of the store adjusted after testing on an installed system: the catalogue is read from the AppStream XML files with a cache, Flatpak runs through its command line, the AUR needs `base-devel` and `git`, and `flatpak-kcm` and `pyalpm` become dependencies.
+
 ## [0.6.0] - 2026-11-21
 
 Phase 5 closed: identity and desktop. Tested on 2026-11-21 with an ISO built in a container and a full encrypted install in QEMU (themed GRUB menu, Plymouth, login screen, Windows-style desktop, Personalization page, snapshot limit). Minor version (phase completed, D-16).

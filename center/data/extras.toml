@@ -6,6 +6,8 @@
 #   with_drivers  tras instalar, vuelve a aplicar los controladores (arctiva-gpu).
 #   update_grub   regenera el menú de GRUB al instalar y al quitar.
 #   remove_also   se quitan también, si están instalados (dependen de los paquetes del extra).
+#   flatpaks      aplicaciones de Flathub (instalación de sistema, sin el ayudante). Un extra es de pacman
+#                 (packages) o de Flatpak (flatpaks), no de los dos: el ayudante solo acepta los de pacman.
 # Juegos y Oficina deben tener los mismos paquetes que los perfiles del instalador
 # (installer/calamares/modules/packagechooser-perfiles.conf): lo comprueba una prueba.
 # Impresoras y cortafuegos ya vienen en el sistema base: la ventana enlaza a su configuración.
@@ -62,3 +64,42 @@ ca = "Nucli LTS"
 en = "A second, long-term support kernel. If an update of the main kernel causes problems, choose it in the GRUB menu when starting the computer."
 es = "Un segundo kernel, con soporte a largo plazo. Si una actualización del kernel principal da problemas, elígelo en el menú de GRUB al encender el equipo."
 ca = "Un segon nucli, amb suport a llarg termini. Si una actualització del nucli principal dona problemes, tria'l al menú de GRUB en engegar l'ordinador."
+
+[[extra]]
+id = "windows"
+icon = "application-x-executable"
+flatpaks = ["com.usebottles.bottles"]
+[extra.name]
+en = "Windows programs"
+es = "Programas de Windows"
+ca = "Programes de Windows"
+[extra.description]
+en = "Bottles, to run many Windows programs and games. Double-click a .exe or .msi to open it. Not everything works: games with anti-cheat usually do not. Download of about 0.2 GB."
+es = "Bottles, para ejecutar muchos programas y juegos de Windows. Haz doble clic en un .exe o .msi para abrirlo. No todo funciona: los juegos con anti-trampas suelen no funcionar. Descarga de unos 0,2 GB."
+ca = "Bottles, per executar molts programes i jocs de Windows. Fes doble clic en un .exe o .msi per obrir-lo. No tot funciona: els jocs amb anti-trampes solen no funcionar. Descàrrega d'uns 0,2 GB."
+
+[[extra]]
+id = "heroic"
+icon = "applications-games"
+flatpaks = ["com.heroicgameslauncher.hgl"]
+[extra.name]
+en = "Heroic Games Launcher"
+es = "Heroic Games Launcher"
+ca = "Heroic Games Launcher"
+[extra.description]
+en = "Play your Epic Games, GOG and Amazon Games libraries on Linux."
+es = "Juega a tus bibliotecas de Epic Games, GOG y Amazon Games en Linux."
+ca = "Juga a les teves biblioteques d'Epic Games, GOG i Amazon Games a Linux."
+
+[[extra]]
+id = "protonplus"
+icon = "applications-games"
+flatpaks = ["com.vysp3r.ProtonPlus"]
+[extra.name]
+en = "ProtonPlus"
+es = "ProtonPlus"
+ca = "ProtonPlus"
+[extra.description]
+en = "Manage Proton and Wine versions for Steam, Lutris, Heroic and Bottles."
+es = "Gestiona las versiones de Proton y Wine para Steam, Lutris, Heroic y Bottles."
+ca = "Gestiona les versions de Proton i Wine per a Steam, Lutris, Heroic i Bottles."

@@ -8,6 +8,72 @@ El formato se basa en [Keep a Changelog](https://keepachangelog.com/es-ES/1.1.0/
 
 ## [Sin publicar]
 
+## [0.7.0] - 2026-11-22
+
+Fase 6 terminada: aplicaciones y Windows. Probada el 2026-11-22 en un sistema instalado en QEMU (búsqueda en la tienda, instalar y quitar desde Arch y Flathub, AUR con revisión y diff de actualización, diálogo de `.exe` con Bottles, extras de Flatpak) y con la ISO construida en un contenedor. Versión menor (fase terminada, D-16). Sin cambios de código desde la 0.6.7.
+
+## [0.6.7] - 2026-11-22
+
+Discover fuera de la ISO live (fase 6, paso 6.6). Versión de parche.
+
+### Eliminado
+
+- La ISO live ya no incluye Discover: la tienda es la página «Aplicaciones» de Arctiva Center, que en la sesión live muestra el catálogo con las acciones desactivadas.
+
+## [0.6.6] - 2026-11-22
+
+Programas de Windows y extras de Flatpak (fase 6, paso 6.5). Versión de parche.
+
+### Añadido
+
+- Arctiva Center 0.7.7: extras «Programas de Windows» (Bottles), «Heroic Games Launcher» y «ProtonPlus», instalados desde Flathub con Flatpak (campo `flatpaks` de `extras.toml`).
+- Al hacer doble clic en un `.exe` o `.msi` (Dolphin antes pregunta si lanzarlo) se abre un diálogo (`arctiva-center --windows-app <archivo>`) que explica qué va a pasar, instala Bottles si falta, abre el archivo con Bottles y enlaza a WineHQ AppDB, ProtonDB y Are We Anti-Cheat Yet?. Es la aplicación por defecto de esos tipos de archivo.
+
+## [0.6.5] - 2026-11-22
+
+AUR en la tienda (fase 6, paso 6.4). Versión de parche.
+
+### Añadido
+
+- Arctiva Center 0.7.6: compatibilidad con el AUR, desactivado de serie y activable en Aplicaciones tras un aviso. Búsqueda por la RPC del AUR, revisión obligatoria (PKGBUILD y `.install` de cada paquete que se va a compilar, votos, mantenedor, fechas y avisos reforzados para paquetes huérfanos, recientes, desactualizados o con pocos votos), cadena de dependencias, compilación como usuario con `makepkg` e instalación con el ayudante. Las actualizaciones del AUR son manuales y muestran el diff desde el commit instalado.
+
+### Cambiado
+
+- D-07: el AUR se compila con `makepkg` en lugar de `paru`.
+
+## [0.6.4] - 2026-11-22
+
+Página «Aplicaciones» en Arctiva Center (fase 6, paso 6.3). Versión de parche.
+
+### Añadido
+
+- Arctiva Center 0.7.5: módulo «Aplicaciones» tras Actualizaciones, con buscador, categorías, destacadas y una página de detalle con una fila por fuente (Arch, Flathub), versión, tamaño, la fuente recomendada y capturas. Las de Arch se instalan y quitan con el ayudante; las de Flathub, con Flatpak (instalación de sistema, con registro) y un botón «Permisos». Si hay actualizaciones pendientes, instalar desde Arch lleva antes a Actualizaciones (sin actualizaciones parciales) y la instalación queda esperando.
+
+## [0.6.3] - 2026-11-22
+
+Operaciones de la tienda en el ayudante privilegiado (fase 6, paso 6.2). Versión de parche.
+
+### Añadido
+
+- Arctiva Center 0.7.4, ayudante: `app-install` (`pacman -Syu --needed`), `app-remove` (rechaza los paquetes protegidos, los no instalados de forma explícita y las desinstalaciones que arrastrarían uno protegido, con una simulación previa), `aur-prepare` (`base-devel` y `git`), `aur-deps` (solo si no hay actualizaciones pendientes) y `aur-install` (solo paquetes ya compilados por el usuario en `~/.cache/arctiva-center/aur/build/`, instalados desde una copia hecha por root). La lista de paquetes protegidos está en `data/protected.toml`.
+
+## [0.6.2] - 2026-11-22
+
+Catálogo y consultas de la tienda (fase 6, paso 6.1). Versión de parche.
+
+### Añadido
+
+- Arctiva Center 0.7.3: catálogo de aplicaciones (`core/appstream.py`) leído de los archivos AppStream de Arch y de Flathub, fusionado por aplicación, con búsqueda sin distinguir tildes, categorías, la fuente recomendada (Arch antes que Flathub, nunca el AUR, con excepciones en `data/sources.toml`), la lista de destacadas (`data/featured.toml`) y una caché; consultas de solo lectura a pacman con `pyalpm` sobre la base temporal (`core/alpm_query.py`).
+- Dependencias nuevas: `pyalpm`, `archlinux-appstream-data` y `flatpak-kcm`.
+
+## [0.6.1] - 2026-11-22
+
+Prueba de concepto de la tienda (fase 6, paso 6.0). Solo documentación; versión de parche.
+
+### Cambiado
+
+- Diseño de la tienda ajustado tras probarlo en un sistema instalado: el catálogo se lee de los XML de AppStream con caché, Flatpak se ejecuta por su línea de órdenes, el AUR necesita `base-devel` y `git`, y `flatpak-kcm` y `pyalpm` pasan a ser dependencias.
+
 ## [0.6.0] - 2026-11-21
 
 Fase 5 terminada: identidad y escritorio. Probada el 2026-11-21 con una ISO construida en un contenedor y una instalación cifrada completa en QEMU (menú de GRUB con tema, Plymouth, pantalla de inicio de sesión, escritorio tipo Windows, página Personalización, límite de instantáneas). Versión menor (fase terminada, D-16).

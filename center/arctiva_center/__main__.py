@@ -13,6 +13,8 @@ def build_parser():
     group.add_argument("--check", action="store_true",
                        help="busca actualizaciones sin abrir ventana (aviso periódico)")
     group.add_argument("--module", choices=MODULES, help="abre la ventana en ese módulo")
+    group.add_argument("--windows-app", metavar="ARCHIVO",
+                       help="abre el diálogo para ejecutar un programa de Windows con Bottles")
     return parser
 
 
@@ -25,6 +27,9 @@ def main(argv=None):
         from .core import welcome
         if not welcome.should_show():
             return 0
+    if args.windows_app is not None:
+        from .app import run_windows_app  # PySide6 solo se importa si hay ventana.
+        return run_windows_app(args.windows_app)
     module = "welcome" if args.welcome else (args.module or "welcome")
     from .app import run  # PySide6 solo se importa si hay ventana.
     return run(module)
