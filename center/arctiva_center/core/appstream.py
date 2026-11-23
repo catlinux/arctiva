@@ -10,6 +10,8 @@ import xml.etree.ElementTree as ET
 from dataclasses import dataclass, field
 from pathlib import Path
 
+from . import fuzzy
+
 XML_LANG = "{http://www.w3.org/XML/1998/namespace}lang"
 
 ARCH_XML_DIR = "/usr/share/swcatalog/xml"
@@ -216,6 +218,10 @@ class Catalog:
             app.recommended = recommend(app, overrides)
         self._index = {a.id: normalize(" ".join((a.name, a.id, " ".join(a.keywords)))) for a in apps}
         self._summary = {a.id: normalize(a.summary) for a in apps}
+        # Sin separadores («claude-code» = «claude code» = «claudecode») y con las palabras sueltas para las erratas.
+        self._index_sq = {k: fuzzy.squash(v) for k, v in self._index.items()}
+        self._summary_sq = {k: fuzzy.squash(v) for k, v in self._summary.items()}
+        self._words = {k: set(fuzzy.tokens(v)) for k, v in self._index.items()}
 
     def __len__(self):
         return len(self.apps)
@@ -223,24 +229,43 @@ class Catalog:
     def get(self, id_):
         return self.apps.get(app_id(id_))
 
-    def search(self, query, limit=60):
-        """Todas las palabras deben aparecer; el nombre pesa más que las palabras clave y el resumen."""
-        words = normalize(query).split()
+    # Con menos aciertos exactos que estos, se completa con coincidencias con erratas.
+    FUZZY_BELOW = 5
+
+    def search(self, query, limit=400):
+        """Todas las palabras deben aparecer (sin fijarse en guiones, espacios ni tildes); el nombre pesa
+        más que las palabras clave y el resumen. Si salen pocos, se añaden los parecidos con erratas."""
+        words = fuzzy.tokens(query)
+        whole = fuzzy.squash(query)
         if not words:
             return []
-        scored = []
+        scored, seen = [], set()
         for app in self.apps.values():
-            index, summary = self._index[app.id], self._summary[app.id]
-            if not all(w in index or w in summary for w in words):
+            index, summary = self._index_sq[app.id], self._summary_sq[app.id]
+            if not (all(w in index or w in summary for w in words) or whole in index):
                 continue
-            name = normalize(app.name)
+            name = fuzzy.squash(app.name)
             score = sum(100 if name == w else 60 if name.startswith(w) else 30 if w in name
                         else 10 if w in index else 1 for w in words)
+            if whole in name:
+                score += 40
             scored.append((-score, name, app))
+            seen.add(app.id)
         scored.sort(key=lambda t: t[:2])
-        return [a for _, _, a in scored[:limit]]
+        found = [a for _, _, a in scored]
+        if len(found) < self.FUZZY_BELOW:
+            near = []
+            for app in self.apps.values():
+                if app.id in seen:
+                    continue
+                total = fuzzy.fuzzy_total(words, self._words[app.id])
+                if total is not None:
+                    near.append((total, fuzzy.squash(app.name), app))
+            near.sort(key=lambda t: t[:2])
+            found += [a for _, _, a in near]
+        return found[:limit]
 
-    def category(self, name, limit=200):
+    def category(self, name, limit=3000):
         found = [a for a in self.apps.values() if name in a.categories]
         found.sort(key=lambda a: normalize(a.name))
         return found[:limit]

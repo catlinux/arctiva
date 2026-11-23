@@ -19,6 +19,7 @@ EX_UNAVAILABLE = 69
 
 
 class AurBackend(QObject):
+    PAGE = 30                      # resultados que se enseñan cada vez; «Ver más» añade otros tantos
     changed = Signal()
     log = Signal(str)
     finished = Signal(int)
@@ -33,6 +34,13 @@ class AurBackend(QObject):
         self._live = live
         self._enabled = aur.aur_enabled()
         self._results = []
+        self._all = []                    # todo lo que devolvió el AUR, sin filtrar ni cortar
+        self._total = 0
+        self._sort = aur.get_setting("aur_sort", "relevance")
+        if self._sort not in aur.SORTS:
+            self._sort = "relevance"
+        self._limit = self.PAGE
+        self._hide_few = aur.get_setting("aur_hide_few_votes", False)
         self._query = ""
         self._busy = False
         self._error = ""
@@ -69,6 +77,45 @@ class AurBackend(QObject):
     @Property(str, notify=changed)
     def query(self):
         return self._query
+
+    @Property(str, notify=changed)
+    def sortBy(self):
+        return self._sort
+
+    @Property(bool, notify=changed)
+    def hideFewVotes(self):
+        return self._hide_few
+
+    @Property(int, notify=changed)
+    def total(self):
+        return self._total
+
+    @Slot(str)
+    def setSortBy(self, key):
+        if key in aur.SORTS:
+            self._sort = key
+            aur.set_setting("aur_sort", key)
+            self._rebuild()
+
+    @Slot()
+    def showMore(self):
+        self._limit += self.PAGE
+        self._rebuild()
+
+    @Slot(bool)
+    def setHideFewVotes(self, value):
+        self._hide_few = bool(value)
+        aur.set_setting("aur_hide_few_votes", self._hide_few)
+        self._rebuild()
+
+    def _rebuild(self):
+        """Filtra y ordena lo recibido y enseña la primera página; no vuelve a pedir nada al AUR."""
+        shown = [p for p in self._all if not self._hide_few or p.votes >= aur.MIN_VOTES]
+        shown = aur.sort_packages(shown, self._sort)
+        self._total = len(shown)
+        self._results = [{"name": p.name, "version": p.version, "description": p.description,
+                          "votes": p.votes, "maintainer": p.maintainer} for p in shown[:self._limit]]
+        self.changed.emit()
 
     @Property("QVariantMap", notify=changed)
     def review(self):
@@ -109,7 +156,7 @@ class AurBackend(QObject):
         aur.set_aur_enabled(enabled)
         self._enabled = enabled
         if not enabled:
-            self._results, self._query, self._updates = [], "", []
+            self._results, self._all, self._total, self._query, self._updates = [], [], 0, "", []
             self._approved = False
         self.changed.emit()
 
@@ -117,7 +164,7 @@ class AurBackend(QObject):
     @Slot(str)
     def search(self, text):
         self._query = text.strip()
-        self._results = []
+        self._results, self._all, self._total, self._limit = [], [], 0, self.PAGE
         if not self._enabled or len(self._query) < 2:
             self.changed.emit()
             return
@@ -126,7 +173,7 @@ class AurBackend(QObject):
 
         def work():
             try:
-                self._searchDone.emit((self._query, aur.search(self._query), ""))
+                self._searchDone.emit((self._query, aur.search_smart(self._query), ""))
             except (aur.AurError, OSError) as e:
                 self._searchDone.emit((self._query, [], str(e)))
         threading.Thread(target=work, daemon=True).start()
@@ -136,9 +183,8 @@ class AurBackend(QObject):
         if query != self._query:
             return
         self._busy, self._error = False, error
-        self._results = [{"name": p.name, "version": p.version, "description": p.description,
-                          "votes": p.votes, "maintainer": p.maintainer} for p in packages[:40]]
-        self.changed.emit()
+        self._all = list(packages)
+        self._rebuild()
 
     # --- revisión ---
     @Slot(str, bool)

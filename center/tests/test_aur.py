@@ -1,5 +1,6 @@
 # SPDX-License-Identifier: GPL-3.0-or-later
 import json
+import urllib.parse
 import shutil
 import subprocess
 from types import SimpleNamespace as NS
@@ -323,3 +324,81 @@ def test_is_installed_reads_the_local_database(monkeypatch):
     assert backend.isInstalled("claude-desktop") and not backend.isInstalled("otro")
     monkeypatch.setattr(aur_backend.alpm_query, "AlpmQuery", lambda: (_ for _ in ()).throw(RuntimeError("sin base")))
     assert backend.isInstalled("claude-desktop") is False
+
+
+def test_sort_packages():
+    pk = [aur.AurPackage("b", "b", "1", votes=5, popularity=9.0), aur.AurPackage("a", "a", "1", votes=5, popularity=1.0),
+          aur.AurPackage("claude-desktop", "claude-desktop", "1", votes=32, popularity=3.0),
+          aur.AurPackage("z", "z", "1", votes=0, popularity=0.0)]
+    assert [p.name for p in aur.sort_packages(pk)] == ["claude-desktop", "b", "a", "z"]          # votos y, a igualdad, popularidad
+    assert [p.name for p in aur.sort_packages(pk, "popularity")] == ["b", "claude-desktop", "a", "z"]
+    assert [p.name for p in aur.sort_packages(pk, "name")] == ["a", "b", "claude-desktop", "z"]
+    assert [p.name for p in aur.sort_packages(pk, "inventado")] == ["claude-desktop", "b", "a", "z"]
+
+
+def test_backend_sorts_before_cutting_and_can_hide_unpopular(tmp_path, monkeypatch):
+    pytest.importorskip("PySide6")
+    from PySide6.QtCore import QObject, Signal
+    from arctiva_center import aur_backend
+
+    class FakeHelper(QObject):
+        line = Signal(str)
+        finished = Signal(int)
+        running = False
+
+    monkeypatch.setattr(aur, "SETTINGS_FILE", tmp_path / "s.toml")
+    monkeypatch.setattr(aur.get_setting, "__defaults__", (tmp_path / "s.toml",))
+    monkeypatch.setattr(aur.set_setting, "__defaults__", (tmp_path / "s.toml",))
+    backend = aur_backend.AurBackend(FakeHelper())
+    many = [aur.AurPackage(f"p{i:02d}", "x", "1", votes=0) for i in range(60)]
+    many.append(aur.AurPackage("zz-popular", "zz-popular", "1", votes=32))     # al final del orden alfabético
+    backend._query = "q"
+    backend._on_search(("q", many, ""))
+    assert backend.results[0]["name"] == "p00" and len(backend.results) == 30 and backend.total == 61    # relevancia: el orden recibido
+    backend.setSortBy("votes")
+    assert backend.results[0]["name"] == "zz-popular" and len(backend.results) == 30 and backend.total == 61
+    backend.showMore()
+    assert len(backend.results) == 60
+    backend.showMore()
+    assert len(backend.results) == 61
+    backend.setHideFewVotes(True)
+    assert [r["name"] for r in backend.results] == ["zz-popular"] and backend.total == 1
+    backend.setHideFewVotes(False)
+    backend.setSortBy("name")
+    assert backend.results[0]["name"] == "p00" and backend.sortBy == "name"
+    backend.setSortBy("inventado")
+    assert backend.sortBy == "name"
+
+
+def fake_rpc(packages):
+    """fetch de mentira: el AUR solo entiende subcadenas exactas de nombre o descripción."""
+    def fetch(url):
+        needle = urllib.parse.unquote(url.split("/search/")[1].split("?")[0]).lower()
+        hits = [p for p in packages if needle in p["Name"].lower() or needle in p["Description"].lower()]
+        return json.dumps({"version": 5, "type": "search", "resultcount": len(hits), "results": hits})
+    return fetch
+
+
+def rpc_pkg(name, desc="", votes=0):
+    return {"Name": name, "PackageBase": name, "Version": "1", "Description": desc, "NumVotes": votes, "Popularity": 0}
+
+
+def test_search_smart_ignores_separators_and_ranks_by_relevance():
+    pkgs = [rpc_pkg("claude-code", "CLI", 50), rpc_pkg("claude-desktop", "App", 32), rpc_pkg("claudio", "audio", 3),
+            rpc_pkg("agent-bin", "Run Claude Code agents", 9), rpc_pkg("otro", "nada", 99)]
+    fetch = fake_rpc(pkgs)
+    names = lambda q: [p.name for p in aur.search_smart(q, fetch)]
+    assert names("claude")[:2] == ["claude-code", "claude-desktop"]          # empiezan por la consulta, por votos
+    assert names("claude code")[0] == "claude-code"                          # sin guion
+    assert names("claudecode")[0] == "claude-code"                            # todo junto
+    assert names("CLAUDE-CODE")[0] == "claude-code"
+    assert "otro" not in names("claude")
+    assert "agent-bin" in names("claude code")                               # la descripción también cuenta
+    assert names("") == [] and names("a") == []
+
+
+def test_search_smart_tolerates_typos():
+    fetch = fake_rpc([rpc_pkg("claude-desktop", "App", 32), rpc_pkg("clutter", "x", 1)])
+    assert [p.name for p in aur.search_smart("cluade", fetch)][0] == "claude-desktop"      # transposición
+    assert [p.name for p in aur.search_smart("clauude desktop", fetch)][0] == "claude-desktop"
+    assert aur.search_smart("zzzzzz", fetch) == []

@@ -124,3 +124,19 @@ def test_cache_roundtrip_and_invalidation(tmp_path):
     assert again.get("editor").name == "Editor nuevo"
     cache.write_bytes(b"roto")
     assert len(ap.load_cached(files, cache, ("en",))) == 3   # caché dañada: se rehace
+
+
+def test_search_ignores_separators_and_tolerates_typos(catalog):
+    # «Pintor digital» (nombre), «pintor» en el id: sin espacios, con guion o con una errata sigue saliendo.
+    for query in ("pintor digital", "pintor-digital", "PINTOR_DIGITAL", "pintordigital", "pintór"):
+        assert [a.id for a in catalog.search(query)][:1] == ["org.ejemplo.pintor"], query
+    assert [a.id for a in catalog.search("pintro")][:1] == ["org.ejemplo.pintor"]          # letras cambiadas
+    assert [a.id for a in catalog.search("pinttor")][:1] == ["org.ejemplo.pintor"]         # letra de más
+    assert catalog.search("zzzzzz") == [] and catalog.search("---") == []
+    assert [a.id for a in catalog.search("ed")] == [a.id for a in catalog.search("ed")]    # cortas: sin erratas, sin romper
+
+
+def test_search_has_no_small_cap():
+    apps = [ap.App(f"app{i}", f"Herramienta {i}", summary="util", sources=[ap.Source("arch", f"app{i}")]) for i in range(150)]
+    big = ap.Catalog(apps)
+    assert len(big.search("herramienta")) == 150

@@ -606,6 +606,38 @@
 <context>
     <name>AppsPage</name>
     <message>
+        <source>Relevance</source>
+        <translation>Rellevància</translation>
+    </message>
+    <message>
+        <source>Show more (%1 left)</source>
+        <translation>Mostra'n més (en queden %1)</translation>
+    </message>
+    <message>
+        <source>Sort by</source>
+        <translation>Ordena per</translation>
+    </message>
+    <message>
+        <source>Votes</source>
+        <translation>Vots</translation>
+    </message>
+    <message>
+        <source>Popularity</source>
+        <translation>Popularitat</translation>
+    </message>
+    <message>
+        <source>Name</source>
+        <translation>Nom</translation>
+    </message>
+    <message>
+        <source>Hide packages with fewer than 10 votes</source>
+        <translation>Amaga els paquets amb menys de 10 vots</translation>
+    </message>
+    <message>
+        <source>Showing %1 of %2</source>
+        <translation>Es mostren %1 de %2</translation>
+    </message>
+    <message>
         <source>1 application selected</source>
         <translation>1 aplicació seleccionada</translation>
     </message>

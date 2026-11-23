@@ -307,10 +307,46 @@ Kirigami.ScrollablePage {
             }
         }
 
+        RowLayout {
+            Layout.alignment: Qt.AlignHCenter
+            visible: backend.resultsTotal > backend.results.length
+            QQC2.Button {
+                text: qsTr("Show more (%1 left)").arg(backend.resultsTotal - backend.results.length)
+                icon.name: "arrow-down-double"
+                onClicked: backend.showMore()
+            }
+        }
+
         Kirigami.Heading {
             level: 2
             visible: aur.enabled && aur.query !== ""
             text: qsTr("From the AUR (community, not reviewed)")
+        }
+
+        RowLayout {
+            Layout.fillWidth: true
+            spacing: Kirigami.Units.largeSpacing
+            visible: aur.enabled && aur.query !== "" && !aur.busy && (aur.results.length > 0 || aur.hideFewVotes)
+            QQC2.Label { text: qsTr("Sort by") }
+            QQC2.ComboBox {
+                id: aurSort
+                readonly property var keys: ["relevance", "votes", "popularity", "name"]
+                model: [qsTr("Relevance"), qsTr("Votes"), qsTr("Popularity"), qsTr("Name")]
+                currentIndex: Math.max(0, keys.indexOf(aur.sortBy))
+                onActivated: (index) => aur.setSortBy(keys[index])
+            }
+            QQC2.CheckBox {
+                text: qsTr("Hide packages with fewer than 10 votes")
+                checked: aur.hideFewVotes
+                onToggled: aur.setHideFewVotes(checked)
+            }
+            QQC2.Label {
+                Layout.fillWidth: true
+                horizontalAlignment: Text.AlignRight
+                opacity: 0.7
+                visible: aur.total > aur.results.length
+                text: qsTr("Showing %1 of %2").arg(aur.results.length).arg(aur.total)
+            }
         }
 
         RowLayout {
@@ -367,6 +403,16 @@ Kirigami.ScrollablePage {
                         color: Kirigami.Theme.disabledTextColor
                     }
                 }
+            }
+        }
+
+        RowLayout {
+            Layout.alignment: Qt.AlignHCenter
+            visible: aur.enabled && aur.total > aur.results.length
+            QQC2.Button {
+                text: qsTr("Show more (%1 left)").arg(aur.total - aur.results.length)
+                icon.name: "arrow-down-double"
+                onClicked: aur.showMore()
             }
         }
 

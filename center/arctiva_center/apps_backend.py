@@ -36,6 +36,7 @@ class AppsBackend(QObject):
         self._loading = False
         self._error = ""
         self._results = []
+        self._shown = self.PAGE
         self._query = ""
         self._category = ""
         self._op = None                     # (id, acción) mientras hay una operación en marcha
@@ -102,9 +103,20 @@ class AppsBackend(QObject):
         self._queue.clear_finished()
         self.queueChanged.emit()
 
+    PAGE = 30                      # resultados que se enseñan cada vez; «Ver más» añade otros tantos
+
     @Property(list, notify=changed)
     def results(self):
-        return self._results
+        return self._results[:self._shown]
+
+    @Property(int, notify=changed)
+    def resultsTotal(self):
+        return len(self._results)
+
+    @Slot()
+    def showMore(self):
+        self._shown += self.PAGE
+        self.changed.emit()
 
     @Property(list, notify=changed)
     def featured(self):
@@ -212,6 +224,7 @@ class AppsBackend(QObject):
     def search(self, text):
         self._query = text.strip()
         self._category = ""
+        self._shown = self.PAGE
         self._refilter()
         self.changed.emit()
 
@@ -219,12 +232,14 @@ class AppsBackend(QObject):
     def selectCategory(self, category):
         self._query = ""
         self._category = category
+        self._shown = self.PAGE
         self._refilter()
         self.changed.emit()
 
     @Slot()
     def clearFilter(self):
         self._query = self._category = ""
+        self._shown = self.PAGE
         self._refilter()
         self.changed.emit()
 

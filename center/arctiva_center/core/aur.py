@@ -5,6 +5,7 @@ Nada se ejecuta como root aquí: el clonado y `makepkg` corren como el usuario y
 compilado pasa por el ayudante (`aur-install`). Las funciones que tocan la red o ejecutan órdenes
 reciben `fetch` o `runner` para poder probarse sin ellas."""
 import json
+from concurrent.futures import ThreadPoolExecutor
 import re
 import subprocess
 import time
@@ -13,6 +14,8 @@ import urllib.parse
 import urllib.request
 from dataclasses import dataclass, field
 from pathlib import Path
+
+from . import fuzzy
 
 RPC = "https://aur.archlinux.org/rpc/v5"
 GIT_URL = "https://aur.archlinux.org/{}.git"
@@ -90,6 +93,80 @@ def search(query, fetch=default_fetch):
         return []
     url = f"{RPC}/search/{urllib.parse.quote(query, safe='')}?by=name-desc"
     return _decode(fetch(url))
+
+
+SORTS = ("relevance", "votes", "popularity", "name")
+
+
+def sort_packages(packages, key="votes"):
+    """Ordena los resultados: por votos (los más usados primero), por popularidad o por nombre."""
+    if key == "relevance":
+        return list(packages)            # ya vienen por relevancia (search_smart)
+    if key == "name":
+        return sorted(packages, key=lambda p: p.name)
+    if key == "popularity":
+        return sorted(packages, key=lambda p: (-p.popularity, -p.votes, p.name))
+    return sorted(packages, key=lambda p: (-p.votes, -p.popularity, p.name))
+
+
+def _relevance(query, pkg):
+    """(nivel, distancia) o None si el paquete no tiene que ver con la consulta. El nivel 0 es el nombre
+    exacto; después, nombre que empieza por la consulta, que la contiene, descripción y, al final,
+    parecidos con erratas."""
+    words = fuzzy.tokens(query)
+    whole = fuzzy.squash(query)
+    name = fuzzy.squash(pkg.name)
+    text = fuzzy.squash(pkg.name + " " + pkg.description)
+    if name == whole:
+        return 0, 0
+    if name.startswith(whole):
+        return 1, 0
+    if whole in name or all(w in name for w in words):
+        return 2, 0
+    if whole in text or all(w in text for w in words):
+        return 3, 0
+    total = fuzzy.fuzzy_total(words, set(fuzzy.tokens(pkg.name)) | set(fuzzy.tokens(pkg.description)))
+    return (4, total) if total is not None else None
+
+
+def _variants(word):
+    """Otras palabras por las que preguntar al AUR cuando la escrita no aparece: el AUR solo entiende
+    subcadenas exactas, así que se prueban la primera y la segunda mitad (una sustitución estropea una
+    sola), cada pareja de letras intercambiada y cada letra quitada (una letra de más)."""
+    half = max(3, (len(word) + 1) // 2)
+    candidates = [word[:half], word[-half:]]
+    candidates += [word[:i] + word[i + 1] + word[i] + word[i + 2:] for i in range(len(word) - 1)]
+    candidates += [word[:i] + word[i + 1:] for i in range(len(word))]
+    found = []
+    for v in candidates:
+        if len(v) >= 3 and v != word and v not in found:
+            found.append(v)
+    return found[:24]
+
+
+def search_smart(query, fetch=default_fetch, min_results=5):
+    """Búsqueda tolerante en el AUR: el AUR solo entiende subcadenas exactas, así que se le pregunta por
+    la palabra más larga y el resto (varias palabras, guiones, erratas) se resuelve aquí. Devuelve los
+    paquetes por relevancia y, a igualdad, por votos."""
+    words = fuzzy.tokens(query)
+    if not words or max(len(w) for w in words) < 2:
+        return []
+    primary = max(words, key=len)
+    pool = {p.name: p for p in search(primary, fetch)}
+    ranked = {n: r for n, p in pool.items() if (r := _relevance(query, p)) is not None}
+    if len(ranked) < min_results and len(primary) >= 4:
+        def ask(variant):
+            try:
+                return search(variant, fetch)
+            except (AurError, OSError):
+                return []          # una variante que falla no estropea la búsqueda
+        with ThreadPoolExecutor(max_workers=8) as pool_of_threads:
+            for found in pool_of_threads.map(ask, _variants(primary)):
+                for p in found:
+                    pool.setdefault(p.name, p)
+        ranked = {n: r for n, p in pool.items() if (r := _relevance(query, p)) is not None}
+    ordered = sorted(ranked, key=lambda n: (ranked[n], -pool[n].votes, -pool[n].popularity, n))
+    return [pool[n] for n in ordered]
 
 
 def info(names, fetch=default_fetch):

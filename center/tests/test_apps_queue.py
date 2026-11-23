@@ -166,3 +166,16 @@ def test_install_many_uses_each_preferred_source_and_skips_the_unknown(qapp, bac
     wait_until(qapp, lambda: not backend.queueActive)
     assert [(i["id"], i["kind"]) for i in backend.queue] == [("a", "arch"), ("flat", "flathub"), ("both", "arch")]
     assert [i["state"] for i in backend.queue] == ["done"] * 3
+
+
+def test_results_come_in_pages(qapp, backend):
+    backend._results = [{"id": str(i)} for i in range(70)]
+    backend._shown = backend.PAGE
+    assert len(backend.results) == 30 and backend.resultsTotal == 70
+    backend.showMore()
+    assert len(backend.results) == 60
+    backend.showMore()
+    assert len(backend.results) == 70
+    backend._refilter = lambda: None
+    backend.search("otra cosa")
+    assert backend._shown == backend.PAGE
