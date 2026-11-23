@@ -10,13 +10,14 @@ Kirigami.ScrollablePage {
 
     property string pkgName
     property bool isUpdate: false
+    property bool batch: false           // todas las actualizaciones del AUR; se aprueban y se instalan con el sistema
     property bool working: false
     property int lastCode: -2
     readonly property var backend: aurBackend
     readonly property var data: backend.review
     readonly property var packages: data.packages || []
 
-    title: pkgName
+    title: batch ? qsTr("AUR updates") : pkgName
 
     function warningText(key) {
         switch (key) {
@@ -32,7 +33,14 @@ Kirigami.ScrollablePage {
         return seconds > 0 ? new Date(seconds * 1000).toLocaleDateString(Qt.locale(), Locale.ShortFormat) : "—"
     }
 
-    Component.onCompleted: backend.prepare(pkgName, isUpdate)
+    Component.onCompleted: {
+        if (batch)
+            backend.prepareUpdates()
+        else
+            backend.prepare(pkgName, isUpdate)
+    }
+    // Salir sin aprobar descarta la revisión: el siguiente intento vuelve a descargarla.
+    Component.onDestruction: if (batch && !backend.approved) backend.discardReview()
 
     Connections {
         target: backend
@@ -168,11 +176,16 @@ Kirigami.ScrollablePage {
         RowLayout {
             visible: page.packages.length > 0
             QQC2.Button {
-                text: page.isUpdate ? qsTr("Update") : qsTr("Install")
+                text: page.batch ? qsTr("Approve and update") : page.isUpdate ? qsTr("Update") : qsTr("Install")
                 icon.name: "run-build-install"
                 highlighted: true
                 enabled: reviewed.checked && !isLive && !page.working && !backend.busy && (data.unresolved || []).length === 0
                 onClicked: {
+                    if (page.batch) {
+                        backend.approve()
+                        applicationWindow().pageStack.layers.pop()
+                        return
+                    }
                     log.clear()
                     page.lastCode = -2
                     page.working = true

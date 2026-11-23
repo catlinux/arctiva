@@ -106,6 +106,17 @@ def test_settings(tmp_path):
     assert aur.aur_enabled(f) is False
 
 
+def test_other_settings_are_kept_and_typed(tmp_path):
+    f = tmp_path / "settings.toml"
+    assert aur.get_setting("update_flatpak", True, f) is True
+    aur.set_setting("update_flatpak", False, f)
+    aur.set_aur_enabled(True, f)
+    assert aur.get_setting("update_flatpak", True, f) is False
+    assert aur.aur_enabled(f) is True
+    f.write_text("update_flatpak = 3", encoding="utf-8")
+    assert aur.get_setting("update_flatpak", True, f) is True
+
+
 def test_state(tmp_path):
     f = tmp_path / "s" / "aur.json"
     assert aur.load_state(f) == {}
@@ -166,6 +177,24 @@ def test_diff_rejects_odd_commit(tmp_path, remote):
     for bad in ("", "--output=/tmp/x", "HEAD~1", "zzzz", None, "abc"):
         with pytest.raises(aur.AurError):
             aur.diff_since(folder, bad)
+
+
+@pytestmark_git
+def test_build_only_what_was_reviewed(tmp_path, remote):
+    src = tmp_path / "src"
+    folder, reviewed = aur.clone("pkg", src, url_for=lambda b: str(remote))
+    assert aur.unchanged_since_review(folder, reviewed)
+    (folder / "PKGBUILD").write_text("pkgname=pkg\npkgver=1\nrm -rf ~\n")
+    assert not aur.unchanged_since_review(folder, reviewed)
+    git(folder, "checkout", "-q", "--", "PKGBUILD")
+    (folder / "nuevo.sh").write_text("x")
+    assert not aur.unchanged_since_review(folder, reviewed)
+    (folder / "nuevo.sh").unlink()
+    (remote / "PKGBUILD").write_text("pkgname=pkg\npkgver=2\n")
+    git(remote, "commit", "-q", "-am", "dos")
+    aur.clone("pkg", src, url_for=lambda b: str(remote))     # otra revisión movió la carpeta
+    assert not aur.unchanged_since_review(folder, reviewed)
+    assert not aur.unchanged_since_review(tmp_path / "no-existe", reviewed)
 
 
 def test_clone_rejects_bad_names(tmp_path):

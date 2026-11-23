@@ -123,25 +123,34 @@ def dep_name(dep):
 
 # --- settings y estado ---
 
-def aur_enabled(path=SETTINGS_FILE):
+def get_setting(key, default, path=SETTINGS_FILE):
     try:
         with open(path, "rb") as f:
-            return tomllib.load(f).get("aur_enabled") is True
+            value = tomllib.load(f).get(key, default)
     except (OSError, tomllib.TOMLDecodeError):
-        return False
+        return default
+    return value if isinstance(value, type(default)) else default
 
 
-def set_aur_enabled(enabled, path=SETTINGS_FILE):
+def set_setting(key, value, path=SETTINGS_FILE):
     path = Path(path)
     try:
         with open(path, "rb") as f:
             data = tomllib.load(f)
     except (OSError, tomllib.TOMLDecodeError):
         data = {}
-    data["aur_enabled"] = bool(enabled)
+    data[key] = value
     path.parent.mkdir(parents=True, exist_ok=True)
     lines = [f"{k} = {str(v).lower() if isinstance(v, bool) else json.dumps(v)}" for k, v in data.items()]
     path.write_text("\n".join(lines) + "\n", encoding="utf-8")
+
+
+def aur_enabled(path=SETTINGS_FILE):
+    return get_setting("aur_enabled", False, path)
+
+
+def set_aur_enabled(enabled, path=SETTINGS_FILE):
+    set_setting("aur_enabled", bool(enabled), path)
 
 
 def load_state(path=STATE_FILE):
@@ -193,6 +202,17 @@ def clone(base, src_dir=SRC_DIR, runner=run_command, url_for=GIT_URL.format):
     else:
         _git(runner, "clone", "--quiet", url_for(base), str(dest))
     return dest, _git(runner, "rev-parse", "HEAD", cwd=dest).strip()
+
+
+def unchanged_since_review(folder, commit, runner=run_command):
+    """True si la carpeta sigue en el commit revisado y sin cambios: entre la revisión y la
+    compilación pueden pasar minutos (la actualización del sistema va antes)."""
+    try:
+        head = _git(runner, "rev-parse", "HEAD", cwd=folder).strip()
+        dirty = _git(runner, "status", "--porcelain", "--untracked-files=all", cwd=folder).strip()
+    except (AurError, OSError, subprocess.SubprocessError):
+        return False
+    return head == commit and not dirty
 
 
 def _install_scripts(folder):

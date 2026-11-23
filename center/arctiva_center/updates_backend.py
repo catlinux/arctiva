@@ -9,7 +9,7 @@ from pathlib import Path
 
 from PySide6.QtCore import Property, QDate, QLocale, QObject, QProcess, Signal, Slot
 
-from .core import errors, helper_client, pacnew, updates
+from .core import aur, errors, helper_client, pacnew, updates
 
 PACMAN_LOG = "/var/log/pacman.log"
 STATE = Path(os.environ.get("XDG_STATE_HOME") or Path.home() / ".local/state") / "arctiva-center"
@@ -38,6 +38,8 @@ class UpdatesBackend(QObject):
         self._read_news = updates.ReadNews(STATE / "news.json")
         self._checking = False
         self._updates = []
+        self._flatpak_updates = []
+        self._include = {k: aur.get_setting(k, True) for k in ("update_flatpak", "update_aur")}
         self._news = []
         self._news_error = ""
         self._check_error = ""
@@ -46,6 +48,7 @@ class UpdatesBackend(QObject):
         self._explanation = {}
         self._started = None
         self._flatpak = None
+        self._flatpak_listing = None
         self.live = os.path.exists("/run/archiso")
         self.newsLoaded.connect(self._news_done)
 
@@ -57,6 +60,35 @@ class UpdatesBackend(QObject):
     @Property(list, notify=changed)
     def updates(self):
         return self._updates
+
+    @Property(list, notify=changed)
+    def flatpakUpdates(self):
+        return self._flatpak_updates
+
+    @Property(bool, notify=changed)
+    def includeFlatpak(self):
+        return self._include["update_flatpak"]
+
+    @Property(bool, notify=changed)
+    def includeAur(self):
+        return self._include["update_aur"]
+
+    @Slot(bool)
+    def setIncludeFlatpak(self, value):
+        self._set_include("update_flatpak", value)
+
+    @Slot(bool)
+    def setIncludeAur(self, value):
+        self._set_include("update_aur", value)
+
+    def _set_include(self, key, value):
+        aur.set_setting(key, bool(value))
+        self._include[key] = bool(value)
+        if key == "update_flatpak" and not value:
+            self._flatpak_updates = []
+        self.changed.emit()
+        if key == "update_flatpak" and value:
+            self._list_flatpak()
 
     @Property(list, notify=changed)
     def news(self):
@@ -104,6 +136,25 @@ class UpdatesBackend(QObject):
         proc.start("checkupdates", [])
         threading.Thread(target=self._fetch_news, daemon=True).start()
         self.refreshPacnew()
+        self._list_flatpak()
+
+    def _list_flatpak(self):
+        if not self._include["update_flatpak"] or self._flatpak_listing is not None:
+            return
+        proc = QProcess(self)
+        proc.finished.connect(lambda code, _s, p=proc: self._flatpak_listed(p, code))
+        proc.errorOccurred.connect(lambda _e, p=proc: self._flatpak_listed(p, -1))
+        self._flatpak_listing = proc
+        proc.start("flatpak", ["remote-ls", "--updates", "--columns=application,name,version"])
+
+    def _flatpak_listed(self, proc, code):
+        if self._flatpak_listing is not proc:
+            return
+        self._flatpak_listing = None
+        out = bytes(proc.readAllStandardOutput()).decode("utf-8", "replace") if code == 0 else ""
+        proc.deleteLater()
+        self._flatpak_updates = [{"name": u.name, "new": u.new} for u in updates.parse_flatpak_updates(out)]
+        self.changed.emit()
 
     def _checkupdates_done(self, proc, code):
         out = bytes(proc.readAllStandardOutput()).decode("utf-8", "replace")

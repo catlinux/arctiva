@@ -128,3 +128,10 @@ def test_pacnew(tmp_path):
     (tmp_path / "b.conf").write_text("x")
     assert pacnew.unified_diff(tmp_path / "b.conf.pacnew") is None
     assert pacnew.unified_diff(tmp_path / "no.conf.pacnew") is None
+
+
+def test_flatpak_updates():
+    out = "org.mozilla.firefox\tFirefox\t140.0\ncom.valvesoftware.Steam\tSteam\t\norg.x.Sin\n\n"
+    found = updates.parse_flatpak_updates(out)
+    assert [(u.name, u.new) for u in found] == [("Firefox", "140.0"), ("Steam", ""), ("org.x.Sin", "")]
+    assert updates.parse_flatpak_updates("") == []

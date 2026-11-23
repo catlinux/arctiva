@@ -25,6 +25,7 @@ class AurBackend(QObject):
     _searchDone = Signal(object)
     _reviewDone = Signal(object)
     _updatesDone = Signal(object)
+    approvedChanged = Signal()
 
     def __init__(self, helper, live=False, parent=None):
         super().__init__(parent)
@@ -41,6 +42,7 @@ class AurBackend(QObject):
         self._proc = None
         self._plan = None
         self._clones = {}                 # nombre → (carpeta, commit)
+        self._approved = False
         self._searchDone.connect(self._on_search)
         self._reviewDone.connect(self._on_review)
         self._updatesDone.connect(self._on_updates)
@@ -76,12 +78,32 @@ class AurBackend(QObject):
     def updates(self):
         return self._updates
 
+    @Property(bool, notify=approvedChanged)
+    def approved(self):
+        return self._approved
+
+    @Slot()
+    def approve(self):
+        """El usuario ha leído la revisión actual: queda para instalarla más tarde, junto con el sistema."""
+        if self._review and self._plan is not None and not self._review.get("unresolved"):
+            self._approved = True
+            self.approvedChanged.emit()
+
+    @Slot()
+    def discardReview(self):
+        if self._busy:
+            return
+        self._review, self._plan, self._clones, self._approved = {}, None, {}, False
+        self.approvedChanged.emit()
+        self.changed.emit()
+
     @Slot(bool)
     def setEnabled(self, enabled):
         aur.set_aur_enabled(enabled)
         self._enabled = enabled
         if not enabled:
             self._results, self._query, self._updates = [], "", []
+            self._approved = False
         self.changed.emit()
 
     # --- búsqueda ---
@@ -115,22 +137,39 @@ class AurBackend(QObject):
     @Slot(str, bool)
     def prepare(self, name, update):
         """Reúne todo lo que el usuario debe revisar antes de instalar o actualizar `name`."""
-        if not self._enabled or not aur.valid_name(name) or self._busy:
+        if not aur.valid_name(name):
             return
-        self._busy, self._error, self._review = True, "", {}
-        self.changed.emit()
-        threading.Thread(target=self._prepare_worker, args=(name, update), daemon=True).start()
+        self._start_prepare([name], update, name)
 
-    def _prepare_worker(self, name, update):
+    @Slot()
+    def prepareUpdates(self):
+        """Lo mismo para todas las actualizaciones pendientes del AUR, en una sola revisión."""
+        names = [u["name"] for u in self._updates]
+        if names:
+            self._start_prepare(names, True, "AUR")
+
+    def _start_prepare(self, names, update, label):
+        if not self._enabled or self._busy:
+            return
+        self._busy, self._error, self._review, self._approved = True, "", {}, False
+        self.changed.emit()
+        threading.Thread(target=self._prepare_worker, args=(names, update, label), daemon=True).start()
+
+    def _prepare_worker(self, names, update, label):
         try:
-            found = aur.info([name])
-            root = next((p for p in found if p.name == name), None)
-            if root is None:
-                raise aur.AurError("El paquete no existe en el AUR.")
+            found = {p.name: p for p in aur.info(names)}
             query = alpm_query.AlpmQuery()
             installed = query.installed_names()
-            plan = aur.resolve(root, lambda d: d in installed or self._provided(query, d),
-                               lambda d: self._in_repos(query, d))
+            plan = aur.Plan()
+            for name in names:
+                root = found.get(name)
+                if root is None:
+                    raise aur.AurError(f"{name}: el paquete no existe en el AUR.")
+                one = aur.resolve(root, lambda d: d in installed or self._provided(query, d),
+                                  lambda d: self._in_repos(query, d))
+                plan.aur_chain += [p for p in one.aur_chain if all(p.name != q.name for q in plan.aur_chain)]
+                plan.repo_deps += [d for d in one.repo_deps if d not in plan.repo_deps]
+                plan.unresolved += [d for d in one.unresolved if d not in plan.unresolved]
             state = aur.load_state()
             entries, clones = [], {}
             for pkg in plan.aur_chain:
@@ -140,16 +179,14 @@ class AurBackend(QObject):
                     raise aur.AurError(f"{pkg.name}: {', '.join(hidden)} es un enlace simbólico y no se puede revisar")
                 clones[pkg.name] = (folder, commit)
                 old = (state.get(pkg.name) or {}).get("commit")
-                diff = ""
-                if update and old and pkg.name == name:
-                    diff = aur.diff_since(folder, old)
+                diff = aur.diff_since(folder, old) if update and old else ""
                 entries.append({
                     "name": pkg.name, "base": pkg.base, "version": pkg.version, "description": pkg.description,
                     "votes": pkg.votes, "popularity": round(pkg.popularity, 2), "maintainer": pkg.maintainer,
                     "firstSubmitted": pkg.first_submitted, "lastModified": pkg.last_modified,
                     "warnings": aur.warnings(pkg, time.time()), "diff": diff,
                     "files": [{"name": n, "text": t} for n, t in aur.review_files(folder)]})
-            self._reviewDone.emit({"name": name, "update": update, "plan": plan, "clones": clones, "packages": entries,
+            self._reviewDone.emit({"name": label, "update": update, "plan": plan, "clones": clones, "packages": entries,
                                    "repoDeps": plan.repo_deps, "unresolved": plan.unresolved, "error": ""})
         except (aur.AurError, OSError, subprocess.SubprocessError) as e:
             self._reviewDone.emit({"error": str(e)})
@@ -175,19 +212,20 @@ class AurBackend(QObject):
         self.changed.emit()
 
     # --- instalación ---
-    @Slot()
+    @Slot(result=bool)
     def install(self):
-        """Solo tras la confirmación de la ventana: instala lo que acaba de revisarse."""
+        """Solo tras la confirmación de la ventana: instala lo que acaba de revisarse. Devuelve False
+        si no ha empezado (y entonces no llegará `finished`)."""
         if self._busy or self._helper.running or not self._review or self._plan is None:
-            return
+            return False
         if self._live:
             self.log.emit("arctiva-center: no disponible en la sesión live")
-            self.finished.emit(EX_UNAVAILABLE)
-            return
+            self._finish(EX_UNAVAILABLE)
+            return True
         if self._plan.unresolved:
             self.log.emit("Dependencias sin resolver: " + ", ".join(self._plan.unresolved))
-            self.finished.emit(65)
-            return
+            self._finish(65)
+            return True
         steps = []
         if not (shutil.which("git") and shutil.which("makepkg") and shutil.which("gcc")):
             steps.append(("helper", "aur-prepare", []))
@@ -199,6 +237,7 @@ class AurBackend(QObject):
         self._busy = True
         self.changed.emit()
         self._next()
+        return True
 
     def _next(self):
         if not self._steps:
@@ -232,6 +271,10 @@ class AurBackend(QObject):
 
     def _build(self, pkg):
         folder, commit = self._clones[pkg.name]
+        if not aur.unchanged_since_review(folder, commit):
+            self.log.emit(f"{pkg.name}: el código ha cambiado desde la revisión; vuelve a revisarlo")
+            self._finish(65)
+            return
         work = aur.BUILD_DIR / pkg.base
         shutil.rmtree(work, ignore_errors=True)
         work.parent.mkdir(parents=True, exist_ok=True)
@@ -287,6 +330,9 @@ class AurBackend(QObject):
         self._busy = False
         self._installing = False
         self._steps = []
+        if self._approved:
+            self._approved = False
+            self.approvedChanged.emit()
         self.changed.emit()
         self.finished.emit(code)
 

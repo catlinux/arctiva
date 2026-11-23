@@ -117,7 +117,7 @@ En el módulo de actualizaciones de Arctiva Center:
 2. Muestra las noticias de archlinux.org publicadas desde la última actualización. Si alguna exige intervención manual, el proceso se detiene hasta que el usuario la lee, con la explicación y la acción concreta.
 3. Lista los paquetes y marca los delicados (kernel, controladores NVIDIA, Mesa, systemd, Plasma).
 4. Actualiza con `pacman -Syu` mediante un ayudante privilegiado (polkit), mostrando el registro real. snap-pac crea la instantánea antes.
-5. Actualiza los Flatpak.
+5. Actualiza los Flatpak y, si el AUR está activado, los paquetes del AUR instalados desde el Centro, siempre después de pacman. Las actualizaciones del AUR se revisan **antes de empezar** (D-07): una sola página con el diff del PKGBUILD de cada una y su cadena de dependencias; hasta que el usuario la aprueba no se descarga nada más ni se compila, y se construye exactamente el commit revisado. Flatpak y AUR se pueden desactivar (`update_flatpak`, `update_aur` en `settings.toml`).
 6. Avisa de archivos `.pacnew` y recomienda reiniciar si cambió el kernel o los controladores.
 7. Traduce los errores habituales (conflictos, claves PGP, espacio en disco) a mensajes comprensibles, sin ocultar el texto original. El ayudante ejecuta pacman con los mensajes en inglés (`LC_ALL=C.UTF-8`) para reconocer los errores sea cual sea el idioma del usuario; la explicación se muestra traducida y el registro original queda a un clic.
 

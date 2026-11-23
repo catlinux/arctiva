@@ -1,6 +1,7 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 // Módulo «Actualizaciones» (D-08): noticias que bloquean, paquetes delicados, registro real,
-// errores explicados, Flatpak, .pacnew y aviso de reinicio.
+// errores explicados, .pacnew y aviso de reinicio. Una sola actualización recorre pacman, Flatpak y,
+// si está activado, el AUR (cuya revisión se pide antes de empezar).
 import QtQuick
 import QtQuick.Controls as QQC2
 import QtQuick.Layouts
@@ -12,7 +13,23 @@ Kirigami.ScrollablePage {
     property int lastCode: -2
     property string operation: ""
     property bool showLog: false
-    readonly property bool busy: helper.running || updatesBackend.checking
+    property bool working: false
+    property string stage: ""
+    property int aurCode: -2
+    property bool awaitingReview: false
+    readonly property bool busy: helper.running || updatesBackend.checking || working || aurBackend.busy
+    readonly property bool flatpakIncluded: updatesBackend.includeFlatpak
+    readonly property bool aurIncluded: aurBackend.enabled && updatesBackend.includeAur
+    readonly property var allUpdates: updatesBackend.updates
+        .map(u => Object.assign({ source: "" }, u))
+        .concat(flatpakIncluded ? updatesBackend.flatpakUpdates.map(u => ({ name: u.name, old: "", new: u.new, delicate: false, source: "Flatpak" })) : [])
+        .concat(aurIncluded ? aurBackend.updates.map(u => ({ name: u.name, old: u.old, new: u.new, delicate: false, source: "AUR" })) : [])
+
+    function checkAll() {
+        updatesBackend.check()
+        if (aurIncluded)
+            aurBackend.checkUpdates()
+    }
 
     function runHelper(op, args) {
         page.operation = op
@@ -20,10 +37,66 @@ Kirigami.ScrollablePage {
             page.flickable.contentY = 0
             log.clear()
             page.lastCode = -2
+            page.aurCode = -2
             page.showLog = true
+            page.working = true
             updatesBackend.updateStarted()
         }
         helper.run(op, args)
+    }
+
+    // El AUR se revisa antes de tocar nada: así el resto va sin interrupciones y lo que se
+    // construye es exactamente lo que se ha leído.
+    function beginUpdate() {
+        if (aurIncluded && aurBackend.updates.length > 0 && !aurBackend.approved) {
+            awaitingReview = true
+            applicationWindow().pageStack.layers.push(Qt.resolvedUrl("AurReviewPage.qml"), { batch: true, isUpdate: true })
+        } else {
+            startUpdate()
+        }
+    }
+
+    function startUpdate() {
+        awaitingReview = false
+        if (updatesBackend.updates.length > 0) {
+            runHelper("update", [])
+            return
+        }
+        page.flickable.contentY = 0
+        log.clear()
+        page.lastCode = 0
+        page.aurCode = -2
+        page.showLog = true
+        page.working = true
+        updatesBackend.updateStarted()
+        afterSystem()
+    }
+
+    function afterSystem() {
+        if (flatpakIncluded) {
+            stage = "flatpak"
+            updatesBackend.updateFlatpak()
+        } else {
+            runAur()
+        }
+    }
+
+    function runAur() {
+        if (aurBackend.approved) {
+            stage = "aur"
+            if (!aurBackend.install()) {
+                aurCode = 75
+                finishAll()
+            }
+        } else {
+            finishAll()
+        }
+    }
+
+    function finishAll() {
+        stage = ""
+        working = false
+        checkAll()
     }
 
     function resolvePacnew(op, path) {
@@ -36,17 +109,17 @@ Kirigami.ScrollablePage {
             text: qsTr("Check now")
             icon.name: "view-refresh"
             enabled: !page.busy
-            onTriggered: updatesBackend.check()
+            onTriggered: page.checkAll()
         },
         Kirigami.Action {
             text: qsTr("Update")
             icon.name: "system-software-update"
-            enabled: !isLive && !page.busy && !updatesBackend.blocked && updatesBackend.updates.length > 0
-            onTriggered: page.runHelper("update", [])
+            enabled: !isLive && !page.busy && !updatesBackend.blocked && page.allUpdates.length > 0
+            onTriggered: page.beginUpdate()
         }
     ]
 
-    Component.onCompleted: updatesBackend.check()
+    Component.onCompleted: page.checkAll()
 
     Connections {
         target: helper
@@ -56,7 +129,9 @@ Kirigami.ScrollablePage {
                 page.lastCode = code
                 updatesBackend.updateFinished(code, log.text)
                 if (code === 0)
-                    updatesBackend.updateFlatpak()
+                    page.afterSystem()
+                else
+                    page.working = false
             } else if (page.operation === "pacnew") {
                 updatesBackend.refreshPacnew()
             }
@@ -67,8 +142,26 @@ Kirigami.ScrollablePage {
     Connections {
         target: updatesBackend
         function onFlatpakLine(text) { log.append(text) }
-        // Tras Flatpak se vuelve a comprobar: la lista y las noticias ya no son las de antes.
-        function onFlatpakFinished(code) { updatesBackend.check() }
+        // Tras Flatpak sigue el AUR y al final se vuelve a comprobar: lista y noticias ya no son las de antes.
+        function onFlatpakFinished(code) {
+            if (page.stage === "flatpak")
+                page.runAur()
+        }
+    }
+
+    Connections {
+        target: aurBackend
+        function onLog(text) { if (page.stage === "aur") log.append(text) }
+        function onFinished(code) {
+            if (page.stage !== "aur")
+                return
+            page.aurCode = code
+            page.finishAll()
+        }
+        function onApprovedChanged() {
+            if (aurBackend.approved && page.awaitingReview)
+                page.startUpdate()
+        }
     }
 
     ColumnLayout {
@@ -84,27 +177,36 @@ Kirigami.ScrollablePage {
         // Resultado de la última actualización y, si falló, qué significa.
         Kirigami.InlineMessage {
             Layout.fillWidth: true
-            visible: helper.running && page.operation === "update" || page.lastCode !== -2
-            type: helper.running ? Kirigami.MessageType.Information
+            visible: page.working || page.lastCode !== -2
+            type: page.working ? Kirigami.MessageType.Information
                 : page.lastCode === 0 ? Kirigami.MessageType.Positive
                 : Kirigami.MessageType.Error
-            text: helper.running ? qsTr("Updating…")
+            text: page.working ? qsTr("Updating…")
                 : page.lastCode === 0 ? qsTr("The system is up to date.")
                 : (page.lastCode === 126 || page.lastCode === 127) ? qsTr("Authorization cancelled")
                 : updatesBackend.explanation.message !== undefined ? updatesBackend.explanation.message
                 : qsTr("The update failed (error code %1). The log below has the details.").arg(page.lastCode)
             actions: [
                 Kirigami.Action {
-                    visible: !helper.running && updatesBackend.explanation.action === "keyring-first"
+                    visible: !page.working && updatesBackend.explanation.action === "keyring-first"
                     text: qsTr("Update the keyring first")
                     onTriggered: page.runHelper("update", ["--keyring-first"])
                 },
                 Kirigami.Action {
-                    visible: !helper.running && updatesBackend.explanation.action === "retry"
+                    visible: !page.working && updatesBackend.explanation.action === "retry"
                     text: qsTr("Try again")
                     onTriggered: page.runHelper("update", [])
                 }
             ]
+        }
+
+        Kirigami.InlineMessage {
+            Layout.fillWidth: true
+            visible: page.aurCode !== -2 && !page.working
+            type: page.aurCode === 0 ? Kirigami.MessageType.Positive : Kirigami.MessageType.Error
+            text: page.aurCode === 0 ? qsTr("The AUR packages were updated.")
+                : (page.aurCode === 126 || page.aurCode === 127) ? qsTr("Authorization cancelled")
+                : qsTr("The AUR update failed (error code %1). The log below has the details.").arg(page.aurCode)
         }
 
         Kirigami.InlineMessage {
@@ -199,10 +301,10 @@ Kirigami.ScrollablePage {
         Kirigami.Heading {
             level: 2
             text: updatesBackend.checking ? qsTr("Checking for updates…")
-                : updatesBackend.updates.length === 0 ? qsTr("No updates available")
+                : page.allUpdates.length === 0 ? qsTr("No updates available")
                 // Sin numerus de Qt: el inglés no tiene catálogo y mostraría el texto fuente.
-                : updatesBackend.updates.length === 1 ? qsTr("1 update available")
-                : qsTr("%1 updates available").arg(updatesBackend.updates.length)
+                : page.allUpdates.length === 1 ? qsTr("1 update available")
+                : qsTr("%1 updates available").arg(page.allUpdates.length)
         }
 
         QQC2.Label {
@@ -213,7 +315,7 @@ Kirigami.ScrollablePage {
         }
 
         Repeater {
-            model: updatesBackend.updates
+            model: page.allUpdates
             delegate: RowLayout {
                 required property var modelData
                 Layout.fillWidth: true
@@ -230,7 +332,12 @@ Kirigami.ScrollablePage {
                     Layout.fillWidth: true
                     opacity: 0.7
                     elide: Text.ElideRight
-                    text: modelData.old + " → " + modelData.new
+                    text: modelData.old !== "" ? modelData.old + " → " + modelData.new : modelData.new
+                }
+                QQC2.Label {
+                    visible: modelData.source !== ""
+                    text: modelData.source
+                    color: Kirigami.Theme.disabledTextColor
                 }
                 QQC2.Label {
                     visible: modelData.delicate
@@ -238,6 +345,46 @@ Kirigami.ScrollablePage {
                     color: Kirigami.Theme.neutralTextColor
                 }
             }
+        }
+
+        // Qué se actualiza junto con el sistema.
+        Kirigami.Heading {
+            level: 3
+            text: qsTr("Update sources")
+        }
+
+        QQC2.Label {
+            Layout.fillWidth: true
+            wrapMode: Text.WordWrap
+            opacity: 0.7
+            text: qsTr("The Arch repositories are always updated. Choose what else is updated at the same time.")
+        }
+
+        QQC2.Switch {
+            text: qsTr("Flatpak applications")
+            checked: updatesBackend.includeFlatpak
+            enabled: !page.busy
+            onToggled: updatesBackend.setIncludeFlatpak(checked)
+        }
+
+        QQC2.Switch {
+            visible: aurBackend.enabled
+            text: qsTr("AUR packages (you review their changes before they are built)")
+            checked: updatesBackend.includeAur
+            enabled: !page.busy
+            onToggled: {
+                updatesBackend.setIncludeAur(checked)
+                if (checked)
+                    aurBackend.checkUpdates()
+            }
+        }
+
+        QQC2.Label {
+            Layout.fillWidth: true
+            wrapMode: Text.WordWrap
+            opacity: 0.7
+            visible: !aurBackend.enabled
+            text: qsTr("To update AUR packages here too, turn on the AUR in Applications.")
         }
 
         // Archivos de configuración nuevos que dejó la actualización.

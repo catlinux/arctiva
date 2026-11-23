@@ -35,6 +35,34 @@
 <context>
     <name>UpdatesPage</name>
     <message>
+        <source>The AUR packages were updated.</source>
+        <translation>Els paquets de l'AUR s'han actualitzat.</translation>
+    </message>
+    <message>
+        <source>The AUR update failed (error code %1). The log below has the details.</source>
+        <translation>L'actualització de l'AUR ha fallat (codi d'error %1). El registre de sota té els detalls.</translation>
+    </message>
+    <message>
+        <source>Update sources</source>
+        <translation>Què s'actualitza</translation>
+    </message>
+    <message>
+        <source>The Arch repositories are always updated. Choose what else is updated at the same time.</source>
+        <translation>Els repositoris d'Arch s'actualitzen sempre. Tria què més s'actualitza alhora.</translation>
+    </message>
+    <message>
+        <source>Flatpak applications</source>
+        <translation>Aplicacions Flatpak</translation>
+    </message>
+    <message>
+        <source>AUR packages (you review their changes before they are built)</source>
+        <translation>Paquets de l'AUR (revises els canvis abans de compilar-los)</translation>
+    </message>
+    <message>
+        <source>To update AUR packages here too, turn on the AUR in Applications.</source>
+        <translation>Per actualitzar aquí també els paquets de l'AUR, activa l'AUR a Aplicacions.</translation>
+    </message>
+    <message>
         <source>This is the live session: installing and updating only work once Arctiva is installed.</source>
         <translation>Aquesta és la sessió live: instal·lar i actualitzar només funcionen quan Arctiva està instal·lat.</translation>
     </message>
@@ -790,6 +818,14 @@
 </context>
 <context>
     <name>AurReviewPage</name>
+    <message>
+        <source>AUR updates</source>
+        <translation>Actualitzacions de l'AUR</translation>
+    </message>
+    <message>
+        <source>Approve and update</source>
+        <translation>Aprova i actualitza</translation>
+    </message>
     <message>
         <source>It has no maintainer: nobody is looking after it.</source>
         <translation>No té mantenidor: ningú se n&apos;ocupa.</translation>

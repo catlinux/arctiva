@@ -41,7 +41,7 @@ Descarga la ISO y comprueba que es auténtica (ver [publicación](../publicacion
 Al entrar por primera vez puedes abrir **Arctiva Center** (está en el menú de inicio). Sus páginas:
 
 - **Personalización:** modo claro u oscuro, color, fondo, barra de tareas (centrada o a la izquierda, flotante) y tamaño del texto. «Restaurar el aspecto de Arctiva» lo deja como recién instalado.
-- **Actualizaciones:** actualiza el sistema con un clic, mostrando antes las noticias de Arch que necesitan tu atención. Antes de cada actualización se guarda una instantánea.
+- **Actualizaciones:** actualiza con un clic los repositorios de Arch, Flatpak y, si lo has activado, el AUR, mostrando antes las noticias de Arch que necesitan tu atención. Antes de cada actualización se guarda una instantánea. Al final de la página eliges qué más se actualiza junto al sistema.
 - **Aplicaciones:** la tienda. Busca programas de los repositorios de Arch y de Flathub; el origen siempre se ve. Si hay actualizaciones pendientes, te pide actualizar antes. Puedes poner varias instalaciones o desinstalaciones en cola y se ejecutan una a una.
 - **Controladores:** detecta tu gráfica e instala lo necesario (NVIDIA incluida).
 - **Extras:** Juegos (Steam, Lutris…), Oficina (LibreOffice, Thunderbird), kernel LTS, Programas de Windows (Bottles), Heroic y ProtonPlus.
@@ -66,7 +66,7 @@ Instala el extra **Programas de Windows** (Bottles). La primera vez descarga muc
 
 ## 9. La tienda y el AUR
 
-En **Aplicaciones** puedes instalar y quitar programas de Arch y de Flathub. El **AUR** (recetas de la comunidad sin revisar) está **desactivado**; si lo activas, antes de cada instalación debes leer el PKGBUILD. Las actualizaciones del AUR son manuales y muestran qué ha cambiado.
+En **Aplicaciones** puedes instalar y quitar programas de Arch y de Flathub. El **AUR** (recetas de la comunidad sin revisar) está **desactivado**; si lo activas, antes de cada instalación debes leer el PKGBUILD. Si el AUR está activado, sus actualizaciones se hacen junto con las del sistema desde **Actualizaciones**: antes de empezar se muestra qué ha cambiado en cada paquete y no se compila nada hasta que lo apruebas (puedes dejarlo fuera en «Qué se actualiza»).
 
 Puedes pedir varias instalaciones o desinstalaciones seguidas desde la ficha de cada aplicación; se ejecutan una a una. La barra inferior del Center muestra el elemento en curso y su progreso, y **Detalles** abre la lista de elementos y sus registros. Puedes cancelar los que aún no han empezado, limpiar los terminados y cerrar la barra cuando no quede trabajo. El progreso se conserva al salir de una ficha, y no puedes cerrar la ventana del Center mientras haya trabajo pendiente.
 

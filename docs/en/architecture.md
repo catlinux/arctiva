@@ -117,7 +117,7 @@ In the Arctiva Center update module:
 2. Show the archlinux.org news published since the last upgrade. If an item requires manual intervention, the process stops until the user has read it, with the explanation and the concrete action.
 3. List the packages and highlight the sensitive ones (kernel, NVIDIA drivers, Mesa, systemd, Plasma).
 4. Upgrade with `pacman -Syu` through a privileged helper (polkit), showing the real log. snap-pac takes the snapshot beforehand.
-5. Update Flatpaks.
+5. Update Flatpaks and, if the AUR is turned on, the AUR packages installed through the Center, always after pacman. AUR updates are reviewed **before anything starts** (D-07): one page with the PKGBUILD diff of each one and its dependency chain; nothing is built until the user approves it, and exactly the reviewed commit is built. Flatpak and the AUR can be turned off (`update_flatpak`, `update_aur` in `settings.toml`).
 6. Report `.pacnew` files and recommend a reboot if the kernel or drivers changed.
 7. Translate common errors (conflicts, PGP keys, disk space) into understandable messages without hiding the original text. The helper runs pacman with English messages (`LC_ALL=C.UTF-8`) so that errors are recognised whatever the user's language; the explanation is shown translated and the original log stays one click away.
 

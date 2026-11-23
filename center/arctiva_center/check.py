@@ -6,7 +6,7 @@ import subprocess
 import sys
 from pathlib import Path
 
-from .core import i18n, updates
+from .core import aur, i18n, updates
 
 STATE = Path(os.environ.get("XDG_STATE_HOME") or Path.home() / ".local/state") / "arctiva-center"
 
@@ -47,17 +47,47 @@ def new_since_last_notice(current, notified):
     return sorted({f"{u.name} {u.new}" for u in current} - set(notified))
 
 
+def _run(argv, timeout):
+    try:
+        return subprocess.run(argv, capture_output=True, text=True, timeout=timeout)
+    except (OSError, subprocess.TimeoutExpired):
+        return None
+
+
+def pending(run=_run, settings_path=aur.SETTINGS_FILE, aur_updates=None):
+    """Lo mismo que actualiza el módulo Actualizaciones: pacman, Flatpak y el AUR según los ajustes.
+    Una fuente que falla (sin red, sin flatpak) no impide avisar de las demás."""
+    found = []
+    out = run(["checkupdates"], 300)
+    # checkupdates: 0 hay actualizaciones, 2 no hay, 1 error (sin red, por ejemplo).
+    if out is not None and out.returncode == 0:
+        found += updates.parse_checkupdates(out.stdout)
+    if aur.get_setting("update_flatpak", True, settings_path):
+        out = run(["flatpak", "remote-ls", "--updates", "--columns=application,name,version"], 120)
+        if out is not None and out.returncode == 0:
+            found += updates.parse_flatpak_updates(out.stdout)
+    if aur.aur_enabled(settings_path) and aur.get_setting("update_aur", True, settings_path):
+        found += (aur_updates or _aur_updates)()
+    return found
+
+
+def _aur_updates():
+    try:
+        import pyalpm
+        state = aur.load_state()
+        foreign = {n: v for n, v in aur.foreign_packages().items() if n in state}
+        if not foreign:
+            return []
+        return [updates.Update(p.name, foreign[p.name], p.version)
+                for p in aur.newer_versions(foreign, pyalpm.vercmp)]
+    except Exception:  # sin red, RPC caído: se avisará la próxima vez
+        return []
+
+
 def main():
     if os.path.exists("/run/archiso"):
         return 0
-    try:
-        out = subprocess.run(["checkupdates"], capture_output=True, text=True, timeout=300)
-    except (OSError, subprocess.TimeoutExpired):
-        return 0
-    # checkupdates: 0 hay actualizaciones, 2 no hay, 1 error (sin red, por ejemplo).
-    if out.returncode != 0:
-        return 0
-    current = updates.parse_checkupdates(out.stdout)
+    current = pending()
     state = STATE / "notified.json"
     try:
         notified = json.loads(state.read_text(encoding="utf-8"))

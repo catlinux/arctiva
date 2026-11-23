@@ -50,6 +50,18 @@ def parse_checkupdates(text):
     return updates
 
 
+def parse_flatpak_updates(text):
+    """Salida de `flatpak remote-ls --updates --columns=application,name,version`: [Update] con
+    el nombre legible y la versión nueva (vacía si el remoto no la indica)."""
+    found = []
+    for line in text.splitlines():
+        cols = [c.strip() for c in line.split("	")]
+        if cols and cols[0]:
+            found.append(Update(cols[1] if len(cols) > 1 and cols[1] else cols[0], "",
+                                cols[2] if len(cols) > 2 else ""))
+    return found
+
+
 _LOG_RE = re.compile(r"\[([^\]]+)\] \[(PACMAN|ALPM)\] (.*)")
 
 

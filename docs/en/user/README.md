@@ -41,7 +41,7 @@ Download the ISO and check it is authentic (see [releasing](../releasing.md)). T
 The first time you log in you can open **Arctiva Center** (it is in the start menu). Its pages:
 
 - **Personalization:** light or dark mode, colour, wallpaper, taskbar (centred or left, floating) and text size. "Restore the Arctiva look" puts it back as freshly installed.
-- **Updates:** updates the system with one click, showing first the Arch news that need your attention. A snapshot is saved before every update.
+- **Updates:** updates the Arch repositories, Flatpak and, if you turned it on, the AUR with one click, showing first the Arch news that need your attention. A snapshot is saved before every update. At the bottom of the page you choose what else is updated along with the system.
 - **Applications:** the store. Search programs from the Arch repositories and Flathub; the source is always visible. If updates are pending, it asks you to update first. You can queue several installs or removals, which run one at a time.
 - **Drivers:** detects your graphics card and installs what is needed (NVIDIA included).
 - **Extras:** Gaming (Steam, Lutris…), Office (LibreOffice, Thunderbird), LTS kernel, Windows programs (Bottles), Heroic and ProtonPlus.
@@ -66,7 +66,7 @@ Install the **Windows programs** extra (Bottles). The first time it downloads a 
 
 ## 9. The store and the AUR
 
-In **Applications** you can install and remove programs from Arch and Flathub. The **AUR** (unreviewed community recipes) is **off**; if you turn it on, you must read the PKGBUILD before every installation. AUR updates are manual and show what changed.
+In **Applications** you can install and remove programs from Arch and Flathub. The **AUR** (unreviewed community recipes) is **off**; if you turn it on, you must read the PKGBUILD before every installation. If the AUR is on, its updates run together with the system ones from **Updates**: before starting, what changed in each package is shown and nothing is built until you approve it (you can leave it out under "Update sources").
 
 You can queue several installs or removals in succession from each app's page; they run one at a time. The Center's bottom bar shows the current item and its progress, and **Details** opens the item list and its logs. You can cancel items that have not started, clear finished items, and close the bar when no work remains. Progress is kept when you leave an app page, and you cannot close the Center window while work is pending.
 
