@@ -156,3 +156,19 @@ def test_jugar_lanza_independiente_y_no_repite(app, tmp_path, monkeypatch):
     assert len(calls) == 1 and b.procs[0]["name"] == "Battle.net.exe"
     b.showLauncher()
     assert len(calls) == 2
+
+
+def test_solo_wine_ofrece_descargar_ge_proton_y_avisa(app, tmp_path):
+    from arctiva_games.core import games_runners as gr
+    runners = [Runner("wine")] + gr.virtual_runners()
+    b = make(tmp_path, runners=runners, umu="/usr/bin/umu-run")
+    b.prepareRecipe("battlenet")
+    assert b.runnerName.startswith("GE-Proton (se descarga") and b.runnerHint == "download"   # antes: wine
+    assert len(b.runnerChoices) == 3 and b.runnerChoices[0] == "wine"
+    b.setRunner(next(n for n in b.runnerChoices if "Wayland" in n))
+    assert b.runnerHint == "download-wayland"
+    b.setRunner("wine")
+    assert b.runnerHint == "system-wine"
+    sin_umu = make(tmp_path, runners=[Runner("wine")], umu=None)
+    sin_umu.prepareRecipe("battlenet")
+    assert sin_umu.runnerName == "wine" and sin_umu.runnerHint == "system-wine"

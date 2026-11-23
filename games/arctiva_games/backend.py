@@ -6,6 +6,7 @@ hilos y devuelven el resultado por señales (se encolan en el hilo de la interfa
 import json
 import os
 import shutil
+import subprocess
 import sys
 import threading
 import time
@@ -39,7 +40,7 @@ class GamesBackend(QObject):
         self._downloads = Path(downloads) if downloads else games_runtime.DOWNLOADS
         self._recipes = games_recipes.load(data_dir)
         # `runners()` → (lista de Runner, ruta de umu-run o None); se sustituye en las pruebas.
-        self._scan = runners or (lambda: (games_runners.list_runners(), games_runners.find_umu()))
+        self._scan = runners or games_runners.scan
         self._runners, self._umu, self._runner, self._pref = [], None, None, None
         self._menu_dir = Path(menu_dir) if menu_dir else games_shortcuts.MENU_DIR
         self._desk_dir = Path(desk_dir) if desk_dir else None
@@ -83,6 +84,26 @@ class GamesBackend(QObject):
     @Property(list, notify=changed)
     def runnerChoices(self):
         return [r.name for r in self._runners if self._umu or not r.is_proton]
+
+    @Property(str, notify=changed)
+    def runnerHint(self):
+        """Qué avisar sobre el ejecutor elegido; la interfaz lo traduce."""
+        r = self._runner
+        if r is None:
+            return ""
+        if r.virtual:
+            return "download-wayland" if r.wayland else "download"
+        if not r.is_proton:
+            return "system-wine"
+        return "wayland" if r.wayland else ""
+
+    @Slot()
+    def openRunnerManager(self):
+        """ProtonPlus (extra de Arctiva) para añadir más ejecutores; si no está, Arctiva Center en Extras."""
+        if subprocess.run(["flatpak", "info", "com.vysp3r.ProtonPlus"], capture_output=True).returncode == 0:
+            QProcess.startDetached("flatpak", ["run", "com.vysp3r.ProtonPlus"])
+        else:
+            QProcess.startDetached("arctiva-center", ["--module", "extras"])
 
     @Property(str, notify=changed)
     def runnerName(self):

@@ -29,6 +29,7 @@ Pending work grouped by priority. Phases and decisions: [roadmap](docs/en/roadma
 
 ## Later
 
+- Arctiva Games, choosing the install script per launcher (Arctiva recipe, a Lutris script or other distributions' scripts that work): design it first, since it runs code downloaded from third parties.
 - Arctiva Games (optional `arctiva-games` package and extra, 0.1.0, coded but **not tested on real hardware**): run a full Battle.net install in a VM with acceleration or real hardware and check the launcher stays open until Continue; diagnose the WoW private-server case with `lutris -d` (plan step 1); check Proton runner order per launcher on real hardware (Battle.net with the system `wine` crashes in its browser engine); implement `extract`, `move`, `merge`, `input_menu` and user-provided files; ask the Lutris team before publishing; manual test of popular lutris.net scripts (plan step 9). Details in the games plan.
 - Installing from inside Windows (assistant that downloads the ISO, verifies it and writes the USB): parked by the maintainer, not planned.
 - Phases 2 to 7 as described in the roadmap.

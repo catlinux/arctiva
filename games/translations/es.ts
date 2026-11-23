@@ -31,6 +31,12 @@
 </context>
 <context>
     <name>GameInstallPage</name>
+    <message><source>More runners…</source><translation>Más ejecutores…</translation></message>
+    <message><source>Opens ProtonPlus to add more Proton and Wine versions</source><translation>Abre ProtonPlus para añadir más versiones de Proton y Wine</translation></message>
+    <message><source>GE-Proton will be downloaded the first time it is used (a few hundred MB, it needs a connection).</source><translation>GE-Proton se descargará la primera vez que se use (unos cientos de MB, hace falta conexión).</translation></message>
+    <message><source>GE-Proton with native Wayland (experimental) will be downloaded the first time it is used (a few hundred MB, it needs a connection). It may not work with every launcher.</source><translation>GE-Proton con Wayland nativo (experimental) se descargará la primera vez que se use (unos cientos de MB, hace falta conexión). Puede que no funcione con todos los lanzadores.</translation></message>
+    <message><source>With the system's Wine some launchers, such as Battle.net, may not open. If that happens, choose GE-Proton.</source><translation>Con el Wine del sistema, algunos lanzadores, como Battle.net, pueden no abrirse. Si pasa, elige GE-Proton.</translation></message>
+    <message><source>Native Wayland is experimental: if the launcher does not open or looks wrong, choose another runner.</source><translation>Wayland nativo es experimental: si el lanzador no se abre o se ve mal, elige otro ejecutor.</translation></message>
     <message><source>Playing</source><translation>Jugando</translation></message>
     <message><source>Install</source><translation>Instalar</translation></message>
     <message><source>In progress</source><translation>En curso</translation></message>

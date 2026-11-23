@@ -68,3 +68,44 @@ def test_jugar_con_proton(tmp_path):
         pass
     g.runner = "wine"
     assert lib.launch_argv(g)[0] == "wine"
+
+
+def test_sin_ejecutores_instalados_se_prefiere_descargar_ge_proton_al_wine_del_sistema(tmp_path):
+    runners = gr.list_runners([tmp_path / "no"], which=lambda n: "/usr/bin/wine") + gr.virtual_runners()
+    assert gr.choose(gr.DEFAULT_PREFERENCE, runners).path == gr.AUTO_GE             # antes: wine
+    assert gr.choose(gr.DEFAULT_PREFERENCE, runners, umu=False).path == ""          # sin umu-run, solo wine
+    assert gr.choose(["wine"], runners).path == ""                                  # la receta manda
+    assert gr.choose(["Proton-Wineland", "wine"], runners).path == ""
+    # Lo experimental (Wayland nativo) no se elige solo, pero se puede elegir a mano.
+    wayland = [r for r in runners if r.name.startswith("GE-Proton, Wayland")][0]
+    assert not wayland.auto_pick and wayland.wayland and gr.by_name(wayland.name, runners) is wayland
+
+
+def test_lo_instalado_va_antes_que_lo_que_se_descarga(tmp_path):
+    proton_dirs(tmp_path, ["UMU-Proton-9.0", "GE-Proton9-2"])
+    runners = gr.list_runners([tmp_path], which=lambda n: "/usr/bin/wine") + gr.virtual_runners()
+    assert gr.choose(gr.DEFAULT_PREFERENCE, runners).name == "GE-Proton9-2"
+    only_umu = [r for r in runners if r.name != "GE-Proton9-2"]
+    assert gr.choose(gr.DEFAULT_PREFERENCE, only_umu).name == "UMU-Proton-9.0"       # no descarga si ya hay uno
+
+
+def test_umu_env_con_nombre_en_clave_y_wayland():
+    auto = gr.umu_env(gr.AUTO_GE, "x")
+    assert auto["PROTONPATH"] == "GE-Proton" and auto["PROTON_ENABLE_WAYLAND"] == "0"
+    wl = gr.umu_env(gr.AUTO_GE + gr.WAYLAND, "x")
+    assert wl["PROTONPATH"] == "GE-Proton" and wl["PROTON_ENABLE_WAYLAND"] == "1"
+    assert gr.split_spec("/p/ge+wayland") == ("/p/ge", True) and gr.split_spec("/p/ge") == ("/p/ge", False)
+
+
+def test_proton_dir_resuelve_el_nombre_en_clave(tmp_path):
+    assert gr.proton_dir("GE-Proton", [tmp_path]) is None                             # aún sin descargar
+    proton_dirs(tmp_path, ["GE-Proton9-2", "GE-Proton10-4", "UMU-Proton-9.0"])
+    assert gr.proton_dir("GE-Proton", [tmp_path]).name == "GE-Proton10-4"
+    assert gr.proton_dir("GE-Proton+wayland", [tmp_path]).name == "GE-Proton10-4"
+    assert gr.proton_dir(str(tmp_path / "GE-Proton9-2")).name == "GE-Proton9-2"
+    assert gr.proton_dir(str(tmp_path / "no-existe")) is None
+
+
+def test_parar_un_ejecutor_sin_descargar_no_falla():
+    assert ge.stop_command_for({"path": "GE-Proton-que-no-existe-todavia"}).program == "true"
+    assert ge.stop_command_for(None).program == "wineserver"

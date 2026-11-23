@@ -29,6 +29,7 @@ Trabajo pendiente agrupado por prioridad. Fases y decisiones: [hoja de ruta](doc
 
 ## Más adelante
 
+- Arctiva Games, elegir el script de instalación de cada lanzador (receta de Arctiva, script de Lutris u otros de otras distribuciones que funcionen): diseñarlo antes, porque ejecuta código descargado de terceros.
 - Arctiva Games (paquete opcional `arctiva-games` y extra, 0.1.0, programado pero **sin probar en hardware real**): hacer una instalación completa de Battle.net en una VM con aceleración o en hardware real y comprobar que el lanzador queda abierto hasta pulsar Continuar; diagnosticar el caso del servidor privado de WoW con `lutris -d` (paso 1 del plan); ajustar el orden de ejecutores Proton por lanzador en hardware real (Battle.net con el `wine` del sistema se cae en su motor de navegador); implementar `extract`, `move`, `merge`, `input_menu` y archivos que aporta el usuario; escribir al equipo de Lutris antes de publicar; prueba manual con scripts populares de lutris.net (paso 9 del plan). Detalles en el plan de juegos.
 - Instalar desde dentro de Windows (asistente que descarga la ISO, la verifica y graba el USB): aparcado por el mantenedor, no planificado.
 - Fases 2 a 7 según la hoja de ruta.

@@ -95,7 +95,10 @@ def default_command(step, engine):
 def stop_command_for(runner):
     """`wineserver -k` del ejecutor: con Proton, el de su carpeta; si no, el del sistema."""
     if runner and runner.get("path"):
-        return Command(str(Path(runner["path"]) / "files" / "bin" / "wineserver"), ["-k"])
+        spec, _ = games_runners.split_spec(runner["path"])
+        folder = Path(spec) if Path(spec).is_absolute() else games_runners.proton_dir(spec)
+        # Un ejecutor que umu-run aún no ha descargado (nombre en clave) no tiene procesos que parar.
+        return Command(str(folder / "files" / "bin" / "wineserver"), ["-k"]) if folder else Command("true", [])
     return Command("wineserver", ["-k"])
 
 

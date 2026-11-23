@@ -73,12 +73,34 @@ Kirigami.ScrollablePage {
                 header: Kirigami.Heading { level: 3; text: qsTr("Options") }
                 contentItem: ColumnLayout {
                     RowLayout {
-                        visible: backend.runnerChoices.length > 0
                         QQC2.Label { text: qsTr("Runner") }
                         QQC2.ComboBox {
+                            Layout.fillWidth: true
                             model: backend.runnerChoices
                             currentIndex: backend.runnerChoices.indexOf(backend.runnerName)
                             onActivated: backend.setRunner(currentText)
+                        }
+                        QQC2.Button {
+                            text: qsTr("More runners…")
+                            icon.name: "list-add"
+                            onClicked: backend.openRunnerManager()
+                            QQC2.ToolTip.visible: hovered
+                            QQC2.ToolTip.text: qsTr("Opens ProtonPlus to add more Proton and Wine versions")
+                        }
+                    }
+                    QQC2.Label {
+                        Layout.fillWidth: true
+                        visible: backend.runnerHint !== ""
+                        wrapMode: Text.WordWrap
+                        opacity: 0.7
+                        text: {
+                            switch (backend.runnerHint) {
+                            case "download": return qsTr("GE-Proton will be downloaded the first time it is used (a few hundred MB, it needs a connection).")
+                            case "download-wayland": return qsTr("GE-Proton with native Wayland (experimental) will be downloaded the first time it is used (a few hundred MB, it needs a connection). It may not work with every launcher.")
+                            case "system-wine": return qsTr("With the system's Wine some launchers, such as Battle.net, may not open. If that happens, choose GE-Proton.")
+                            case "wayland": return qsTr("Native Wayland is experimental: if the launcher does not open or looks wrong, choose another runner.")
+                            default: return ""
+                            }
                         }
                     }
                     QQC2.CheckBox {
