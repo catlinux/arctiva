@@ -1,0 +1,11 @@
+#!/bin/sh
+# SPDX-License-Identifier: GPL-3.0-or-later
+# NetworkManager llama a este script al conectarse (argumentos: interfaz y acción). Si quedan aplicaciones
+# pendientes de instalar, lanza el servicio que las instala (arctiva-deferred.service).
+[ -e /run/archiso ] && exit 0
+case $2 in
+    up|vpn-up|connectivity-change) ;;
+    *) exit 0 ;;
+esac
+[ "$(sed -n 1p /var/lib/arctiva/deferred.status 2>/dev/null)" = done ] && exit 0
+exec systemctl start --no-block arctiva-deferred.service

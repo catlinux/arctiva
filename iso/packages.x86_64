@@ -77,13 +77,13 @@ plasma-pa
 plasma-firewall
 plasma-systemmonitor
 powerdevil
+power-profiles-daemon
 bluedevil
 kscreen
 kinfocenter
 systemsettings
 polkit-kde-agent
 kwallet-pam
-kwalletmanager
 kde-cli-tools
 kde-gtk-config
 breeze-gtk
@@ -96,15 +96,11 @@ flatpak-kcm
 archlinux-appstream-data
 
 # Aplicaciones
+# Kate, Ark, Okular, Gwenview, Spectacle, KWalletManager y las miniaturas no van en la ISO (unos 490 MiB
+# sin comprimir, con qt6-webengine): se instalan al instalar si hay red o en la primera conexión.
+# Lista: packages/arctiva-settings/files/usr/share/arctiva/deferred-packages.
 konsole
 dolphin
-kate
-ark
-spectacle
-gwenview
-okular
-ffmpegthumbs
-kdegraphics-thumbnailers
 firefox
 firefox-i18n-es-es
 firefox-i18n-ca

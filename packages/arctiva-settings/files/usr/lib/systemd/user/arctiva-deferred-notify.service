@@ -1,0 +1,10 @@
+[Unit]
+Description=Aviso de las aplicaciones de Arctiva pendientes de instalar
+ConditionPathExists=!/run/archiso
+
+[Service]
+Type=oneshot
+ExecStart=/usr/lib/arctiva/notify-deferred
+
+[Install]
+WantedBy=default.target

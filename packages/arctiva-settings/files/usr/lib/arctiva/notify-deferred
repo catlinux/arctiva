@@ -1,0 +1,60 @@
+#!/bin/sh
+# SPDX-License-Identifier: GPL-3.0-or-later
+# Avisa al usuario, con una notificación, del estado de la instalación de las aplicaciones pendientes
+# (/var/lib/arctiva/deferred.status, que escribe install-deferred). Solo avisa cuando el estado cambia
+# durante la sesión y no dice nada de lo que ya estaba hecho al entrar.
+[ -e /run/archiso ] && exit 0
+STATUS=${DEFERRED_STATUS:-/var/lib/arctiva/deferred.status}   # la variable es solo para las pruebas
+[ -r "$STATUS" ] || exit 0
+state=$(sed -n 1p "$STATUS")
+pkgs=$(sed -n 2p "$STATUS")
+last=${XDG_RUNTIME_DIR:-/tmp}/arctiva-deferred.last
+prev=$(cat "$last" 2>/dev/null)
+[ "$state" = "$prev" ] && exit 0
+printf '%s\n' "$state" > "$last"
+
+case ${LANG%%_*} in
+    es)
+        t_pending='Aplicaciones pendientes'
+        b_pending="Se instalarán, junto con las actualizaciones del sistema, la primera vez que te conectes a Internet: $pkgs."
+        t_running='Instalando aplicaciones'
+        b_running="Arctiva está instalando $pkgs y actualizando el sistema. No apagues el equipo."
+        t_done='Aplicaciones instaladas'
+        b_done='Ya están disponibles las aplicaciones que faltaban.'
+        t_failed='No se pudieron instalar las aplicaciones'
+        b_failed='Se volverá a intentar la próxima vez que te conectes a Internet.'
+        ;;
+    ca)
+        t_pending='Aplicacions pendents'
+        b_pending="S'instal·laran, juntament amb les actualitzacions del sistema, la primera vegada que et connectis a Internet: $pkgs."
+        t_running='Instal·lant aplicacions'
+        b_running="Arctiva està instal·lant $pkgs i actualitzant el sistema. No apaguis l'ordinador."
+        t_done='Aplicacions instal·lades'
+        b_done='Ja estan disponibles les aplicacions que faltaven.'
+        t_failed="No s'han pogut instal·lar les aplicacions"
+        b_failed='Es tornarà a intentar la propera vegada que et connectis a Internet.'
+        ;;
+    *)
+        t_pending='Applications pending'
+        b_pending="They will be installed, together with the system updates, the first time you connect to the Internet: $pkgs."
+        t_running='Installing applications'
+        b_running="Arctiva is installing $pkgs and updating the system. Do not turn the computer off."
+        t_done='Applications installed'
+        b_done='The missing applications are now available.'
+        t_failed='The applications could not be installed'
+        b_failed='It will be tried again the next time you connect to the Internet.'
+        ;;
+esac
+
+case $state in
+    pending) title=$t_pending body=$b_pending ;;
+    running) title=$t_running body=$b_running ;;
+    done)
+        # Solo si en esta sesión se avisó antes de que faltaban.
+        [ -n "$prev" ] || exit 0
+        title=$t_done body=$b_done ;;
+    failed) title=$t_failed body=$b_failed ;;
+    *) exit 0 ;;
+esac
+
+exec notify-send --app-name=Arctiva --icon=system-software-install --expire-time=30000 -- "$title" "$body"

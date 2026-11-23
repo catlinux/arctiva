@@ -1,0 +1,10 @@
+[Unit]
+Description=Vigila el estado de las aplicaciones de Arctiva pendientes de instalar
+ConditionPathExists=!/run/archiso
+
+[Path]
+PathChanged=/var/lib/arctiva/deferred.status
+Unit=arctiva-deferred-notify.service
+
+[Install]
+WantedBy=paths.target

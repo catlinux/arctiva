@@ -1,0 +1,17 @@
+[Unit]
+Description=Aplicaciones de Arctiva pendientes de instalar
+Documentation=https://github.com/catlinux/arctiva
+# No en la live: allí esas aplicaciones no se instalan.
+ConditionPathExists=!/run/archiso
+After=network-online.target
+
+[Service]
+Type=oneshot
+ExecStart=/usr/lib/arctiva/install-deferred
+# Una actualización grande por una conexión lenta puede tardar mucho; no se corta a medias.
+TimeoutStartSec=infinity
+Nice=10
+IOSchedulingClass=idle
+
+[Install]
+WantedBy=multi-user.target

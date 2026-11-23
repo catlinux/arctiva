@@ -1,0 +1,14 @@
+# Aplicaciones que NO van en la ISO (pesan unos 490 MiB sin comprimir, con qt6-webengine) y se instalan
+# desde los repositorios: durante la instalación si hay conexión y, si no, la primera vez que el equipo
+# se conecta a Internet (arctiva-deferred.service). Un paquete por línea.
+#
+# Esta lista debe coincidir con las operaciones «try_install» de installer/calamares/modules/packages.conf
+# (hay una prueba que lo comprueba) y no puede estar en iso/packages.x86_64.
+kate
+ark
+okular
+gwenview
+spectacle
+kwalletmanager
+kdegraphics-thumbnailers
+ffmpegthumbs

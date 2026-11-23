@@ -1,0 +1,55 @@
+#!/bin/sh
+# SPDX-License-Identifier: GPL-3.0-or-later
+# Instala los paquetes de /usr/share/arctiva/deferred-packages que falten (aplicaciones que no caben en
+# la ISO). Lo lanza arctiva-deferred.service al arrancar y el despachador de NetworkManager cada vez que
+# hay conexión; no hace nada si ya están todos. Deja su estado en /var/lib/arctiva/deferred.status
+# (primera línea: pending, running, done o failed; segunda: los paquetes que faltan) para que la sesión
+# del usuario lo avise.
+#
+# Se sincroniza y actualiza todo el sistema (pacman -Syu) porque la base de datos de la ISO es antigua:
+# instalar solo estos paquetes sería una actualización parcial, que Arch no admite (D-07).
+# Las variables DEFERRED_* solo existen para las pruebas.
+LIST=${DEFERRED_LIST:-/usr/share/arctiva/deferred-packages}
+STATE_DIR=${DEFERRED_STATE_DIR:-/var/lib/arctiva}
+STATUS=$STATE_DIR/deferred.status
+LOCK=${DEFERRED_LOCK:-/var/lib/pacman/db.lck}
+
+set_status() {
+    mkdir -p -- "$STATE_DIR"
+    # En el sitio, sin renombrar: la unidad .path del usuario vigila este archivo.
+    printf '%s\n%s\n' "$1" "$2" > "$STATUS"
+    chmod 644 "$STATUS"
+}
+
+missing=
+while read -r pkg; do
+    case $pkg in ''|'#'*) continue ;; esac
+    pacman -Qq -- "$pkg" >/dev/null 2>&1 || missing="$missing $pkg"
+done < "$LIST"
+missing=${missing# }
+
+if [ -z "$missing" ]; then
+    set_status done ''
+    exit 0
+fi
+
+# Sin conexión: se avisa y se espera a la próxima (el despachador vuelve a lanzar esto al conectarse).
+if ! nm-online -q -t 30; then
+    set_status pending "$missing"
+    exit 0
+fi
+
+# Otra instalación o actualización en marcha (la tienda, por ejemplo): se reintentará.
+if [ -e "$LOCK" ]; then
+    set_status pending "$missing"
+    exit 0
+fi
+
+set_status running "$missing"
+# shellcheck disable=SC2086  # la lista se separa a propósito
+if pacman -Syu --noconfirm --needed $missing; then
+    set_status done ''
+else
+    set_status failed "$missing"
+    exit 1
+fi

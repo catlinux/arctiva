@@ -1,14 +1,15 @@
 # SPDX-License-Identifier: GPL-3.0-or-later
 # Maintainer: CatLinux
-# Ajustes del sistema de Arctiva: zram, identidad en os-release, mirrors (reflector) y barra en varios monitores.
+# Ajustes del sistema de Arctiva: zram, identidad en os-release, mirrors (reflector) y barra en varios monitores y aplicaciones
+# que se instalan al conectarse (las que no caben en la ISO).
 pkgname=arctiva-settings
-pkgver=0.6.0
+pkgver=0.7.0
 pkgrel=1
 pkgdesc='Ajustes del sistema de Arctiva (zram, os-release, reflector, GRUB)'
 arch=(any)
 url='https://github.com/catlinux/arctiva'
 license=(GPL-3.0-or-later)
-depends=(zram-generator reflector plymouth)
+depends=(zram-generator reflector plymouth networkmanager libnotify)
 backup=(etc/arctiva/reflector.conf etc/pacman.d/arctiva-mirrorlist)
 install=arctiva-settings.install
 
@@ -41,4 +42,17 @@ package() {
     install -Dm644 -t "$pkgdir/usr/lib/systemd/user" usr/lib/systemd/user/arctiva-panels.{service,timer}
     install -d -- "$pkgdir/usr/lib/systemd/user/timers.target.wants"
     ln -s ../arctiva-panels.timer "$pkgdir/usr/lib/systemd/user/timers.target.wants/arctiva-panels.timer"
+    # Aplicaciones que no caben en la ISO: se instalan durante la instalación si hay red y, si no, en la
+    # primera conexión (servicio + despachador de NetworkManager), con aviso al usuario.
+    install -Dm644 usr/share/arctiva/deferred-packages "$pkgdir/usr/share/arctiva/deferred-packages"
+    install -Dm755 usr/lib/arctiva/install-deferred "$pkgdir/usr/lib/arctiva/install-deferred"
+    install -Dm755 usr/lib/arctiva/notify-deferred "$pkgdir/usr/lib/arctiva/notify-deferred"
+    install -Dm644 usr/lib/systemd/system/arctiva-deferred.service         "$pkgdir/usr/lib/systemd/system/arctiva-deferred.service"
+    install -d -- "$pkgdir/usr/lib/systemd/system/multi-user.target.wants"
+    ln -s ../arctiva-deferred.service "$pkgdir/usr/lib/systemd/system/multi-user.target.wants/arctiva-deferred.service"
+    install -Dm755 etc/NetworkManager/dispatcher.d/90-arctiva-deferred         "$pkgdir/etc/NetworkManager/dispatcher.d/90-arctiva-deferred"
+    install -Dm644 -t "$pkgdir/usr/lib/systemd/user" usr/lib/systemd/user/arctiva-deferred-notify.{service,path}
+    install -d -- "$pkgdir/usr/lib/systemd/user/paths.target.wants" "$pkgdir/usr/lib/systemd/user/default.target.wants"
+    ln -s ../arctiva-deferred-notify.path "$pkgdir/usr/lib/systemd/user/paths.target.wants/arctiva-deferred-notify.path"
+    ln -s ../arctiva-deferred-notify.service "$pkgdir/usr/lib/systemd/user/default.target.wants/arctiva-deferred-notify.service"
 }

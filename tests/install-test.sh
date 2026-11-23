@@ -8,6 +8,7 @@
 # Uso: tests/install-test.sh <archivo.iso> [--encrypt] [directorio-de-capturas]
 # Necesita: qemu-system-x86_64 con KVM, OVMF, 7z, socat, python3 con venv y acceso a internet
 # (instala vncdotool y pillow en un entorno temporal). Las contraseñas son de prueba.
+# Variables opcionales: KEEP_DISK=<archivo> conserva el disco instalado; QEMU_NET=none prueba sin red.
 set -euo pipefail
 
 iso="${1:?Uso: tests/install-test.sh <archivo.iso> [--encrypt] [capturas]}"
@@ -33,6 +34,8 @@ tmp="$(mktemp -d)"
 qpid=""
 cleanup() {
     [[ -z "$qpid" ]] || kill "$qpid" 2>/dev/null || true
+    # KEEP_DISK=<archivo>: conserva el disco instalado para inspeccionarlo (qemu-nbd, mount).
+    [[ -z "${KEEP_DISK:-}" || ! -f "$tmp/disco.qcow2" ]] || cp -- "$tmp/disco.qcow2" "$KEEP_DISK"
     rm -rf -- "$tmp"
 }
 trap cleanup EXIT
@@ -51,7 +54,7 @@ start_qemu() {
         -drive "if=pflash,format=raw,readonly=on,file=$ovmf_code" \
         -drive "if=pflash,format=raw,file=$tmp/vars.fd" \
         "${qemu_disk[@]}" "$@" \
-        -device virtio-vga -device qemu-xhci -device usb-tablet -nic user,model=virtio-net-pci \
+        -device virtio-vga -device qemu-xhci -device usb-tablet -nic "${QEMU_NET:-user,model=virtio-net-pci}" \
         -vnc "127.0.0.1:$display" -display none &
     qpid=$!
 }
