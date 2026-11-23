@@ -784,6 +784,9 @@
         <source>Update the system first</source>
         <translation>Actualitzar el sistema primer</translation>
     </message>
+    <message><source>In the queue: it will start when the previous ones finish.</source><translation>A la cua: començarà quan acabin les anteriors.</translation></message>
+    <message><source>Working…</source><translation>Treballant…</translation></message>
+    <message><source>Remove from queue</source><translation>Treure de la cua</translation></message>
 </context>
 <context>
     <name>AurReviewPage</name>
@@ -929,5 +932,28 @@
     <message><source>%1% done</source><translation>%1 % completat</translation></message>
     <message><source>Time elapsed: %1</source><translation>Temps transcorregut: %1</translation></message>
     <message><source>This can take several minutes. Do not turn off or suspend the computer until it finishes.</source><translation>Pot trigar uns quants minuts. No apaguis ni suspenguis l&apos;equip fins que acabi.</translation></message>
+</context>
+<context>
+    <name>QueueBar</name>
+    <message><source>Removing %1 (%2 of %3)</source><translation>Treient %1 (%2 de %3)</translation></message>
+    <message><source>Installing %1 (%2 of %3)</source><translation>Instal·lant %1 (%2 de %3)</translation></message>
+    <message><source>Queue finished with %1 error(s)</source><translation>Cua acabada amb %1 error(s)</translation></message>
+    <message><source>Queue finished</source><translation>Cua acabada</translation></message>
+    <message><source>Details</source><translation>Detalls</translation></message>
+    <message><source>Dismiss</source><translation>Tancar</translation></message>
+</context>
+<context>
+    <name>QueueSheet</name>
+    <message><source>Installation queue</source><translation>Cua d'instal·lacions</translation></message>
+    <message><source>Removing…</source><translation>Treient…</translation></message>
+    <message><source>Installing…</source><translation>Instal·lant…</translation></message>
+    <message><source>Waiting</source><translation>En espera</translation></message>
+    <message><source>Removed</source><translation>Treta</translation></message>
+    <message><source>Installed</source><translation>Instal·lada</translation></message>
+    <message><source>Update the system first</source><translation>Actualitza primer el sistema</translation></message>
+    <message><source>Authorization cancelled</source><translation>Autorització cancel·lada</translation></message>
+    <message><source>Failed (code %1)</source><translation>Ha fallat (codi %1)</translation></message>
+    <message><source>Cancel</source><translation>Cancel·lar</translation></message>
+    <message><source>Clear finished</source><translation>Netejar acabades</translation></message>
 </context>
 </TS>

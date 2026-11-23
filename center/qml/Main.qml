@@ -42,7 +42,15 @@ Kirigami.ApplicationWindow {
 
     // Mientras el ayudante trabaja, la ventana no se cierra: cortar pacman a medias es peor
     // que un fallo.
-    onClosing: (close) => { if (helper.running) close.accepted = false }
+    onClosing: (close) => { if (helper.running || appsBackend.queueActive) close.accepted = false }
+
+    footer: QueueBar {
+        onDetailsRequested: queueSheet.open()
+    }
+
+    QueueSheet {
+        id: queueSheet
+    }
 
     Component {
         id: modulePage

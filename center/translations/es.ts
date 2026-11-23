@@ -784,6 +784,9 @@
         <source>Update the system first</source>
         <translation>Actualizar el sistema primero</translation>
     </message>
+    <message><source>In the queue: it will start when the previous ones finish.</source><translation>En la cola: empezará cuando terminen las anteriores.</translation></message>
+    <message><source>Working…</source><translation>Trabajando…</translation></message>
+    <message><source>Remove from queue</source><translation>Quitar de la cola</translation></message>
 </context>
 <context>
     <name>AurReviewPage</name>
@@ -929,5 +932,28 @@
     <message><source>%1% done</source><translation>%1 % completado</translation></message>
     <message><source>Time elapsed: %1</source><translation>Tiempo transcurrido: %1</translation></message>
     <message><source>This can take several minutes. Do not turn off or suspend the computer until it finishes.</source><translation>Puede tardar varios minutos. No apagues ni suspendas el equipo hasta que termine.</translation></message>
+</context>
+<context>
+    <name>QueueBar</name>
+    <message><source>Removing %1 (%2 of %3)</source><translation>Quitando %1 (%2 de %3)</translation></message>
+    <message><source>Installing %1 (%2 of %3)</source><translation>Instalando %1 (%2 de %3)</translation></message>
+    <message><source>Queue finished with %1 error(s)</source><translation>Cola terminada con %1 error(es)</translation></message>
+    <message><source>Queue finished</source><translation>Cola terminada</translation></message>
+    <message><source>Details</source><translation>Detalles</translation></message>
+    <message><source>Dismiss</source><translation>Cerrar</translation></message>
+</context>
+<context>
+    <name>QueueSheet</name>
+    <message><source>Installation queue</source><translation>Cola de instalaciones</translation></message>
+    <message><source>Removing…</source><translation>Quitando…</translation></message>
+    <message><source>Installing…</source><translation>Instalando…</translation></message>
+    <message><source>Waiting</source><translation>En espera</translation></message>
+    <message><source>Removed</source><translation>Quitada</translation></message>
+    <message><source>Installed</source><translation>Instalada</translation></message>
+    <message><source>Update the system first</source><translation>Actualiza primero el sistema</translation></message>
+    <message><source>Authorization cancelled</source><translation>Autorización cancelada</translation></message>
+    <message><source>Failed (code %1)</source><translation>Falló (código %1)</translation></message>
+    <message><source>Cancel</source><translation>Cancelar</translation></message>
+    <message><source>Clear finished</source><translation>Limpiar terminadas</translation></message>
 </context>
 </TS>

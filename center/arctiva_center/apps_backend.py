@@ -8,9 +8,9 @@ import subprocess
 import threading
 from pathlib import Path
 
-from PySide6.QtCore import Property, QLocale, QObject, QProcess, QProcessEnvironment, Signal, Slot
+from PySide6.QtCore import Property, QLocale, QObject, QProcess, QProcessEnvironment, QTimer, Signal, Slot
 
-from .core import alpm_query, appstream, store
+from .core import alpm_query, appstream, opqueue, store
 
 EX_UNAVAILABLE = 69
 EX_NO_UPDATES_CHECK = 75
@@ -19,6 +19,8 @@ EX_NO_UPDATES_CHECK = 75
 class AppsBackend(QObject):
     changed = Signal()
     log = Signal(str)
+    logFor = Signal(str, str)               # id de la aplicación, línea
+    queueChanged = Signal()                 # estado, progreso o contenido de la cola
     finished = Signal(int, str, str)        # código, id de la aplicación, «install» o «remove»
     updatesNeeded = Signal(str, str)        # id, fuente: hay actualizaciones pendientes antes de instalar
     _loadDone = Signal(object)
@@ -37,6 +39,7 @@ class AppsBackend(QObject):
         self._query = ""
         self._category = ""
         self._op = None                     # (id, acción) mientras hay una operación en marcha
+        self._queue = opqueue.OpQueue()     # instalar y quitar se acumulan y van de una en una
         self._proc = None
         self._pending = None                # (id, fuente) a la espera de actualizar el sistema
         self._loadDone.connect(self._on_loaded)
@@ -59,6 +62,45 @@ class AppsBackend(QObject):
     @Property(bool, notify=changed)
     def busy(self):
         return self._op is not None
+
+    @Property(list, notify=queueChanged)
+    def queue(self):
+        return self._queue.summaries()
+
+    @Property(bool, notify=queueChanged)
+    def queueActive(self):
+        return self._queue.has_work()
+
+    @Property("QVariantMap", notify=queueChanged)
+    def queueProgress(self):
+        """Resumen para la barra global: qué se está haciendo, cuántas van y el progreso de la actual."""
+        item = self._queue.running()
+        position, total = self._queue.counts()
+        if item is None:
+            return {"active": False, "position": position, "total": total}
+        return {"active": True, "position": position, "total": total, "name": item.name or item.app_id,
+                "action": item.action, "fraction": item.fraction, "step": item.step}
+
+    @Slot(str, result="QVariantMap")
+    def itemInfo(self, app_id):
+        """Estado y registro de la última operación de una aplicación, para reconstruir su ficha."""
+        item = self._queue.latest(app_id)
+        if item is None:
+            return {}
+        return {**item.summary(), "log": "\n".join(item.lines)}
+
+    @Slot(str, str)
+    def cancelQueued(self, app_id, kind):
+        if self._queue.discard(app_id, kind):
+            if self._pending and self._pending[0] == app_id:
+                self._pending = None
+            self.changed.emit()
+            self.queueChanged.emit()
+
+    @Slot()
+    def clearFinished(self):
+        self._queue.clear_finished()
+        self.queueChanged.emit()
 
     @Property(list, notify=changed)
     def results(self):
@@ -198,52 +240,78 @@ class AppsBackend(QObject):
         return store.app_detail(app, self._pacman, self._flatpak, alpm)
 
     # --- operaciones ---
-    def _begin(self, app_id, action):
-        if self._op is not None or self._helper.running:
-            return False
+    def _log(self, text):
+        item = self._queue.running()
+        if item is not None:
+            item.feed(text)
+            self.logFor.emit(item.app_id, text)
+            self.queueChanged.emit()
+        self.log.emit(text)
+
+    def _enqueue(self, app_id, kind, action):
+        app = self._catalog.get(app_id) if self._catalog else None
+        if app is None or app.source(kind) is None:
+            return
         if self._live:
             self.log.emit("arctiva-center: no disponible en la sesión live")
             self.finished.emit(EX_UNAVAILABLE, app_id, action)
-            return False
-        self._op = (app_id, action)
-        self.changed.emit()
-        return True
-
-    def _end(self, code):
-        op, self._op = self._op, None
-        self._proc = None
-        self.changed.emit()
-        if op:
-            self.finished.emit(code, op[0], op[1])
-        self.refreshInstalled()
-
-    @Slot(str, str)
-    def install(self, app_id, kind):
-        app = self._catalog.get(app_id) if self._catalog else None
-        source = app.source(kind) if app else None
-        if source is None or not self._begin(app_id, "install"):
             return
-        self._pending = None
-        if kind == "arch":
-            self._check_updates(app_id, kind, source.ref)
-        elif kind == "flathub":
+        if self._queue.add(app_id, kind, action, app.name) is None:
+            return
+        self.changed.emit()
+        self.queueChanged.emit()
+        self._pump()
+
+    def _pump(self):
+        """Arranca la siguiente operación de la cola si no hay ninguna en marcha."""
+        if self._op is not None or self._helper.running:
+            return
+        item = self._queue.next_queued()
+        if item is None:
+            return
+        app = self._catalog.get(item.app_id) if self._catalog else None
+        source = app.source(item.kind) if app else None
+        self._queue.start(item)
+        self._op = (item.app_id, item.action)
+        self.changed.emit()
+        self.queueChanged.emit()
+        if source is None:
+            self._end(64)
+        elif item.action == "remove":
+            if item.kind == "arch":
+                if not self._helper.run("app-remove", [source.ref]):
+                    self._end(64)
+            elif item.kind == "flathub":
+                self._run_flatpak(store.flatpak_uninstall_argv(source.ref))
+            else:
+                self._end(64)
+        elif item.kind == "arch":
+            self._check_updates(item.app_id, item.kind, source.ref)
+        elif item.kind == "flathub":
             self._run_flatpak(store.flatpak_install_argv(source.ref))
         else:
             self._end(64)
 
+    def _end(self, code):
+        op, self._op = self._op, None
+        self._proc = None
+        item = self._queue.running()
+        if item is not None:
+            self._queue.finish(item, code)
+        self.changed.emit()
+        self.queueChanged.emit()
+        if op:
+            self.finished.emit(code, op[0], op[1])
+        self.refreshInstalled()
+        QTimer.singleShot(0, self._pump)
+
+    @Slot(str, str)
+    def install(self, app_id, kind):
+        self._enqueue(app_id, kind, "install")
+
     @Slot(str, str)
     def remove(self, app_id, kind):
-        app = self._catalog.get(app_id) if self._catalog else None
-        source = app.source(kind) if app else None
-        if source is None or not self._begin(app_id, "remove"):
-            return
-        if kind == "arch":
-            if not self._helper.run("app-remove", [source.ref]):
-                self._end(64)
-        elif kind == "flathub":
-            self._run_flatpak(store.flatpak_uninstall_argv(source.ref))
-        else:
-            self._end(64)
+        self._enqueue(app_id, kind, "remove")
 
     @Slot()
     def continuePending(self):
@@ -251,12 +319,16 @@ class AppsBackend(QObject):
             app_id, kind = self._pending
             self._pending = None
             self.changed.emit()
+            self._queue.discard(app_id, kind)       # el bloqueado se sustituye por uno nuevo
             self.install(app_id, kind)
 
     @Slot()
     def discardPending(self):
+        if self._pending:
+            self._queue.discard(*self._pending)
         self._pending = None
         self.changed.emit()
+        self.queueChanged.emit()
 
     @Slot()
     def openPermissions(self):
@@ -275,7 +347,7 @@ class AppsBackend(QObject):
 
     def _updates_failed(self, error):
         if error == QProcess.ProcessError.FailedToStart and self._op is not None:
-            self.log.emit("checkupdates no está disponible")
+            self._log("checkupdates no está disponible")
             self._end(EX_NO_UPDATES_CHECK)
 
     def _updates_checked(self, code, app_id, kind, ref):
@@ -284,13 +356,18 @@ class AppsBackend(QObject):
         self._proc = None   # a partir de aquí, lo que termine es el ayudante
         pending = store.checkupdates_pending(code)
         if pending is None:
-            self.log.emit("No se ha podido comprobar si hay actualizaciones (¿sin conexión?)")
+            self._log("No se ha podido comprobar si hay actualizaciones (¿sin conexión?)")
             self._end(EX_NO_UPDATES_CHECK)
         elif pending:
+            item = self._queue.running()
+            if item is not None:
+                self._queue.block(item)
             self._pending = (app_id, kind)
             self._op = None
             self.changed.emit()
+            self.queueChanged.emit()
             self.updatesNeeded.emit(app_id, kind)
+            QTimer.singleShot(0, self._pump)
         elif not self._helper.run("app-install", [ref]):
             self._end(64)
 
@@ -298,16 +375,16 @@ class AppsBackend(QObject):
         proc = QProcess(self)
         proc.setProcessChannelMode(QProcess.ProcessChannelMode.MergedChannels)
         proc.readyReadStandardOutput.connect(
-            lambda: [self.log.emit(l) for l in bytes(proc.readAllStandardOutput()).decode("utf-8", "replace").splitlines() if l])
+            lambda: [self._log(l) for l in bytes(proc.readAllStandardOutput()).decode("utf-8", "replace").splitlines() if l])
         proc.finished.connect(lambda code, status: self._flatpak_done(code if status == QProcess.ExitStatus.NormalExit else -1))
         proc.errorOccurred.connect(lambda e: self._flatpak_failed(e))
         self._proc = proc
-        self.log.emit("$ " + " ".join(argv))
+        self._log("$ " + " ".join(argv))
         proc.start(argv[0], argv[1:])
 
     def _flatpak_failed(self, error):
         if error == QProcess.ProcessError.FailedToStart and self._op is not None:
-            self.log.emit("flatpak no se pudo iniciar")
+            self._log("flatpak no se pudo iniciar")
             self._end(EX_UNAVAILABLE)
 
     def _flatpak_done(self, code):
@@ -318,8 +395,10 @@ class AppsBackend(QObject):
     # --- ayudante (pacman) ---
     def _helper_line(self, text):
         if self._op is not None:
-            self.log.emit(text)
+            self._log(text)
 
     def _helper_finished(self, code):
         if self._op is not None and self._proc is None:
             self._end(code)
+        else:
+            QTimer.singleShot(0, self._pump)    # terminó otra tarea del ayudante: sigue la cola

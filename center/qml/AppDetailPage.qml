@@ -10,45 +10,67 @@ Kirigami.ScrollablePage {
 
     property string appId
     property var app: ({})
-    property string workingKind: ""
-    property string workingAction: ""
-    property int lastCode: -2
-    property bool needsUpdate: false
+    property var item: ({})             // última operación de esta aplicación en la cola del backend
+    readonly property bool working: item.state === "queued" || item.state === "running"
+    readonly property bool running: item.state === "running"
+    readonly property string workingKind: working ? item.kind : ""
+    readonly property string workingAction: item.action || ""
+    readonly property int lastCode: (item.state === "done" || item.state === "failed") ? item.code : -2
+    readonly property bool needsUpdate: item.state === "blocked"
     readonly property var backend: appsBackend
 
     title: app.name || ""
 
     function reload() { app = backend.detail(appId) }
 
-    Component.onCompleted: reload()
+    // La cola vive en el backend: al volver a esta ficha se reconstruyen el estado, el progreso y el
+    // registro de lo que se haya pedido, aunque se haya salido mientras tanto.
+    function sync() {
+        const wasRunning = running
+        item = backend.itemInfo(appId)
+        if (running) {
+            if (!wasRunning)
+                progress.reset()
+            progress.fraction = item.fraction
+            progress.current = item.step
+            progress.steps = item.steps
+        }
+    }
+
+    function restoreLog() {
+        log.clear()
+        for (const line of (item.log || "").split("\n"))
+            if (line !== "")
+                log.append(line)
+    }
+
+    Component.onCompleted: {
+        reload()
+        sync()
+        restoreLog()
+    }
 
     Connections {
         target: backend
         function onChanged() { if (!backend.busy) page.reload() }
-        function onLog(text) { if (page.workingKind !== "") { log.append(text); progress.feed(text) } }
-        // Hay actualizaciones pendientes: no se instala hasta actualizar el sistema (D-07).
-        function onUpdatesNeeded(id) {
-            if (id === page.appId) {
-                page.workingKind = ""
-                page.needsUpdate = true
-            }
-        }
+        function onQueueChanged() { page.sync() }
+        function onLogFor(id, text) { if (id === page.appId) log.append(text) }
         function onFinished(code, id, action) {
-            if (id !== page.appId)
-                return
-            page.workingKind = ""
-            page.lastCode = code
-            page.reload()
+            if (id === page.appId) {
+                page.sync()
+                page.reload()
+            }
         }
     }
 
     function run(row) {
+        const queued = item.state === "queued" && item.kind === row.kind
+        if (queued) {
+            backend.cancelQueued(appId, row.kind)
+            return
+        }
         log.clear()
         progress.reset()
-        lastCode = -2
-        needsUpdate = false
-        workingKind = row.kind
-        workingAction = row.installed ? "remove" : "install"
         if (row.installed)
             backend.remove(appId, row.kind)
         else
@@ -112,7 +134,6 @@ Kirigami.ScrollablePage {
                     text: qsTr("Update the system first")
                     icon.name: "system-software-update"
                     onTriggered: {
-                        page.needsUpdate = false
                         applicationWindow().pageStack.layers.pop()
                         applicationWindow().show(2)
                     }
@@ -127,7 +148,9 @@ Kirigami.ScrollablePage {
                 : page.lastCode === 0 ? Kirigami.MessageType.Positive
                 : Kirigami.MessageType.Error
             text: page.workingKind !== ""
-                ? (page.workingAction === "remove" ? qsTr("Removing…") : qsTr("Installing…"))
+                ? (page.running
+                    ? (page.workingAction === "remove" ? qsTr("Removing…") : qsTr("Installing…"))
+                    : qsTr("In the queue: it will start when the previous ones finish."))
                 : page.lastCode === 0
                     ? (page.workingAction === "remove" ? qsTr("The application has been removed.") : qsTr("The application has been installed."))
                 : (page.lastCode === 126 || page.lastCode === 127) ? qsTr("Authorization cancelled")
@@ -138,7 +161,7 @@ Kirigami.ScrollablePage {
         InstallProgress {
             id: progress
             Layout.fillWidth: true
-            active: page.workingKind !== ""
+            active: page.running
         }
 
         Kirigami.Heading {
@@ -180,7 +203,7 @@ Kirigami.ScrollablePage {
                         }
                     }
                     QQC2.BusyIndicator {
-                        visible: page.workingKind === rowCard.modelData.kind
+                        visible: page.running && page.workingKind === rowCard.modelData.kind
                         running: visible
                     }
                     QQC2.Button {
@@ -190,10 +213,15 @@ Kirigami.ScrollablePage {
                         onClicked: backend.openPermissions()
                     }
                     QQC2.Button {
-                        text: rowCard.modelData.installed ? qsTr("Remove") : qsTr("Install")
-                        icon.name: rowCard.modelData.installed ? "edit-delete" : "run-build-install"
-                        highlighted: !rowCard.modelData.installed && rowCard.modelData.recommended
-                        enabled: !isLive && !backend.busy
+                        id: actionButton
+                        readonly property string rowState: page.working && page.item.kind === rowCard.modelData.kind ? page.item.state : ""
+                        text: rowState === "running" ? qsTr("Working…")
+                            : rowState === "queued" ? qsTr("Remove from queue")
+                            : rowCard.modelData.installed ? qsTr("Remove") : qsTr("Install")
+                        icon.name: rowState === "queued" ? "dialog-cancel"
+                            : rowCard.modelData.installed ? "edit-delete" : "run-build-install"
+                        highlighted: rowState === "" && !rowCard.modelData.installed && rowCard.modelData.recommended
+                        enabled: !isLive && rowState !== "running"
                         onClicked: page.run(rowCard.modelData)
                     }
                 }
