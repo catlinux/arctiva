@@ -3,10 +3,10 @@ Description=Remote access to the Arctiva live session (only with arctiva.ssh on 
 ConditionKernelCommandLine=archisobasedir
 ConditionKernelCommandLine=arctiva.ssh
 Requires=arctiva-live-setup.service
-After=arctiva-live-setup.service network-online.target
-Wants=network-online.target
+After=arctiva-live-setup.service
+# Sin Wants/After=network-online.target: esperar a la red retrasaba el arranque de todas las ISOs.
 
 [Service]
-Type=oneshot
-RemainAfterExit=yes
+# simple: el arranque no espera a este servicio; el script espera por su cuenta a tener dirección.
+Type=simple
 ExecStart=/usr/local/bin/arctiva-live-ssh

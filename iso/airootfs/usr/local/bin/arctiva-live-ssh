@@ -20,14 +20,24 @@ EOF
 
 systemctl start sshd.service
 
-addresses=$(ip -brief -4 address show scope global | awk '{print $1": "$3}' || true)
 note="/home/${live_user}/Desktop/ACCESO-SSH.txt"
-install -D -m 0600 -o "$live_user" -g "$live_user" /dev/stdin "$note" <<EOF
+write_note() {
+    local addresses
+    addresses=$(ip -brief -4 address show scope global | awk '{print $1": "$3}' || true)
+    install -D -m 0600 -o "$live_user" -g "$live_user" /dev/stdin "$note" <<EOF
 Acceso remoto a esta sesión live (solo hasta que se apague):
 
   ssh ${live_user}@<dirección>
   contraseña: ${password}
 
 Direcciones del equipo:
-${addresses:-  (aún sin red; vuelve a abrir este archivo cuando haya conexión)}
+${addresses:-  (aún sin red: este archivo se actualiza solo cuando haya conexión)}
 EOF
+    [[ -n "$addresses" ]]
+}
+
+# La nota sale enseguida; si aún no hay red, se espera hasta 3 minutos a la primera dirección y se rehace.
+write_note || for _ in $(seq 90); do
+    sleep 2
+    write_note && break
+done
