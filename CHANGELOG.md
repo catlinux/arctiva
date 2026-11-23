@@ -8,8 +8,12 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 
 ## [Unreleased]
 
+## [0.8.1] - 2026-11-23
+
 ### Added
 
+- The live ISO and the installed system now include `power-profiles-daemon` (enabled by default), so KDE offers power profiles (power saver, balanced, performance) in the tray and in System Settings.
+- Arctiva Center 0.8.0: installation queue in Applications. You can ask for several installs or removals one after another and they are run one at a time, without having to wait for the first to finish. A bar at the bottom of the window, visible from any module, shows what is being installed ("Installing X (2 of 5)") with its progress; "Details" opens the list with the state of each item (waiting, in progress, done, failed, or waiting for a system update) and the log of the selected one, and items that have not started can be cancelled. On an application's page, going back and returning no longer loses the progress: its state, progress bar and log are rebuilt from the queue. The window cannot be closed while the queue has work pending. Pure queue logic in `core/opqueue.py`, with tests (also of the backend with a fake helper).
 - Arctiva Games 0.1.0: new optional package (`arctiva-games`, with its own window and menu entry) that installs Windows game launchers (Battle.net, EA app, Ubisoft Connect, GOG Galaxy, Epic Games) from our own recipes, or any installer found on lutris.net, step by step: summary of what will be downloaded and run before starting, live log saved to disk, retry / skip / stop at any step, a "Continue" button for launchers where you must sign in (they are not closed), a list of the Wine processes of the game, and a library with Play and Uninstall. It uses the system `wine` and `winetricks` (dependencies). Not yet tested on real hardware.
 - `arctiva-settings` 0.6.0: the bottom taskbar is also created on additional monitors (Plasma does not repeat panels). A user timer (`arctiva-panels.timer`, 30 s after login and then every minute) runs `/usr/lib/arctiva/ensure-panels`, which copies the main taskbar (start menu, task manager showing only that screen's windows, clock, show desktop; no system tray) to every screen that has none. Plasma keeps the panel and shows it again when the monitor is reconnected. Not yet tested on real hardware.
 - Arctiva Games 0.3.2: "Play" now starts the game as an independent process (the same one the shortcuts use), so closing the Arctiva Games window no longer closes a launcher such as Battle.net; the Play screen follows the game's log and has a "Show launcher" button.
@@ -20,11 +24,14 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 
 ### Changed
 
+- Lighter ISO: Kate, Ark, Okular, Gwenview, Spectacle, KWalletManager and the document/video thumbnailers (about 490 MiB uncompressed, including `qt6-webengine`) are no longer on the ISO. They are installed from the repositories during installation when there is a connection and, otherwise, the first time the computer connects (`arctiva-settings` 0.7.0: `arctiva-deferred.service`, a NetworkManager dispatcher script and desktop notifications for pending / installing / done / failed). The installer's welcome and summary pages warn about it when offline. The list lives in `/usr/share/arctiva/deferred-packages` and a test keeps it in line with `packages.conf` and the ISO package list.
 - The live ISO now includes `pv`, so the copy to RAM at boot shows a progress bar instead of staying silent.
 - Num Lock is now on by default when the session starts, in the live session and the installed system (`arctiva-settings` 0.5.2, `/etc/xdg/kcminputrc`). The login screen also requests it (`Numlock=on` in Plasma Login), still untested.
 
 ### Fixed
 
+- The retries of the ISO build in the `ISO` and release workflows now remove `/var/tmp/arctiva-work` before each attempt: `build.sh` refuses to reuse it, so the second and third attempts always failed straight away.
+- The build container now sets `DisableDownloadTimeout` in its own `pacman.conf` (the `pacman` calls made by `makepkg` when building Calamares and our packages gave up with "Operation too slow" on `archive.archlinux.org`).
 - AUR review: the package review now also shows the install script a PKGBUILD declares with `install=` under any name (pacman runs it as root), not only `*.install` files, and refuses to continue if the PKGBUILD or an install script is a symbolic link (it could not be shown). Arctiva Center 0.7.12.
 - Arctiva Center: opening an AUR package on a system without `git` no longer fails with "No such file or directory: git": `git` is now a dependency of the package.
 

@@ -11,7 +11,7 @@ Arctiva is a Linux distribution based on Arch Linux, with a Windows-style KDE Pl
 - A computer with **UEFI** (almost every one from the last 10 years; Arctiva does not boot in legacy BIOS mode).
 - At least **4 GiB of RAM** and **25 GiB of free disk**.
 - A USB stick of 4 GB or more (it is erased completely).
-- An internet connection during installation (for what does not fit on the ISO, such as the LTS kernel or the Gaming and Office profiles). Without it, what the ISO carries is still installed.
+- An internet connection during installation (for what does not fit on the ISO, such as the LTS kernel or the Gaming and Office profiles). Without it, what the ISO carries is still installed. Some basic applications (Kate, Ark, Okular, Gwenview, Spectacle and KWalletManager) are not on the ISO to keep it small: they are downloaded during installation and, if there is no connection, they install themselves **the first time you connect to the Internet**, together with the system updates. A notification tells you what is pending, when it starts and when it finishes.
 
 ## 2. Prepare the USB
 
@@ -42,7 +42,7 @@ The first time you log in you can open **Arctiva Center** (it is in the start me
 
 - **Personalization:** light or dark mode, colour, wallpaper, taskbar (centred or left, floating) and text size. "Restore the Arctiva look" puts it back as freshly installed.
 - **Updates:** updates the system with one click, showing first the Arch news that need your attention. A snapshot is saved before every update.
-- **Applications:** the store. Search programs from the Arch repositories and Flathub; the source is always visible. If updates are pending, it asks you to update first.
+- **Applications:** the store. Search programs from the Arch repositories and Flathub; the source is always visible. If updates are pending, it asks you to update first. You can queue several installs or removals, which run one at a time.
 - **Drivers:** detects your graphics card and installs what is needed (NVIDIA included).
 - **Extras:** Gaming (Steam, Lutris…), Office (LibreOffice, Thunderbird), LTS kernel, Windows programs (Bottles), Heroic and ProtonPlus.
 
@@ -67,6 +67,8 @@ Install the **Windows programs** extra (Bottles). The first time it downloads a 
 ## 9. The store and the AUR
 
 In **Applications** you can install and remove programs from Arch and Flathub. The **AUR** (unreviewed community recipes) is **off**; if you turn it on, you must read the PKGBUILD before every installation. AUR updates are manual and show what changed.
+
+You can queue several installs or removals in succession from each app's page; they run one at a time. The Center's bottom bar shows the current item and its progress, and **Details** opens the item list and its logs. You can cancel items that have not started, clear finished items, and close the bar when no work remains. Progress is kept when you leave an app page, and you cannot close the Center window while work is pending.
 
 ## 10. FAQ
 

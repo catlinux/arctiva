@@ -13,10 +13,14 @@ Pending work grouped by priority. Phases and decisions: [roadmap](docs/en/roadma
 - [ ] Offline map on the "Language and region" page: Calamares' map downloads tiles from the Internet, so the page currently uses lists only.
 - [ ] The profiles list needs Ctrl+click to pick several (Calamares uses extended selection; the hint is in the "Basic" text). A custom QML page would allow plain clicks.
 - [ ] Re-test "Install alongside" with the new 25 GiB requirement (0.3.13) on a 60 GB disk with Windows.
-- [ ] Lighter ISO: the base is already lean (installed 4.3 GiB, ISO 1.76 GiB of the 1.9 limit). Biggest items: `firefox` 307 MiB, `qt6-webengine` 284 MiB (needed by `purpose`→`kaccounts`, used by Spectacle and Gwenview), `llvm-libs` 165 MiB (Mesa), `linux-firmware-*` ~430 MiB (Intel 142, NVIDIA 104, Atheros 53, MediaTek 37, AMDGPU 28), `noto-fonts` 107 MiB. The only real lever is installing only the firmware that the detected hardware needs (phase 3).
+- [ ] Lighter ISO, next step: the optional KDE applications are already deferred (see `deferred-packages`). What is left is mostly firmware (`linux-firmware-*` ~430 MiB: Intel 142, NVIDIA 104, Atheros 53, MediaTek 37, AMDGPU 28; GPU and Wi-Fi firmware cannot be deferred because the first boot and the first connection need them) and `firefox` (307 MiB, kept: captive portals need a browser). Measured on 2026-11-23: ISO 1.92 GB, 830 packages, 4.68 GiB uncompressed.
 
 ## Medium — installer
 
+- [ ] Installer: if `grub-install` fails, a half-created `EFI/arctiva` folder can be left on the FAT ESP and the kernel mounts it read-only, so a retry fails too (seen on a 100 MB Windows ESP: `fsck.vfat -y` on the unmounted partition fixed it). Clean up `EFI/arctiva` and run `fsck.vfat -a` on the ESP before the bootloader step, and explain it in the error message.
+- [ ] Live ISO: include `openssh` (disabled by default) and stop `pam_faillock` from locking the `live` user after three failed attempts, so tests and support can be done remotely without typing commands on the machine.
+- [ ] Applications: select several apps in a list and add them to the install queue at once (the queue itself exists since Center 0.8.0; each one is added from its page).
+- [ ] Ventoy in normal mode fails on the desktop PC (works on the laptop): check Secure Boot and boot mode of that board.
 - [ ] Ventoy in normal mode drops to an emergency shell (only "grub2 mode" boots): probably Ventoy recognises archiso by `/arch/` and Arctiva uses `install_dir="arctiva"`. Check in QEMU with a Ventoy disk; if confirmed, weigh switching `install_dir` to `arch` (it touches `unpackfs`, the installer and the scripts).
 - [ ] Slow live boot from a USB stick: 1 min 53 s on a laptop through Ventoy (loader 32 s, kernel 49 s because archiso copies the 1.7 GiB system to RAM, userspace 25 s). Weigh `copytoram=n` (faster start, slower programs) or a progress message.
 - [ ] On the installer's "Profiles" page, the profile image touches the right edge of the window.

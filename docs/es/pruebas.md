@@ -65,6 +65,13 @@ Pruebas en hardware real, tal como las ha comunicado quien las hizo. Cada línea
   - Instalación **junto a Windows 11**: sin problemas, según el usuario.
   - Gráfica NVIDIA: juegos que se cargan y se mueven con la GPU dedicada (Battle.net y World of Warcraft, instalados con Lutris).
   - En la live se veían en la bandeja el audio, Bluetooth, wifi y batería (42 % cargando).
+- **2026-11-23, ISO 0.8.0, portátil MSI (NVIDIA, Windows 11), Arctiva en una partición del mismo disco NVMe que Windows y la EFI de 100 MB de Windows:**
+  - El instalador falló en el último paso: `grub-install` no pudo crear `/boot/efi/EFI/arctiva` (la EFI tenía 64 MB libres, no estaba llena). `fsck.vfat` mostró una entrada de directorio corrupta en esa carpeta y el bit de suciedad activado; el kernel puso la EFI en solo lectura. Se reparó sin reinstalar (copia de seguridad de la EFI, `fsck.vfat -y` con la partición desmontada, `grub-install`, `grub-mkconfig` y el paso final de las instantáneas desde la live) y después arrancaron Windows y Arctiva desde GRUB.
+  - Pendiente de saber por qué quedó esa carpeta corrupta (resto de una instalación anterior en esa EFI, inicio rápido de Windows o el propio intento): ver `TODO.md`.
+- **2026-11-23, ISO ligera (1.768.824.832 B, 150 MB menos), VM QEMU/KVM con UEFI:**
+  - Arranque en 35 s; instalación con red sin cifrar y con cifrado: correctas. Con red, el instalador deja instaladas las 8 aplicaciones diferidas y `arctiva-settings` 0.7.0 marca el estado `done`.
+  - Instalación **sin red**: correcta (disco de 3,2 GB frente a 4,2 GB); Kate, Okular, Gwenview, Spectacle y el resto no están y el estado es `pending`. Arrancando ese sistema con red, `arctiva-deferred.service` instaló las 8 aplicaciones y `qt6-webengine` en unos minutos y dejó `done`.
+  - Sin comprobar en pantalla: las notificaciones (solo probadas con `notify-send` simulado) y los avisos nuevos de las páginas de bienvenida y resumen del instalador.
 
 ## Cómo anotar un fallo
 

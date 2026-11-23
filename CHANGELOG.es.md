@@ -8,8 +8,12 @@ El formato se basa en [Keep a Changelog](https://keepachangelog.com/es-ES/1.1.0/
 
 ## [Sin publicar]
 
+## [0.8.1] - 2026-11-23
+
 ### Añadido
 
+- La ISO live y el sistema instalado incluyen `power-profiles-daemon` (activado de serie), así que KDE ofrece los perfiles de energía (ahorro, equilibrado, rendimiento) en la bandeja y en Ajustes.
+- Arctiva Center 0.8.0: cola de instalaciones en Aplicaciones. Puedes pedir varias instalaciones o desinstalaciones seguidas y se ejecutan de una en una, sin esperar a que termine la primera. Una barra inferior, visible desde cualquier módulo, muestra qué se está instalando («Instalando X (2 de 5)») con su progreso; «Detalles» abre la lista con el estado de cada elemento (en espera, en curso, hecho, fallido o a la espera de actualizar el sistema) y el registro del elegido, y los que aún no han empezado se pueden cancelar. En la ficha de una aplicación, salir y volver ya no pierde el progreso: el estado, la barra y el registro se reconstruyen desde la cola. La ventana no se puede cerrar mientras la cola tenga trabajo pendiente. La lógica de la cola está en `core/opqueue.py`, con tests (y del backend con un ayudante de mentira).
 - Arctiva Games 0.1.0: nuevo paquete opcional (`arctiva-games`, con su propia ventana y entrada de menú) que instala lanzadores de juegos de Windows (Battle.net, EA app, Ubisoft Connect, GOG Galaxy, Epic Games) con recetas propias, o cualquier instalador de lutris.net, paso a paso: resumen de lo que se descargará y ejecutará antes de empezar, registro en directo guardado en disco, reintentar / saltar / parar en cualquier paso, botón «Continuar» en los lanzadores donde hay que iniciar sesión (no se cierran), lista de los procesos de Wine del juego y biblioteca con Jugar y Desinstalar. Usa el `wine` y el `winetricks` del sistema (dependencias). Aún sin probar en hardware real.
 - `arctiva-settings` 0.6.0: la barra inferior se crea también en los monitores adicionales (Plasma no repite los paneles). Un temporizador de usuario (`arctiva-panels.timer`, 30 s tras iniciar sesión y luego cada minuto) ejecuta `/usr/lib/arctiva/ensure-panels`, que copia la barra principal (menú de inicio, gestor de tareas que solo muestra las ventanas de esa pantalla, reloj y mostrar escritorio; sin bandeja del sistema) en cada pantalla que no tenga ninguna. Plasma guarda el panel y lo vuelve a mostrar al reconectar el monitor. Aún sin probar en hardware real.
 - Arctiva Games 0.3.2: «Jugar» lanza ahora el juego como proceso independiente (el mismo que usan los accesos directos), así que cerrar la ventana de Arctiva Games ya no cierra un lanzador como Battle.net; la pantalla de Jugar sigue el registro del juego y tiene un botón «Mostrar el lanzador».
@@ -20,11 +24,14 @@ El formato se basa en [Keep a Changelog](https://keepachangelog.com/es-ES/1.1.0/
 
 ### Cambiado
 
+- ISO más ligera: Kate, Ark, Okular, Gwenview, Spectacle, KWalletManager y las miniaturas de documentos y vídeo (unos 490 MiB sin comprimir, con `qt6-webengine`) ya no van en la ISO. Se instalan desde los repositorios durante la instalación si hay conexión y, si no, la primera vez que el equipo se conecta (`arctiva-settings` 0.7.0: `arctiva-deferred.service`, un despachador de NetworkManager y notificaciones de escritorio de pendiente / instalando / hecho / fallido). Las páginas de bienvenida y resumen del instalador lo avisan cuando no hay red. La lista está en `/usr/share/arctiva/deferred-packages` y una prueba la mantiene alineada con `packages.conf` y con la lista de paquetes de la ISO.
 - La ISO live incluye `pv`: la copia a la RAM del arranque muestra una barra de progreso en lugar de quedarse en silencio.
 - El Bloq Num queda activado por defecto al iniciar la sesión, en la live y en el sistema instalado (`arctiva-settings` 0.5.2, `/etc/xdg/kcminputrc`). La pantalla de inicio de sesión también lo pide (`Numlock=on` en Plasma Login), aún sin probar.
 
 ### Corregido
 
+- Los reintentos de la construcción de la ISO en los flujos «ISO» y de publicación borran `/var/tmp/arctiva-work` antes de cada intento: `build.sh` se niega a reutilizarlo, así que el segundo y el tercer intento fallaban siempre al instante.
+- El contenedor de compilación activa `DisableDownloadTimeout` en su propio `pacman.conf` (las llamadas a `pacman` de `makepkg` al compilar Calamares y los paquetes propios se rendían con «Operation too slow» en `archive.archlinux.org`).
 - Revisión del AUR: ahora también se muestra el script de instalación que un PKGBUILD declara con `install=` con cualquier nombre (pacman lo ejecuta como root), no solo los `*.install`, y se rechaza el paquete si el PKGBUILD o un script de instalación es un enlace simbólico (no se podría mostrar). Arctiva Center 0.7.12.
 - Arctiva Center: abrir un paquete del AUR en un sistema sin `git` ya no falla con «No existe el fichero o el directorio: git»: `git` pasa a ser dependencia del paquete.
 

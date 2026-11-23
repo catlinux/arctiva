@@ -65,6 +65,13 @@ Real-hardware tests, as reported by whoever ran them. Each line has a date and a
   - Installation **alongside Windows 11**: no problems, according to the user.
   - NVIDIA graphics: games load and run on the dedicated GPU (Battle.net and World of Warcraft, installed with Lutris).
   - In the live session the tray showed audio, Bluetooth, wifi and battery (42 %, charging).
+- **2026-11-23, ISO 0.8.0, MSI laptop (NVIDIA, Windows 11), Arctiva on a partition of the same NVMe disk as Windows and the 100 MB Windows ESP:**
+  - The installer failed on its last step: `grub-install` could not create `/boot/efi/EFI/arctiva` (the ESP had 64 MB free, it was not full). `fsck.vfat` showed a corrupt directory entry for that folder and the dirty bit set, and the kernel mounted the ESP read-only. It was repaired without reinstalling (ESP backup, `fsck.vfat -y` on the unmounted partition, `grub-install`, `grub-mkconfig` and the final snapshots step from the live session) and then both Windows and Arctiva booted from GRUB.
+  - Still unknown why that corrupt folder was there (left over from an earlier install on that ESP, Windows fast startup or the attempt itself): see `TODO.md`.
+- **2026-11-23, lighter ISO (1,768,824,832 B, 150 MB smaller), QEMU/KVM VM with UEFI:**
+  - Boot in 35 s; installation with network, unencrypted and encrypted: correct. With network the installer leaves the 8 deferred applications installed and `arctiva-settings` 0.7.0 sets the state to `done`.
+  - Installation **without network**: correct (3.2 GB disk versus 4.2 GB); Kate, Okular, Gwenview, Spectacle and the rest are absent and the state is `pending`. Booting that system with network, `arctiva-deferred.service` installed the 8 applications and `qt6-webengine` in a few minutes and left `done`.
+  - Not checked on screen: the notifications (only tried with a simulated `notify-send`) and the new notices on the installer's welcome and summary pages.
 
 ## How to report a failure
 

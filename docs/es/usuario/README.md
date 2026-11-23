@@ -11,7 +11,7 @@ Arctiva es una distribución Linux basada en Arch Linux, con el escritorio KDE P
 - Un equipo con **UEFI** (casi todos los de los últimos 10 años; Arctiva no arranca en modo BIOS antiguo).
 - **4 GiB de RAM** como mínimo y **25 GiB libres** de disco.
 - Un USB de 4 GB o más (se borra por completo).
-- Conexión a internet durante la instalación (para lo que no cabe en la ISO, como el kernel LTS o los perfiles Juegos y Oficina). Sin conexión se instala igual lo que trae la ISO.
+- Conexión a internet durante la instalación (para lo que no cabe en la ISO, como el kernel LTS o los perfiles Juegos y Oficina). Sin conexión se instala igual lo que trae la ISO. Algunas aplicaciones básicas (Kate, Ark, Okular, Gwenview, Spectacle y KWalletManager) no vienen en la ISO para que pese menos: se descargan al instalar y, si no hay conexión, se instalan solas **la primera vez que te conectes a Internet**, junto con las actualizaciones del sistema. Una notificación te avisa de lo pendiente, de cuándo empieza y de cuándo termina.
 
 ## 2. Preparar el USB
 
@@ -42,7 +42,7 @@ Al entrar por primera vez puedes abrir **Arctiva Center** (está en el menú de 
 
 - **Personalización:** modo claro u oscuro, color, fondo, barra de tareas (centrada o a la izquierda, flotante) y tamaño del texto. «Restaurar el aspecto de Arctiva» lo deja como recién instalado.
 - **Actualizaciones:** actualiza el sistema con un clic, mostrando antes las noticias de Arch que necesitan tu atención. Antes de cada actualización se guarda una instantánea.
-- **Aplicaciones:** la tienda. Busca programas de los repositorios de Arch y de Flathub; el origen siempre se ve. Si hay actualizaciones pendientes, te pide actualizar antes.
+- **Aplicaciones:** la tienda. Busca programas de los repositorios de Arch y de Flathub; el origen siempre se ve. Si hay actualizaciones pendientes, te pide actualizar antes. Puedes poner varias instalaciones o desinstalaciones en cola y se ejecutan una a una.
 - **Controladores:** detecta tu gráfica e instala lo necesario (NVIDIA incluida).
 - **Extras:** Juegos (Steam, Lutris…), Oficina (LibreOffice, Thunderbird), kernel LTS, Programas de Windows (Bottles), Heroic y ProtonPlus.
 
@@ -67,6 +67,8 @@ Instala el extra **Programas de Windows** (Bottles). La primera vez descarga muc
 ## 9. La tienda y el AUR
 
 En **Aplicaciones** puedes instalar y quitar programas de Arch y de Flathub. El **AUR** (recetas de la comunidad sin revisar) está **desactivado**; si lo activas, antes de cada instalación debes leer el PKGBUILD. Las actualizaciones del AUR son manuales y muestran qué ha cambiado.
+
+Puedes pedir varias instalaciones o desinstalaciones seguidas desde la ficha de cada aplicación; se ejecutan una a una. La barra inferior del Center muestra el elemento en curso y su progreso, y **Detalles** abre la lista de elementos y sus registros. Puedes cancelar los que aún no han empezado, limpiar los terminados y cerrar la barra cuando no quede trabajo. El progreso se conserva al salir de una ficha, y no puedes cerrar la ventana del Center mientras haya trabajo pendiente.
 
 ## 10. Preguntas frecuentes
 
