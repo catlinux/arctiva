@@ -86,3 +86,11 @@ def test_checkupdates_code():
     assert store.checkupdates_pending(2) is False
     assert store.checkupdates_pending(1) is None
     assert store.checkupdates_pending(-1) is None
+
+
+def test_preferred_kind_for_bulk_installs():
+    assert store.preferred_kind(make_app()) == "arch"
+    assert store.preferred_kind(make_app(recommended="flathub")) == "flathub"
+    assert store.preferred_kind(make_app(("flathub",), "arch")) == "flathub"     # la recomendada no existe
+    assert store.preferred_kind(make_app(())) == ""
+    assert store.app_summary(make_app(("flathub",), "flathub"), set(), set())["kind"] == "flathub"

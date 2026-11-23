@@ -293,6 +293,26 @@
 <context>
     <name>ExtrasPage</name>
     <message>
+        <source>From the AUR</source>
+        <translation>Del AUR</translation>
+    </message>
+    <message>
+        <source>Anthropic's desktop app (proprietary software). Arctiva does not host it: it is downloaded from Anthropic and packaged on your computer from the community's AUR recipe, which you review first.</source>
+        <translation>La aplicación de escritorio de Anthropic (software propietario). Arctiva no la aloja: se descarga de Anthropic y se empaqueta en tu equipo con la receta del AUR de la comunidad, que revisas antes.</translation>
+    </message>
+    <message>
+        <source>Installed. Its updates come with the system ones, after you review them.</source>
+        <translation>Instalada. Sus actualizaciones llegan con las del sistema, después de que las revises.</translation>
+    </message>
+    <message>
+        <source>Turn on the AUR in Applications first to install it.</source>
+        <translation>Activa antes el AUR en Aplicaciones para instalarla.</translation>
+    </message>
+    <message>
+        <source>Review and install</source>
+        <translation>Revisar e instalar</translation>
+    </message>
+    <message>
         <source>Install %1?</source>
         <translation>¿Instalar %1?</translation>
     </message>
@@ -585,6 +605,26 @@
 </context>
 <context>
     <name>AppsPage</name>
+    <message>
+        <source>1 application selected</source>
+        <translation>1 aplicación seleccionada</translation>
+    </message>
+    <message>
+        <source>%1 applications selected</source>
+        <translation>%1 aplicaciones seleccionadas</translation>
+    </message>
+    <message>
+        <source>Clear selection</source>
+        <translation>Borrar la selección</translation>
+    </message>
+    <message>
+        <source>Add to the queue</source>
+        <translation>Añadir a la cola</translation>
+    </message>
+    <message>
+        <source>Select to install several applications at once</source>
+        <translation>Márcala para instalar varias aplicaciones a la vez</translation>
+    </message>
     <message>
         <source>Audio and video</source>
         <translation>Audio y vídeo</translation>

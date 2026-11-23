@@ -82,11 +82,20 @@ def source_rows(app, pacman_installed, flatpak_installed, alpm_info=None):
     return rows
 
 
+def preferred_kind(app):
+    """Fuente que se usa al instalar varias aplicaciones de golpe: la recomendada y, si no hay, la primera."""
+    kinds = [s.kind for s in app.sources if s.kind in ("arch", "flathub")]
+    if app.recommended in kinds:
+        return app.recommended
+    return kinds[0] if kinds else ""
+
+
 def app_summary(app, pacman_installed, flatpak_installed):
     """Datos de una tarjeta de la cuadrícula."""
     rows = source_rows(app, pacman_installed, flatpak_installed)
     return {"id": app.id, "name": app.name, "summary": app.summary, "icon": icon_source(app.icon),
-            "sources": [r["label"] for r in rows], "installed": any(r["installed"] for r in rows)}
+            "sources": [r["label"] for r in rows], "installed": any(r["installed"] for r in rows),
+            "kind": preferred_kind(app)}
 
 
 def app_detail(app, pacman_installed, flatpak_installed, alpm_info=None):

@@ -293,6 +293,26 @@
 <context>
     <name>ExtrasPage</name>
     <message>
+        <source>From the AUR</source>
+        <translation>De l'AUR</translation>
+    </message>
+    <message>
+        <source>Anthropic's desktop app (proprietary software). Arctiva does not host it: it is downloaded from Anthropic and packaged on your computer from the community's AUR recipe, which you review first.</source>
+        <translation>L'aplicació d'escriptori d'Anthropic (programari propietari). Arctiva no l'allotja: es descarrega d'Anthropic i s'empaqueta al teu equip amb la recepta de l'AUR de la comunitat, que revises abans.</translation>
+    </message>
+    <message>
+        <source>Installed. Its updates come with the system ones, after you review them.</source>
+        <translation>Instal·lada. Les actualitzacions arriben amb les del sistema, després que les revisis.</translation>
+    </message>
+    <message>
+        <source>Turn on the AUR in Applications first to install it.</source>
+        <translation>Activa abans l'AUR a Aplicacions per instal·lar-la.</translation>
+    </message>
+    <message>
+        <source>Review and install</source>
+        <translation>Revisa i instal·la</translation>
+    </message>
+    <message>
         <source>Install %1?</source>
         <translation>Vols instal·lar %1?</translation>
     </message>
@@ -585,6 +605,26 @@
 </context>
 <context>
     <name>AppsPage</name>
+    <message>
+        <source>1 application selected</source>
+        <translation>1 aplicació seleccionada</translation>
+    </message>
+    <message>
+        <source>%1 applications selected</source>
+        <translation>%1 aplicacions seleccionades</translation>
+    </message>
+    <message>
+        <source>Clear selection</source>
+        <translation>Esborra la selecció</translation>
+    </message>
+    <message>
+        <source>Add to the queue</source>
+        <translation>Afegeix a la cua</translation>
+    </message>
+    <message>
+        <source>Select to install several applications at once</source>
+        <translation>Marca-la per instal·lar diverses aplicacions alhora</translation>
+    </message>
     <message>
         <source>Audio and video</source>
         <translation>Àudio i vídeo</translation>

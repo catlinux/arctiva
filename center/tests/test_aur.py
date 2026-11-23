@@ -302,3 +302,24 @@ def test_unreviewable_flags_symlinked_pkgbuild_and_install(tmp_path):
     except OSError:
         pytest.skip("sin enlaces simbólicos")
     assert aur.unreviewable(tmp_path) == ["PKGBUILD", "x.install"]
+
+
+def test_is_installed_reads_the_local_database(monkeypatch):
+    pytest.importorskip("PySide6")
+    from PySide6.QtCore import QObject, Signal
+    from arctiva_center import aur_backend
+
+    class FakeHelper(QObject):
+        line = Signal(str)
+        finished = Signal(int)
+        running = False
+
+    class Query:
+        def installed_names(self):
+            return {"claude-desktop", "git"}
+
+    backend = aur_backend.AurBackend(FakeHelper())
+    monkeypatch.setattr(aur_backend.alpm_query, "AlpmQuery", Query)
+    assert backend.isInstalled("claude-desktop") and not backend.isInstalled("otro")
+    monkeypatch.setattr(aur_backend.alpm_query, "AlpmQuery", lambda: (_ for _ in ()).throw(RuntimeError("sin base")))
+    assert backend.isInstalled("claude-desktop") is False

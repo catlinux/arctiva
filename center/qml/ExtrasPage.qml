@@ -38,7 +38,22 @@ Kirigami.ScrollablePage {
             helper.run(extra.installed ? "extra-remove" : "extra-install", [extra.id])
     }
 
-    Component.onCompleted: extrasBackend.refresh()
+    // Claude Desktop es software propietario: Arctiva no lo aloja; se monta en el equipo con la receta
+    // del AUR (descarga el paquete oficial de Anthropic) y pasa por la revisión del PKGBUILD.
+    readonly property string claudeName: "claude-desktop"
+    property bool claudeInstalled: false
+
+    function refreshClaude() { claudeInstalled = aurBackend.isInstalled(claudeName) }
+
+    Component.onCompleted: {
+        extrasBackend.refresh()
+        refreshClaude()
+    }
+
+    Connections {
+        target: aurBackend
+        function onFinished(code) { page.refreshClaude() }
+    }
 
     Kirigami.PromptDialog {
         id: confirm
@@ -150,6 +165,57 @@ Kirigami.ScrollablePage {
                         QQC2.ToolTip.visible: hovered
                         QQC2.ToolTip.text: card.modelData.installed ? qsTr("Remove") : qsTr("Install")
                     }
+                }
+            }
+        }
+
+        Kirigami.Heading {
+            level: 2
+            text: qsTr("From the AUR")
+        }
+
+        Kirigami.AbstractCard {
+            Layout.fillWidth: true
+            contentItem: RowLayout {
+                spacing: Kirigami.Units.largeSpacing
+                Kirigami.Icon {
+                    source: "internet-chat"
+                    Layout.preferredWidth: Kirigami.Units.iconSizes.medium
+                    Layout.preferredHeight: Kirigami.Units.iconSizes.medium
+                    Layout.alignment: Qt.AlignTop
+                }
+                ColumnLayout {
+                    Layout.fillWidth: true
+                    Kirigami.Heading {
+                        level: 3
+                        text: "Claude Desktop"
+                    }
+                    QQC2.Label {
+                        Layout.fillWidth: true
+                        wrapMode: Text.WordWrap
+                        text: qsTr("Anthropic's desktop app (proprietary software). Arctiva does not host it: it is downloaded from Anthropic and packaged on your computer from the community's AUR recipe, which you review first.")
+                    }
+                    QQC2.Label {
+                        Layout.fillWidth: true
+                        wrapMode: Text.WordWrap
+                        opacity: 0.7
+                        visible: page.claudeInstalled
+                        text: qsTr("Installed. Its updates come with the system ones, after you review them.")
+                    }
+                    QQC2.Label {
+                        Layout.fillWidth: true
+                        wrapMode: Text.WordWrap
+                        opacity: 0.7
+                        visible: !aurBackend.enabled && !page.claudeInstalled
+                        text: qsTr("Turn on the AUR in Applications first to install it.")
+                    }
+                }
+                QQC2.Button {
+                    visible: !page.claudeInstalled
+                    text: qsTr("Review and install")
+                    icon.name: "document-edit"
+                    enabled: !isLive && aurBackend.enabled && !page.busy && !aurBackend.busy
+                    onClicked: applicationWindow().pageStack.layers.push(Qt.resolvedUrl("AurReviewPage.qml"), { pkgName: page.claudeName })
                 }
             }
         }

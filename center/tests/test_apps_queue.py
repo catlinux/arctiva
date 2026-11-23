@@ -44,7 +44,8 @@ class FakeCatalog:
 
 
 def make_app(name, kinds):
-    return NS(name=name, source=lambda kind: NS(ref=f"{name}-{kind}") if kind in kinds else None)
+    return NS(name=name, source=lambda kind: NS(ref=f"{name}-{kind}") if kind in kinds else None,
+              sources=[NS(kind=k) for k in kinds], recommended=kinds[-1] if name == "Flat" else kinds[0])
 
 
 @pytest.fixture
@@ -157,3 +158,11 @@ def test_live_session_refuses(qapp, backend):
     backend.finished.connect(lambda code, app_id, action: codes.append(code))
     backend.install("a", "arch")
     assert codes == [ab.EX_UNAVAILABLE] and backend.queue == []
+
+
+def test_install_many_uses_each_preferred_source_and_skips_the_unknown(qapp, backend):
+    backend._catalog.apps["flat"] = make_app("Flat", ("arch", "flathub"))     # recomendada: flathub
+    backend.installMany(["a", "flat", "no-existe", 7, "both"])
+    wait_until(qapp, lambda: not backend.queueActive)
+    assert [(i["id"], i["kind"]) for i in backend.queue] == [("a", "arch"), ("flat", "flathub"), ("both", "arch")]
+    assert [i["state"] for i in backend.queue] == ["done"] * 3

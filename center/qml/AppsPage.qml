@@ -11,6 +11,45 @@ Kirigami.ScrollablePage {
     readonly property var backend: appsBackend
     readonly property var aur: aurBackend
     readonly property bool filtering: backend.query !== "" || backend.category !== ""
+    // Aplicaciones marcadas para añadir a la cola de una vez: id → true.
+    property var selected: ({})
+    readonly property int selectedCount: Object.keys(selected).length
+
+    function toggleSelected(id, on) {
+        const next = Object.assign({}, selected)
+        if (on)
+            next[id] = true
+        else
+            delete next[id]
+        selected = next
+    }
+
+    function queueSelected() {
+        backend.installMany(Object.keys(selected))
+        selected = ({})
+    }
+
+    footer: QQC2.ToolBar {
+        visible: page.selectedCount > 0
+        contentItem: RowLayout {
+            QQC2.Label {
+                Layout.fillWidth: true
+                text: page.selectedCount === 1 ? qsTr("1 application selected")
+                    : qsTr("%1 applications selected").arg(page.selectedCount)
+            }
+            QQC2.Button {
+                text: qsTr("Clear selection")
+                onClicked: page.selected = ({})
+            }
+            QQC2.Button {
+                text: qsTr("Add to the queue")
+                icon.name: "run-build-install"
+                highlighted: true
+                enabled: !isLive
+                onClicked: page.queueSelected()
+            }
+        }
+    }
 
     function categoryName(id) {
         switch (id) {
@@ -78,6 +117,14 @@ Kirigami.ScrollablePage {
         onClicked: applicationWindow().pageStack.layers.push(Qt.resolvedUrl("AppDetailPage.qml"), { appId: card.modelData.id })
         contentItem: RowLayout {
             spacing: Kirigami.Units.largeSpacing
+            QQC2.CheckBox {
+                visible: !card.modelData.installed && card.modelData.kind !== "" && !isLive
+                checked: page.selected[card.modelData.id] === true
+                onToggled: page.toggleSelected(card.modelData.id, checked)
+                Layout.alignment: Qt.AlignTop
+                QQC2.ToolTip.text: qsTr("Select to install several applications at once")
+                QQC2.ToolTip.visible: hovered
+            }
             Kirigami.Icon {
                 source: card.modelData.icon
                 Layout.preferredWidth: Kirigami.Units.iconSizes.large

@@ -313,6 +313,15 @@ class AppsBackend(QObject):
     def remove(self, app_id, kind):
         self._enqueue(app_id, kind, "remove")
 
+    @Slot("QVariantList")
+    def installMany(self, app_ids):
+        """Pone en la cola varias aplicaciones a la vez, cada una con su fuente preferida."""
+        for app_id in app_ids:
+            app = self._catalog.get(app_id) if self._catalog and isinstance(app_id, str) else None
+            kind = store.preferred_kind(app) if app else ""
+            if kind:
+                self._enqueue(app_id, kind, "install")
+
     @Slot()
     def continuePending(self):
         if self._pending:

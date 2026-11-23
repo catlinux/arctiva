@@ -97,6 +97,13 @@ class AurBackend(QObject):
         self.approvedChanged.emit()
         self.changed.emit()
 
+    @Slot(str, result=bool)
+    def isInstalled(self, name):
+        try:
+            return name in alpm_query.AlpmQuery().installed_names()
+        except Exception:  # sin pyalpm o sin base de datos: se muestra como no instalado
+            return False
+
     @Slot(bool)
     def setEnabled(self, enabled):
         aur.set_aur_enabled(enabled)
