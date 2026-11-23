@@ -42,6 +42,8 @@ smartmontools
 sudo
 zram-generator
 networkmanager
+# Acceso remoto a la live (apagado salvo con arctiva.ssh; ver arctiva-live-ssh).
+openssh
 bluez
 bluez-utils
 cups

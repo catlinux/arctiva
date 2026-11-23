@@ -1,0 +1,12 @@
+[Unit]
+Description=Remote access to the Arctiva live session (only with arctiva.ssh on the kernel command line)
+ConditionKernelCommandLine=archisobasedir
+ConditionKernelCommandLine=arctiva.ssh
+Requires=arctiva-live-setup.service
+After=arctiva-live-setup.service network-online.target
+Wants=network-online.target
+
+[Service]
+Type=oneshot
+RemainAfterExit=yes
+ExecStart=/usr/local/bin/arctiva-live-ssh

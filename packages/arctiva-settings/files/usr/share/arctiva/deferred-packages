@@ -1,4 +1,5 @@
-# Aplicaciones que NO van en la ISO (pesan unos 490 MiB sin comprimir, con qt6-webengine) y se instalan
+# Aplicaciones que NO van en la ISO (unos 490 MiB sin comprimir, con qt6-webengine, más base-devel, que
+# hace falta para compilar paquetes del AUR) y se instalan
 # desde los repositorios: durante la instalación si hay conexión y, si no, la primera vez que el equipo
 # se conecta a Internet (arctiva-deferred.service). Un paquete por línea.
 #
@@ -12,3 +13,4 @@ spectacle
 kwalletmanager
 kdegraphics-thumbnailers
 ffmpegthumbs
+base-devel

@@ -1,0 +1,33 @@
+#!/usr/bin/env bash
+# SPDX-License-Identifier: GPL-3.0-or-later
+# Acceso remoto a la sesión live, solo si se arrancó con la entrada «acceso remoto por SSH» del menú
+# (parámetro arctiva.ssh). Pone al usuario «live» una contraseña aleatoria, la deja en un archivo del
+# escritorio junto con las direcciones del equipo y arranca sshd. Sin ese parámetro no hay puerto abierto.
+set -euo pipefail
+
+live_user=live
+password=$(openssl rand -hex 8)
+echo "${live_user}:${password}" | chpasswd
+
+install -d -m 0755 /etc/ssh/sshd_config.d
+cat >/etc/ssh/sshd_config.d/10-arctiva-live.conf <<'EOF'
+# Solo la sesión live y solo con la contraseña aleatoria de arctiva-live-ssh.
+PermitRootLogin no
+AllowUsers live
+PasswordAuthentication yes
+PermitEmptyPasswords no
+EOF
+
+systemctl start sshd.service
+
+addresses=$(ip -brief -4 address show scope global | awk '{print $1": "$3}' || true)
+note="/home/${live_user}/Desktop/ACCESO-SSH.txt"
+install -D -m 0600 -o "$live_user" -g "$live_user" /dev/stdin "$note" <<EOF
+Acceso remoto a esta sesión live (solo hasta que se apague):
+
+  ssh ${live_user}@<dirección>
+  contraseña: ${password}
+
+Direcciones del equipo:
+${addresses:-  (aún sin red; vuelve a abrir este archivo cuando haya conexión)}
+EOF

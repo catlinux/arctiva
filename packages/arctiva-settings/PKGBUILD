@@ -3,7 +3,7 @@
 # Ajustes del sistema de Arctiva: zram, identidad en os-release, mirrors (reflector) y barra en varios monitores y aplicaciones
 # que se instalan al conectarse (las que no caben en la ISO).
 pkgname=arctiva-settings
-pkgver=0.7.0
+pkgver=0.7.1
 pkgrel=1
 pkgdesc='Ajustes del sistema de Arctiva (zram, os-release, reflector, GRUB)'
 arch=(any)
