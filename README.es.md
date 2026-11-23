@@ -12,7 +12,7 @@ Arctiva es un proyecto independiente, sin relación oficial con Arch Linux ni re
 
 ## Estado
 
-**Versión actual: 0.8.0 (primera beta pública, publicada como versión preliminar en [GitHub Releases](https://github.com/catlinux/arctiva/releases/tag/v0.8.0)).** Descarga la ISO con sus archivos `.sha256` y `.sig` y compruébalos como indica la [guía de usuario](docs/es/usuario/README.md). Desde la 0.7.0 el instalador ordena los mirrors y avisa si no hay conexión, la sesión Live tiene una pantalla de bienvenida con el botón «Instalar Arctiva», y Arctiva Center avisa y muestra el progreso en las instalaciones pesadas. Las pruebas en hardware continúan (consulta la [matriz de pruebas](docs/es/pruebas.md)).
+**Versión actual: 0.8.1 (beta, publicada como versión preliminar en [GitHub Releases](https://github.com/catlinux/arctiva/releases/tag/v0.8.1)).** Descarga la ISO con sus archivos `.sha256` y `.sig` y compruébalos como indica la [guía de usuario](docs/es/usuario/README.md). Desde la 0.7.0 el instalador ordena los mirrors y avisa si no hay conexión, la sesión Live tiene una pantalla de bienvenida con el botón «Instalar Arctiva», y Arctiva Center avisa y muestra el progreso en las instalaciones pesadas. Las pruebas en hardware continúan (consulta la [matriz de pruebas](docs/es/pruebas.md)).
 
 **Fase 6 terminada (0.7.0):** Arctiva Center tiene una página «Aplicaciones»: busca e instala programas de Arch Linux y de Flathub (y, si lo activas, del AUR con revisión obligatoria del PKGBUILD), sin actualizaciones parciales; Bottles, Heroic y ProtonPlus como extras; y un diálogo que abre los `.exe` y `.msi` con Bottles. Discover ya no está en la ISO live. Probada con una instalación completa en una máquina virtual.
 

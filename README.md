@@ -12,7 +12,7 @@ Arctiva is an independent project. It is not affiliated with or endorsed by Arch
 
 ## Status
 
-**Current version: 0.8.0 (first public beta, published as a pre-release on [GitHub Releases](https://github.com/catlinux/arctiva/releases/tag/v0.8.0)).** Download the ISO with its `.sha256` and `.sig` files and check them as described in the [user guide](docs/en/user/README.md). Since 0.7.0 the installer sorts mirrors and warns when the connection is down, the Live session has a welcome screen with an "Install Arctiva" button, and Arctiva Center warns and shows progress on heavy installs. Hardware tests continue (see the [test matrix](docs/en/testing.md)).
+**Current version: 0.8.1 (beta, published as a pre-release on [GitHub Releases](https://github.com/catlinux/arctiva/releases/tag/v0.8.1)).** Download the ISO with its `.sha256` and `.sig` files and check them as described in the [user guide](docs/en/user/README.md). Since 0.7.0 the installer sorts mirrors and warns when the connection is down, the Live session has a welcome screen with an "Install Arctiva" button, and Arctiva Center warns and shows progress on heavy installs. Hardware tests continue (see the [test matrix](docs/en/testing.md)).
 
 **Phase 6 completed (0.7.0):** Arctiva Center has an "Applications" page: search and install programs from Arch Linux and Flathub (and, if you turn it on, the AUR with a mandatory PKGBUILD review), without partial updates; Bottles, Heroic and ProtonPlus as extras; and a dialog that opens `.exe` and `.msi` files with Bottles. Discover is no longer in the live ISO. Tested in a full install in a virtual machine.
 
