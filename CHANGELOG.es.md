@@ -8,6 +8,18 @@ El formato se basa en [Keep a Changelog](https://keepachangelog.com/es-ES/1.1.0/
 
 ## [Sin publicar]
 
+## [0.8.2] - 2026-11-23
+
+### Añadido
+
+- Arctiva Center 0.10.0: marcar varias aplicaciones y añadirlas a la cola de instalación de una vez. Cada tarjeta de las listas tiene una casilla (no sale en las ya instaladas ni en la sesión live) y una barra inferior ofrece «Añadir a la cola» y «Borrar la selección». Cada aplicación usa su fuente recomendada (Arch o Flathub).
+- Arctiva Center 0.10.0: Claude Desktop en Extras, en «Del AUR». Arctiva no aloja esta aplicación propietaria: el botón abre la revisión habitual del AUR de la receta de la comunidad (`claude-desktop`, que descarga el paquete oficial de Anthropic en tu equipo) y, una vez instalada, sus actualizaciones llegan con las del sistema. Necesita el AUR activado.
+- La ISO live admite acceso por SSH si se arranca desde la nueva entrada «Arctiva (live, remote access over SSH)» del menú (`arctiva.ssh` en la línea de órdenes del kernel). El usuario `live` recibe una contraseña aleatoria, guardada junto con las direcciones del equipo en `ACCESO-SSH.txt` en el escritorio, y arranca `sshd` con acceso por contraseña limitado a ese usuario. Desde las entradas normales no escucha nada: `sshd` sigue apagado. El paquete `openssh` pasa a formar parte de la ISO (y del sistema instalado, con `sshd` desactivado).
+
+### Cambiado
+
+- `arctiva-settings` 0.7.1: `base-devel` (makepkg, gcc, make…) se instala como el resto de aplicaciones diferidas: durante la instalación si hay conexión y, si no, la primera vez que el equipo se conecta. No va en la ISO, pero está de serie para el AUR y para compilar a mano.
+
 ## [0.8.1] - 2026-11-23
 
 ### Añadido

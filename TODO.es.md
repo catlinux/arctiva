@@ -18,8 +18,6 @@ Trabajo pendiente agrupado por prioridad. Fases y decisiones: [hoja de ruta](doc
 ## Media: instalador
 
 - [ ] Instalador: si `grub-install` falla, puede quedar una carpeta `EFI/arctiva` a medio crear en la EFI (FAT) y el kernel la monta en solo lectura, así que reintentar también falla (visto con una EFI de Windows de 100 MB: lo arregló `fsck.vfat -y` con la partición desmontada). Limpiar `EFI/arctiva` y pasar `fsck.vfat -a` a la EFI antes del paso del gestor de arranque, y explicarlo en el mensaje de error.
-- [ ] ISO live: incluir `openssh` (desactivado de serie) y evitar que `pam_faillock` bloquee al usuario `live` tras tres intentos fallidos, para poder hacer pruebas y soporte en remoto sin teclear órdenes en el equipo.
-- [ ] Aplicaciones: marcar varias aplicaciones de una lista y añadirlas a la cola de instalación de una vez (la cola existe desde Center 0.8.0; ahora se añade cada una desde su ficha).
 - [ ] Ventoy en modo normal falla en el PC de sobremesa (en el portátil funciona): revisar Secure Boot y el modo de arranque de esa placa.
 - [ ] Ventoy en modo normal se queda en un shell de emergencia (solo arranca el «modo grub2»): probablemente Ventoy reconoce archiso por `/arch/` y Arctiva usa `install_dir="arctiva"`. Comprobarlo en QEMU con un disco de Ventoy; si se confirma, valorar cambiar `install_dir` a `arch` (afecta a `unpackfs`, al instalador y a los scripts).
 - [ ] Arranque lento de la live desde un USB: 1 min 53 s en un portátil con Ventoy (loader 32 s, kernel 49 s porque archiso copia el sistema de 1,7 GiB a la RAM, espacio de usuario 25 s). Valorar `copytoram=n` (arranca antes, programas más lentos) o un mensaje de progreso.
@@ -44,6 +42,7 @@ Trabajo pendiente agrupado por prioridad. Fases y decisiones: [hoja de ruta](doc
 
 ## Descartado
 
+- **Evitar que `pam_faillock` bloquee al usuario `live`:** el acceso SSH de la live usa una contraseña aleatoria, así que nadie adivina contraseñas y el bloqueo no llega a darse.
 - **Bifurcar o retener paquetes oficiales de Arch:** rompe la compatibilidad con el AUR y multiplica el mantenimiento (D-01).
 - **Motor PackageKit de Discover:** mal soporte en Arch y riesgo de actualizaciones parciales (D-07).
 - **Discover con un motor propio, Pamac, Bauh u Octopi como tienda:** sin motor para pacman en Discover y sin interfaz estable para escribirlo; los demás dependen del AUR, están parados o no tienen Flatpak (D-07).

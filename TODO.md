@@ -18,8 +18,6 @@ Pending work grouped by priority. Phases and decisions: [roadmap](docs/en/roadma
 ## Medium — installer
 
 - [ ] Installer: if `grub-install` fails, a half-created `EFI/arctiva` folder can be left on the FAT ESP and the kernel mounts it read-only, so a retry fails too (seen on a 100 MB Windows ESP: `fsck.vfat -y` on the unmounted partition fixed it). Clean up `EFI/arctiva` and run `fsck.vfat -a` on the ESP before the bootloader step, and explain it in the error message.
-- [ ] Live ISO: include `openssh` (disabled by default) and stop `pam_faillock` from locking the `live` user after three failed attempts, so tests and support can be done remotely without typing commands on the machine.
-- [ ] Applications: select several apps in a list and add them to the install queue at once (the queue itself exists since Center 0.8.0; each one is added from its page).
 - [ ] Ventoy in normal mode fails on the desktop PC (works on the laptop): check Secure Boot and boot mode of that board.
 - [ ] Ventoy in normal mode drops to an emergency shell (only "grub2 mode" boots): probably Ventoy recognises archiso by `/arch/` and Arctiva uses `install_dir="arctiva"`. Check in QEMU with a Ventoy disk; if confirmed, weigh switching `install_dir` to `arch` (it touches `unpackfs`, the installer and the scripts).
 - [ ] Slow live boot from a USB stick: 1 min 53 s on a laptop through Ventoy (loader 32 s, kernel 49 s because archiso copies the 1.7 GiB system to RAM, userspace 25 s). Weigh `copytoram=n` (faster start, slower programs) or a progress message.
@@ -44,6 +42,7 @@ Pending work grouped by priority. Phases and decisions: [roadmap](docs/en/roadma
 
 ## Rejected
 
+- **Stopping `pam_faillock` from locking the `live` user:** the live SSH access uses a random password, so nobody guesses passwords and the lockout never comes up.
 - **Forking or holding back official Arch packages:** it breaks compatibility with the AUR and multiplies maintenance (D-01).
 - **Discover's PackageKit back-end:** poor support on Arch and risk of partial upgrades (D-07).
 - **Discover with a custom back-end, Pamac, Bauh or Octopi as the store:** Discover has no pacman back-end and no stable interface to write one; the others depend on the AUR, are stalled or lack Flatpak (D-07).

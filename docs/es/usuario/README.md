@@ -11,7 +11,7 @@ Arctiva es una distribución Linux basada en Arch Linux, con el escritorio KDE P
 - Un equipo con **UEFI** (casi todos los de los últimos 10 años; Arctiva no arranca en modo BIOS antiguo).
 - **4 GiB de RAM** como mínimo y **25 GiB libres** de disco.
 - Un USB de 4 GB o más (se borra por completo).
-- Conexión a internet durante la instalación (para lo que no cabe en la ISO, como el kernel LTS o los perfiles Juegos y Oficina). Sin conexión se instala igual lo que trae la ISO. Algunas aplicaciones básicas (Kate, Ark, Okular, Gwenview, Spectacle y KWalletManager) no vienen en la ISO para que pese menos: se descargan al instalar y, si no hay conexión, se instalan solas **la primera vez que te conectes a Internet**, junto con las actualizaciones del sistema. Una notificación te avisa de lo pendiente, de cuándo empieza y de cuándo termina.
+- Conexión a internet durante la instalación (para lo que no cabe en la ISO, como el kernel LTS o los perfiles Juegos y Oficina). Sin conexión se instala igual lo que trae la ISO. Algunas aplicaciones básicas (Kate, Ark, Okular, Gwenview, Spectacle y KWalletManager) y las herramientas de compilación (`base-devel`, para el AUR) no vienen en la ISO para que pese menos: se descargan al instalar y, si no hay conexión, se instalan solas **la primera vez que te conectes a Internet**, junto con las actualizaciones del sistema. Una notificación te avisa de lo pendiente, de cuándo empieza y de cuándo termina.
 
 ## 2. Preparar el USB
 
@@ -42,9 +42,9 @@ Al entrar por primera vez puedes abrir **Arctiva Center** (está en el menú de 
 
 - **Personalización:** modo claro u oscuro, color, fondo, barra de tareas (centrada o a la izquierda, flotante) y tamaño del texto. «Restaurar el aspecto de Arctiva» lo deja como recién instalado.
 - **Actualizaciones:** actualiza con un clic los repositorios de Arch, Flatpak y, si lo has activado, el AUR, mostrando antes las noticias de Arch que necesitan tu atención. Antes de cada actualización se guarda una instantánea. Al final de la página eliges qué más se actualiza junto al sistema.
-- **Aplicaciones:** la tienda. Busca programas de los repositorios de Arch y de Flathub; el origen siempre se ve. Si hay actualizaciones pendientes, te pide actualizar antes. Puedes poner varias instalaciones o desinstalaciones en cola y se ejecutan una a una.
+- **Aplicaciones:** la tienda. Busca programas de los repositorios de Arch y de Flathub; el origen siempre se ve. Si hay actualizaciones pendientes, te pide actualizar antes. Puedes poner varias instalaciones o desinstalaciones en cola y se ejecutan una a una; marca varias aplicaciones con la casilla de su tarjeta y pulsa «Añadir a la cola».
 - **Controladores:** detecta tu gráfica e instala lo necesario (NVIDIA incluida).
-- **Extras:** Juegos (Steam, Lutris…), Oficina (LibreOffice, Thunderbird), kernel LTS, Programas de Windows (Bottles), Heroic y ProtonPlus.
+- **Extras:** Juegos (Steam, Lutris…), Oficina (LibreOffice, Thunderbird), kernel LTS, Programas de Windows (Bottles), Heroic y ProtonPlus; y, desde el AUR (con la revisión habitual), Claude Desktop.
 
 ## 6. Volver atrás si algo falla (instantáneas)
 

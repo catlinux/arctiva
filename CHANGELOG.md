@@ -8,6 +8,18 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 
 ## [Unreleased]
 
+## [0.8.2] - 2026-11-23
+
+### Added
+
+- Arctiva Center 0.10.0: select several applications and add them to the install queue at once. Each card in the lists has a checkbox (not shown for installed applications or in the live session) and a bar at the bottom offers "Add to the queue" and "Clear selection". Each application uses its recommended source (Arch or Flathub).
+- Arctiva Center 0.10.0: Claude Desktop in Extras, under "From the AUR". Arctiva does not host this proprietary app: the button opens the usual AUR review of the community recipe (`claude-desktop`, which downloads Anthropic's official package on your computer) and, once installed, its updates come with the system ones. It needs the AUR turned on.
+- The live ISO can be reached over SSH when booted from the new "Arctiva (live, remote access over SSH)" menu entry (`arctiva.ssh` on the kernel command line). The `live` user gets a random password, saved with the machine's addresses in `ACCESO-SSH.txt` on the desktop, and `sshd` starts with password login limited to that user. From the normal entries nothing is listening: `sshd` stays off. The `openssh` package is now part of the ISO (and so of installed systems, with `sshd` disabled).
+
+### Changed
+
+- `arctiva-settings` 0.7.1: `base-devel` (makepkg, gcc, make…) is installed like the other deferred applications: during installation when there is a connection and, if not, the first time the computer connects. It is not on the ISO, but it is there by default for the AUR and for compiling by hand.
+
 ## [0.8.1] - 2026-11-23
 
 ### Added
