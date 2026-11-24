@@ -31,7 +31,9 @@ def run():
 
     # En la sesión live solo se explora (ARCTIVA_GAMES_ALLOW_LIVE=1, para pruebas).
     live = paths.is_live() and os.environ.get("ARCTIVA_GAMES_ALLOW_LIVE") != "1"
-    backend = GamesBackend(where.data, live, app)
+    from .core import games_protondl
+    backend = GamesBackend(where.data, live, app, proton=games_protondl.ensure)
+    backend.ensureProton()
     engine = QQmlApplicationEngine()
     engine.rootContext().setContextProperty("isLive", live)
     engine.rootContext().setContextProperty("gamesBackend", backend)

@@ -90,6 +90,22 @@ Kirigami.ScrollablePage {
             text: backend.error
         }
 
+        // GE-Proton viene «de serie»: se instala o actualiza solo al abrir Arctiva Games.
+        Kirigami.InlineMessage {
+            Layout.fillWidth: true
+            visible: backend.protonState === "working" || backend.protonState === "failed"
+            type: backend.protonState === "failed" ? Kirigami.MessageType.Warning : Kirigami.MessageType.Information
+            text: backend.protonState === "working"
+                ? qsTr("Preparing Proton-Wineland, the runner most launchers need (a download of about 350 MB, repeated at most once a week when there is a new version)… %1 %").arg(Math.round(backend.protonProgress * 100))
+                : qsTr("Proton-Wineland could not be prepared (%1). You can still install with another runner; it will be tried again next time.").arg(backend.protonDetail)
+            actions: Kirigami.Action {
+                visible: backend.protonState === "failed"
+                text: qsTr("Try again")
+                icon.name: "view-refresh"
+                onTriggered: backend.ensureProton()
+            }
+        }
+
         Kirigami.Heading {
             level: 2
             text: qsTr("Installed games")

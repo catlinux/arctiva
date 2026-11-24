@@ -172,3 +172,42 @@ def test_solo_wine_ofrece_descargar_ge_proton_y_avisa(app, tmp_path):
     sin_umu = make(tmp_path, runners=[Runner("wine")], umu=None)
     sin_umu.prepareRecipe("battlenet")
     assert sin_umu.runnerName == "wine" and sin_umu.runnerHint == "system-wine"
+
+
+def test_ge_proton_de_serie_se_prepara_y_sustituye_al_por_descargar(app, tmp_path):
+    from arctiva_games.core import games_runners as gr
+    installed = []
+
+    def scan():
+        real = [Runner("GE-Proton10-25", "/p/GE-Proton10-25")] if installed else []
+        return real + [Runner("wine")] + gr.virtual_runners(), "/usr/bin/umu-run"
+
+    def fake_ensure(progress, keep):
+        progress(50, 100)
+        progress(100, 100)
+        installed.append(True)
+        return "GE-Proton10-25", True
+
+    b = gb.GamesBackend(DATA, False, api=FakeApi(), base=tmp_path / "base", root=tmp_path / "Games",
+                        downloads=tmp_path / "dl", runners=scan, menu_dir=tmp_path / "menu",
+                        desk_dir=tmp_path / "desk", proton=fake_ensure)
+    b.prepareRecipe("battlenet")
+    assert b.runnerName.startswith("GE-Proton (se descarga")
+    b.ensureProton()
+    wait_for(lambda: b.protonState == "ready")
+    assert b.protonDetail == "GE-Proton10-25" and b.protonProgress == 1.0
+    assert b.runnerName == "GE-Proton10-25"                       # ya no hace falta descargar al instalar
+
+
+def test_ge_proton_que_falla_se_avisa_y_no_bloquea(app, tmp_path):
+    def boom(progress, keep):
+        raise OSError("sin red")
+    b = gb.GamesBackend(DATA, False, api=FakeApi(), base=tmp_path / "base", root=tmp_path / "Games",
+                        downloads=tmp_path / "dl", runners=lambda: (WINE, "/usr/bin/umu-run"),
+                        menu_dir=tmp_path / "menu", desk_dir=tmp_path / "desk", proton=boom)
+    b.ensureProton()
+    wait_for(lambda: b.protonState == "failed")
+    assert "sin red" in b.protonDetail
+    sin = make(tmp_path)                                            # sin `proton`: nunca descarga
+    sin.ensureProton()
+    assert sin.protonState == ""

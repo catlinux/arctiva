@@ -90,13 +90,19 @@ Kirigami.ScrollablePage {
                     }
                     QQC2.Label {
                         Layout.fillWidth: true
+                        visible: backend.protonState === "working"
+                        wrapMode: Text.WordWrap
+                        text: qsTr("Wait until Proton-Wineland is ready (%1 %): it is being prepared in the background.").arg(Math.round(backend.protonProgress * 100))
+                    }
+                    QQC2.Label {
+                        Layout.fillWidth: true
                         visible: backend.runnerHint !== ""
                         wrapMode: Text.WordWrap
                         opacity: 0.7
                         text: {
                             switch (backend.runnerHint) {
-                            case "download": return qsTr("GE-Proton will be downloaded the first time it is used (a few hundred MB, it needs a connection).")
-                            case "download-wayland": return qsTr("GE-Proton with native Wayland (experimental) will be downloaded the first time it is used (a few hundred MB, it needs a connection). It may not work with every launcher.")
+                            case "download": return qsTr("GE-Proton will be downloaded the first time it is used (about 600 MB, it needs a connection).")
+                            case "download-wayland": return qsTr("GE-Proton with native Wayland (experimental) will be downloaded the first time it is used (about 600 MB, it needs a connection). It may not work with every launcher.")
                             case "system-wine": return qsTr("With the system's Wine some launchers, such as Battle.net, may not open. If that happens, choose GE-Proton.")
                             case "wayland": return qsTr("Native Wayland is experimental: if the launcher does not open or looks wrong, choose another runner.")
                             default: return ""
@@ -146,7 +152,7 @@ Kirigami.ScrollablePage {
                     text: qsTr("Install")
                     icon.name: "run-install"
                     highlighted: true
-                    enabled: !isLive && backend.warnings.length === 0
+                    enabled: !isLive && backend.warnings.length === 0 && backend.protonState !== "working"
                     onClicked: backend.install()
                 }
                 QQC2.Button {

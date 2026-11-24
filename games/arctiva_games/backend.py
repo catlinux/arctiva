@@ -29,9 +29,11 @@ class GamesBackend(QObject):
     _searchDone = Signal(list, str)
     _installersDone = Signal(list, str)
     _downloaded = Signal(object, str)
+    _protonProgress = Signal(int, int)
+    _protonDone = Signal(str, bool, str)
 
     def __init__(self, data_dir, live=False, parent=None, api=None, base=None, root=None, downloads=None,
-                 runners=None, menu_dir=None, desk_dir=None):
+                 runners=None, menu_dir=None, desk_dir=None, proton=None):
         super().__init__(parent)
         self._live = live
         self._api = api or games_api.GamesApi()
@@ -58,6 +60,12 @@ class GamesBackend(QObject):
         self._searchDone.connect(self._on_search)
         self._installersDone.connect(self._on_installers)
         self._downloaded.connect(self._on_downloaded)
+        # `proton(progress=, keep=)` deja instalado el último GE-Proton (games_protondl.ensure); None, sin
+        # descarga (pruebas). Estado: "" | working | ready | failed.
+        self._proton = proton
+        self._proton_state, self._proton_frac, self._proton_detail = "", 0.0, ""
+        self._protonProgress.connect(self._on_proton_progress)
+        self._protonDone.connect(self._on_proton_done)
 
     # --- propiedades ---
     live = Property(bool, lambda s: s._live, constant=True)
@@ -84,6 +92,59 @@ class GamesBackend(QObject):
     @Property(list, notify=changed)
     def runnerChoices(self):
         return [r.name for r in self._runners if self._umu or not r.is_proton]
+
+    @Property(str, notify=changed)
+    def protonState(self):
+        return self._proton_state
+
+    @Property(float, notify=changed)
+    def protonProgress(self):
+        return self._proton_frac
+
+    @Property(str, notify=changed)
+    def protonDetail(self):
+        return self._proton_detail
+
+    @Slot()
+    def ensureProton(self):
+        """Instala (o actualiza) GE-Proton en segundo plano, como si viniera con el paquete."""
+        if self._proton is None or self._live or self._proton_state == "working":
+            return
+        if self._scan()[1] is None:
+            return                      # sin umu-run no se podría usar
+        keep = [g.runner for g in games_library.list_games(self._base) if g.runner != "wine"]
+        self._proton_state, self._proton_frac, self._proton_detail = "working", 0.0, ""
+        self._refresh_warnings_if_ready()
+        self.changed.emit()
+
+        def work():
+            try:
+                tag, fresh = self._proton(progress=lambda done, total: self._protonProgress.emit(done, total),
+                                          keep=keep)
+                self._protonDone.emit(tag, fresh, "")
+            except Exception as e:      # sin red, sin espacio, suma mala: se avisa y se sigue con lo que haya
+                self._protonDone.emit("", False, str(e))
+        threading.Thread(target=work, daemon=True).start()
+
+    def _on_proton_progress(self, done, total):
+        frac = done / total if total else 0.0
+        if abs(frac - self._proton_frac) >= 0.01 or frac >= 1.0:
+            self._proton_frac = frac
+            self.changed.emit()
+
+    def _on_proton_done(self, tag, fresh, error):
+        self._proton_state = "failed" if error else "ready"
+        self._proton_detail = error or tag
+        self._runners, self._umu = self._scan()
+        # Si se estaba preparando una instalación con el GE-Proton «por descargar», pasa al ya instalado.
+        if self._phase == "ready" and (self._runner is None or self._runner.virtual):
+            self._runner = games_runners.choose(self._pref, self._runners, self._umu is not None)
+        self._refresh_warnings_if_ready()
+        self.changed.emit()
+
+    def _refresh_warnings_if_ready(self):
+        if self._phase == "ready":
+            self._refresh_warnings()
 
     @Property(str, notify=changed)
     def runnerHint(self):
@@ -233,6 +294,7 @@ class GamesBackend(QObject):
         self._script, self._plan, self._error = script, plan, ""
         self._summary = games_script.summary(plan)
         self._runners, self._umu = self._scan()
+        self._pref = preference
         self._runner = games_runners.choose(preference, self._runners, self._umu is not None)
         self._refresh_warnings()
         self._states = ["pending"] * len(plan.steps)
@@ -252,7 +314,7 @@ class GamesBackend(QObject):
     # --- instalación ---
     @Slot()
     def install(self):
-        if self._live or self._phase != "ready" or self._warnings:
+        if self._live or self._phase != "ready" or self._warnings or self._proton_state == "working":
             return
         self._phase = "downloading"
         self.changed.emit()

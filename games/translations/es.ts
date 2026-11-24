@@ -7,6 +7,9 @@
 </context>
 <context>
     <name>GamesPage</name>
+    <message><source>Preparing Proton-Wineland, the runner most launchers need (a download of about 350 MB, repeated at most once a week when there is a new version)… %1 %</source><translation>Preparando Proton-Wineland, el ejecutor que necesitan la mayoría de lanzadores (una descarga de unos 350 MB, que se repite como mucho una vez por semana si hay versión nueva)… %1 %</translation></message>
+    <message><source>Proton-Wineland could not be prepared (%1). You can still install with another runner; it will be tried again next time.</source><translation>No se ha podido preparar Proton-Wineland (%1). Puedes instalar igualmente con otro ejecutor; se volverá a intentar la próxima vez.</translation></message>
+    <message><source>Try again</source><translation>Reintentar</translation></message>
     <message><source>Arctiva Games</source><translation>Arctiva Games</translation></message>
     <message><source>Uninstall game</source><translation>Desinstalar juego</translation></message>
     <message><source>The game folder, including its saves inside the Wine prefix, will be deleted. This cannot be undone.</source><translation>Se borrará la carpeta del juego, incluidas las partidas guardadas dentro del prefijo de Wine. No se puede deshacer.</translation></message>
@@ -31,10 +34,11 @@
 </context>
 <context>
     <name>GameInstallPage</name>
+    <message><source>Wait until Proton-Wineland is ready (%1 %): it is being prepared in the background.</source><translation>Espera a que Proton-Wineland esté listo (%1 %): se está preparando en segundo plano.</translation></message>
     <message><source>More runners…</source><translation>Más ejecutores…</translation></message>
     <message><source>Opens ProtonPlus to add more Proton and Wine versions</source><translation>Abre ProtonPlus para añadir más versiones de Proton y Wine</translation></message>
-    <message><source>GE-Proton will be downloaded the first time it is used (a few hundred MB, it needs a connection).</source><translation>GE-Proton se descargará la primera vez que se use (unos cientos de MB, hace falta conexión).</translation></message>
-    <message><source>GE-Proton with native Wayland (experimental) will be downloaded the first time it is used (a few hundred MB, it needs a connection). It may not work with every launcher.</source><translation>GE-Proton con Wayland nativo (experimental) se descargará la primera vez que se use (unos cientos de MB, hace falta conexión). Puede que no funcione con todos los lanzadores.</translation></message>
+    <message><source>GE-Proton will be downloaded the first time it is used (about 600 MB, it needs a connection).</source><translation>GE-Proton se descargará la primera vez que se use (unos 600 MB, hace falta conexión).</translation></message>
+    <message><source>GE-Proton with native Wayland (experimental) will be downloaded the first time it is used (about 600 MB, it needs a connection). It may not work with every launcher.</source><translation>GE-Proton con Wayland nativo (experimental) se descargará la primera vez que se use (unos 600 MB, hace falta conexión). Puede que no funcione con todos los lanzadores.</translation></message>
     <message><source>With the system's Wine some launchers, such as Battle.net, may not open. If that happens, choose GE-Proton.</source><translation>Con el Wine del sistema, algunos lanzadores, como Battle.net, pueden no abrirse. Si pasa, elige GE-Proton.</translation></message>
     <message><source>Native Wayland is experimental: if the launcher does not open or looks wrong, choose another runner.</source><translation>Wayland nativo es experimental: si el lanzador no se abre o se ve mal, elige otro ejecutor.</translation></message>
     <message><source>Playing</source><translation>Jugando</translation></message>
