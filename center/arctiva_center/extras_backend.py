@@ -116,6 +116,11 @@ class ExtrasBackend(QObject):
             return
         self._next_flatpak()
 
+    @Slot()
+    def prepareGames(self):
+        """Descarga GE-Proton para Arctiva Games como el usuario, en segundo plano (avisa al terminar)."""
+        QProcess.startDetached("arctiva-games", ["--install-proton"])
+
     @Slot(str)
     def openSettings(self, page):
         if page in SETTINGS_PAGES:

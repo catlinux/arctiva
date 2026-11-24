@@ -70,6 +70,9 @@ Kirigami.ScrollablePage {
         function onFinished(code) {
             if (page.working === "")
                 return
+            // Arctiva Games trae GE-Proton «de serie»: se prepara justo después de instalar el extra.
+            if (code === 0 && page.working === "arctiva-games" && !page.removing)
+                extrasBackend.prepareGames()
             page.working = ""
             page.lastCode = code
             extrasBackend.refresh()

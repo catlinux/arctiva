@@ -87,9 +87,9 @@ en = "Arctiva Games"
 es = "Arctiva Games"
 ca = "Arctiva Games"
 [extra.description]
-en = "Install Windows game launchers (Battle.net, EA app, Ubisoft Connect, GOG Galaxy, Epic) and lutris.net installers step by step, with a live log and a Continue button where you must sign in. Installs Wine and winetricks (about 0.5 GB). Open it from the application menu."
-es = "Instala lanzadores de juegos de Windows (Battle.net, EA app, Ubisoft Connect, GOG Galaxy, Epic) e instaladores de lutris.net paso a paso, con registro en directo y un botón Continuar donde hay que iniciar sesión. Instala Wine y winetricks (unos 0,5 GB). Ábrelo desde el menú de aplicaciones."
-ca = "Instal·la llançadors de jocs de Windows (Battle.net, EA app, Ubisoft Connect, GOG Galaxy, Epic) i instal·ladors de lutris.net pas a pas, amb registre en directe i un botó Continua on cal iniciar sessió. Instal·la Wine i winetricks (uns 0,5 GB). Obre'l des del menú d'aplicacions."
+en = "Install Windows game launchers (Battle.net, EA app, Ubisoft Connect, GOG Galaxy, Epic) and lutris.net installers step by step, with a live log and a Continue button where you must sign in. Installs Wine and winetricks (about 0.5 GB) and then downloads Proton-Wineland (about 0.35 GB). Open it from the application menu."
+es = "Instala lanzadores de juegos de Windows (Battle.net, EA app, Ubisoft Connect, GOG Galaxy, Epic) e instaladores de lutris.net paso a paso, con registro en directo y un botón Continuar donde hay que iniciar sesión. Instala Wine y winetricks (unos 0,5 GB) y después descarga Proton-Wineland (unos 0,35 GB). Ábrelo desde el menú de aplicaciones."
+ca = "Instal·la llançadors de jocs de Windows (Battle.net, EA app, Ubisoft Connect, GOG Galaxy, Epic) i instal·ladors de lutris.net pas a pas, amb registre en directe i un botó Continua on cal iniciar sessió. Instal·la Wine i winetricks (uns 0,5 GB) i després descarrega Proton-Wineland (uns 0,35 GB). Obre'l des del menú d'aplicacions."
 
 [[extra]]
 id = "heroic"
