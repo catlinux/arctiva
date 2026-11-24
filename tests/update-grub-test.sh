@@ -32,6 +32,14 @@ preparar() {
     local r="${tmp}/raiz"
     rm -rf -- "$r"
     mkdir -p "${r}/boot/efi/EFI/arctiva" "${r}/boot/grub"
+    if [[ -n "${TEST_BOOTLOADER_ID:-}" ]]; then
+        mkdir -p "${r}/etc/arctiva"
+        printf '%s\n' "$TEST_BOOTLOADER_ID" >"${r}/etc/arctiva/bootloader-id"
+    fi
+    if [[ "${TEST_BOOTLOADER_ID:-}" == arctiva-2 ]]; then
+        mkdir -p "${r}/boot/efi/EFI/arctiva-2"
+        echo grub-viejo >"${r}/boot/efi/EFI/arctiva-2/grubx64.efi"
+    fi
     (( $1 )) && mkdir -p "${r}/sys/firmware/efi"
     if (( ${3:-1} )); then echo grub-viejo >"${r}/boot/efi/EFI/arctiva/grubx64.efi"; fi
     case "$2" in
@@ -60,6 +68,7 @@ probar() {
 
 r="${tmp}/raiz"
 normal="grub-install --target=x86_64-efi --efi-directory=${r}/boot/efi --bootloader-id=arctiva"
+normal2="grub-install --target=x86_64-efi --efi-directory=${r}/boot/efi --bootloader-id=arctiva-2"
 reserva="grub-install --target=x86_64-efi --efi-directory=${r}/boot/efi --removable --no-nvram"
 mkconfig="grub-mkconfig -o ${r}/boot/grub/grub.cfg"
 
@@ -71,6 +80,10 @@ preparar 1 minusculas;       probar "reserva nuestra en minúsculas" 0 "${normal
 preparar 1 distinta;         probar "reserva ajena (Windows): no se toca" 0 "${normal}|${mkconfig}"
 preparar 1 ninguna;          probar "sin reserva" 0 "${normal}|${mkconfig}"
 preparar 1 igual;            FAKE_INSTALL_FAILS=1 probar "grub-install falla: sin grub-mkconfig" 1 "${normal}"
+# Sin /etc/arctiva/bootloader-id (instalaciones anteriores a 0.8.3) ya lo cubren los casos de arriba.
+TEST_BOOTLOADER_ID=arctiva-2 preparar 1 ninguna; probar "id arctiva-2 del instalador" 0 "${normal2}|${mkconfig}"
+TEST_BOOTLOADER_ID=../x preparar 1 ninguna;      probar "id no válido: se usa arctiva" 0 "${normal}|${mkconfig}"
+TEST_BOOTLOADER_ID=arctiva preparar 1 ninguna;   probar "id arctiva explícito" 0 "${normal}|${mkconfig}"
 
 if (( fallos )); then
     echo "${fallos} comprobaciones fallidas" >&2

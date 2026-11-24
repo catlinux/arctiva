@@ -14,6 +14,16 @@ id=arctiva
 
 aviso() { echo "arctiva-grub: $*"; }
 
+id_file="${root}/etc/arctiva/bootloader-id"
+if [[ -f "$id_file" ]]; then
+    id_value="$(tr -d '[:space:]' <"$id_file")"
+    if [[ "$id_value" =~ ^arctiva(-[2-9])?$ ]]; then
+        id="$id_value"
+    elif [[ -n "$id_value" ]]; then
+        aviso "se ignora el identificador EFI no válido de ${id_file}."
+    fi
+fi
+
 if [[ ! -d "${root}/sys/firmware/efi" ]]; then
     aviso "el equipo no arranca en modo UEFI: no se reinstala GRUB."
     exit 0

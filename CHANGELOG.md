@@ -12,6 +12,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 
 ### Fixed
 
+- arctiva-settings 0.7.2: after a grub update, GRUB is reinstalled in the EFI folder chosen by the installer (`/etc/arctiva/bootloader-id`, for example `EFI/arctiva-2`); systems without that file keep using `EFI/arctiva`.
 - Installer: if `grub-install` fails (for example because the EFI partition has file system errors and the kernel mounted it read-only), the installer saves a copy of the EFI partition to `/var/lib/arctiva-installer/` on the new system, repairs it with `fsck.vfat` while it is unmounted, removes only what the failed attempt created and tries once more. If it still fails, a message in Spanish and English explains how to fix it from the live session. The boot loader step is now Arctiva's own script instead of the Calamares `bootloader` module.
 - Installer: it no longer overwrites the boot files of another Arctiva that is still on the computer and shares the EFI partition; it installs to `EFI/arctiva-2` (or the next free name) instead. A leftover `EFI/arctiva` from a system that no longer exists is reused. The chosen name is saved in `/etc/arctiva/bootloader-id`.
 - Installer: the fallback copy `EFI/Boot/BOOTX64.EFI` is only written if there is none or if it was Arctiva's own; another one (such as Windows') is left untouched.
