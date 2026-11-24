@@ -17,7 +17,6 @@ Pending work grouped by priority. Phases and decisions: [roadmap](docs/en/roadma
 
 ## Medium — installer
 
-- [ ] Installer: if `grub-install` fails, a half-created `EFI/arctiva` folder can be left on the FAT ESP and the kernel mounts it read-only, so a retry fails too (seen on a 100 MB Windows ESP: `fsck.vfat -y` on the unmounted partition fixed it). Clean up `EFI/arctiva` and run `fsck.vfat -a` on the ESP before the bootloader step, and explain it in the error message.
 - [ ] Ventoy in normal mode fails on the desktop PC (works on the laptop): check Secure Boot and boot mode of that board.
 - [ ] Ventoy in normal mode drops to an emergency shell (only "grub2 mode" boots): probably Ventoy recognises archiso by `/arch/` and Arctiva uses `install_dir="arctiva"`. Check in QEMU with a Ventoy disk; if confirmed, weigh switching `install_dir` to `arch` (it touches `unpackfs`, the installer and the scripts).
 - [ ] Slow live boot from a USB stick: 1 min 53 s on a laptop through Ventoy (loader 32 s, kernel 49 s because archiso copies the 1.7 GiB system to RAM, userspace 25 s). Weigh `copytoram=n` (faster start, slower programs) or a progress message.

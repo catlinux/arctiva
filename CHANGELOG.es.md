@@ -8,6 +8,14 @@ El formato se basa en [Keep a Changelog](https://keepachangelog.com/es-ES/1.1.0/
 
 ## [Sin publicar]
 
+## [0.8.3] - 2026-11-24
+
+### Corregido
+
+- Instalador: si `grub-install` falla (por ejemplo, porque la partición EFI tiene errores y el kernel la ha montado en solo lectura), el instalador guarda una copia de la partición EFI en `/var/lib/arctiva-installer/` del sistema nuevo, la repara con `fsck.vfat` mientras está desmontada, borra solo lo que haya creado el intento fallido y lo vuelve a intentar una vez. Si sigue fallando, un mensaje en castellano e inglés explica cómo arreglarlo desde la sesión live. El paso del gestor de arranque es ahora un script propio de Arctiva en lugar del módulo `bootloader` de Calamares.
+- Instalador: ya no sobrescribe el arranque de otra Arctiva que siga en el equipo y comparta la partición EFI; se instala en `EFI/arctiva-2` (o el siguiente nombre libre). Una carpeta `EFI/arctiva` de un sistema que ya no existe se reutiliza. El nombre elegido queda en `/etc/arctiva/bootloader-id`.
+- Instalador: la copia de reserva `EFI/Boot/BOOTX64.EFI` solo se escribe si no hay ninguna o si era la de Arctiva; otra (como la de Windows) no se toca.
+
 ## [0.8.2] - 2026-11-23
 
 ### Añadido

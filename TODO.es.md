@@ -17,7 +17,6 @@ Trabajo pendiente agrupado por prioridad. Fases y decisiones: [hoja de ruta](doc
 
 ## Media: instalador
 
-- [ ] Instalador: si `grub-install` falla, puede quedar una carpeta `EFI/arctiva` a medio crear en la EFI (FAT) y el kernel la monta en solo lectura, así que reintentar también falla (visto con una EFI de Windows de 100 MB: lo arregló `fsck.vfat -y` con la partición desmontada). Limpiar `EFI/arctiva` y pasar `fsck.vfat -a` a la EFI antes del paso del gestor de arranque, y explicarlo en el mensaje de error.
 - [ ] Ventoy en modo normal falla en el PC de sobremesa (en el portátil funciona): revisar Secure Boot y el modo de arranque de esa placa.
 - [ ] Ventoy en modo normal se queda en un shell de emergencia (solo arranca el «modo grub2»): probablemente Ventoy reconoce archiso por `/arch/` y Arctiva usa `install_dir="arctiva"`. Comprobarlo en QEMU con un disco de Ventoy; si se confirma, valorar cambiar `install_dir` a `arch` (afecta a `unpackfs`, al instalador y a los scripts).
 - [ ] Arranque lento de la live desde un USB: 1 min 53 s en un portátil con Ventoy (loader 32 s, kernel 49 s porque archiso copia el sistema de 1,7 GiB a la RAM, espacio de usuario 25 s). Valorar `copytoram=n` (arranca antes, programas más lentos) o un mensaje de progreso.

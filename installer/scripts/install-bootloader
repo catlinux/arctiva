@@ -1,0 +1,195 @@
+#!/usr/bin/env bash
+# SPDX-License-Identifier: GPL-3.0-or-later
+# Instala GRUB en la partición EFI del destino. Sustituye al módulo bootloader de Calamares para:
+# no pisar la carpeta EFI de otra Arctiva en uso (instala en EFI/arctiva-2…), no sobrescribir una
+# copia de reserva EFI/Boot/boot*.efi ajena (la de Windows) y, si grub-install falla, copiar y
+# reparar la partición EFI (una FAT con errores se monta en solo lectura) y reintentar una vez.
+set -euo pipefail
+
+root="${1:?uso: $0 <raíz-del-destino>}"
+sys=/sys
+(( EUID != 0 )) && sys="${ARCTIVA_INSTALL_BOOTLOADER_SYS:-/sys}"
+esp="${root}/boot/efi"
+respaldo=""
+
+error_final() {
+    local causa="$1" cause_en="$2"
+    cat >&2 <<EOF
+ERROR: ${causa}
+Copia de la partición EFI: ${respaldo:-no se ha llegado a crear}.
+La partición EFI puede haber quedado desmontada. No reinicies: desde la sesión live, desmonta la
+partición EFI, ejecuta «fsck.vfat -y <partición EFI>» y vuelve a instalar Arctiva.
+
+ERROR: ${cause_en}
+EFI partition copy: ${respaldo:-not created}.
+The EFI partition may have been left unmounted. Do not reboot: from the live session, unmount the
+EFI partition, run "fsck.vfat -y <EFI partition>" and install Arctiva again.
+EOF
+    exit 1
+}
+
+if [[ ! -d "${sys}/firmware/efi" ]]; then
+    echo "El equipo no ha arrancado en modo UEFI: Arctiva solo se instala en UEFI." >&2
+    exit 1
+fi
+if ! mountpoint -q -- "$esp"; then
+    echo "La partición EFI no está montada en ${esp}." >&2
+    exit 1
+fi
+
+if [[ "$(cat "${sys}/firmware/efi/fw_platform_size" 2>/dev/null || true)" == 32 ]]; then
+    target=i386-efi grub_efi=grubia32.efi boot_efi=bootia32.efi
+else
+    target=x86_64-efi grub_efi=grubx64.efi boot_efi=bootx64.efi
+fi
+
+# FAT no distingue mayúsculas: se busca sin distinguirlas.
+buscar() { find "${esp}/" -maxdepth 3 -type f -ipath "${esp}/$1" -print -quit 2>/dev/null; }
+buscar_dir() { find "${esp}/" -maxdepth 2 -type d -ipath "${esp}/$1" -print -quit 2>/dev/null; }
+normalizar() { local u="${1//-/}"; printf '%s' "${u,,}"; }
+
+# En Btrfs findmnt da «/dev/sda2[/@]».
+root_source="$(findmnt -no SOURCE -- "$root" 2>/dev/null || true)"
+root_source="${root_source%%\[*}"
+root_uuid=""
+[[ -n "$root_source" ]] && root_uuid="$(blkid -s UUID -o value "$root_source" 2>/dev/null || true)"
+
+# LUKS de esta instalación (todas las líneas de su crypttab) y LUKS presentes en el equipo.
+declare -A luks_propios=() luks_equipo=()
+if [[ -r "${root}/etc/crypttab" ]]; then
+    while read -r _ dispositivo _; do
+        if [[ "${dispositivo:-}" == UUID=* ]]; then
+            luks_propios["$(normalizar "${dispositivo#UUID=}")"]=1
+        fi
+    done < <(grep -v '^[[:space:]]*#' "${root}/etc/crypttab" || true)
+fi
+while read -r u; do
+    if [[ -n "$u" ]]; then luks_equipo["$(normalizar "$u")"]=1; fi
+done < <(blkid -t TYPE=crypto_LUKS -s UUID -o value 2>/dev/null || true)
+
+esp_disco="$(lsblk -nrpo PKNAME -- "$(findmnt -no SOURCE -- "$esp" 2>/dev/null)" 2>/dev/null | head -n1 || true)"
+
+# Partición número $1 del disco de la ESP, si existe.
+particion_esp() {
+    [[ -n "$esp_disco" ]] || return 0
+    lsblk -nrpo NAME,PARTN -- "$esp_disco" 2>/dev/null | awk -v n="$1" '$2 == n {print $1; exit}'
+}
+
+# Una carpeta EFI/<id> está ocupada si su GRUB arranca otro sistema que sigue en el equipo. La
+# imagen lo dice de tres formas: «(,gptN)/@/boot/grub» si la raíz está en el mismo disco que la ESP
+# (lo normal), «search.fs_uuid <uuid>» si está en otro, y «cryptomount -u <uuid>» o
+# «cryptouuid/<uuid>» (sin guiones) con cifrado; el Btrfs cifrado no se ve con blkid mientras su
+# LUKS está cerrado. Lo que no se puede interpretar se da por ocupado: mejor otro id que pisar el
+# arranque de otro sistema.
+ocupado() {
+    local dir imagen u dispositivo tipo marcas=0
+    dir="$(buscar_dir "efi/$1")"
+    [[ -n "$dir" ]] || return 1
+    imagen="$(find "$dir" -maxdepth 1 -type f -iname 'grub*.efi' -print -quit 2>/dev/null)"
+    [[ -n "$imagen" && -r "$imagen" ]] || return 0
+    while read -r u; do
+        marcas=1
+        dispositivo="$(particion_esp "$u")"
+        [[ -n "$dispositivo" && "$dispositivo" != "$root_source" ]] || continue
+        tipo="$(blkid -s TYPE -o value "$dispositivo" 2>/dev/null || true)"
+        if [[ "$tipo" == crypto_LUKS ]]; then
+            u="$(normalizar "$(blkid -s UUID -o value "$dispositivo" 2>/dev/null || true)")"
+            [[ -n "${luks_propios[$u]:-}" ]] || return 0
+        elif [[ "$tipo" == btrfs ]]; then
+            return 0
+        fi
+    done < <(grep -aoE '\(,gpt[0-9]+\)' "$imagen" | tr -dc '0-9\n')
+    while read -r u; do
+        marcas=1
+        [[ "$u" == "$root_uuid" ]] && continue
+        blkid -U "$u" >/dev/null 2>&1 && return 0
+    done < <(grep -aoE 'search\.fs_uuid[[:space:]]+[[:xdigit:]-]+' "$imagen" | awk '{print $2}')
+    while read -r u; do
+        marcas=1
+        u="$(normalizar "${u##*[ /]}")"
+        [[ -n "${luks_equipo[$u]:-}" && -z "${luks_propios[$u]:-}" ]] && return 0
+    done < <(grep -aoE 'cryptomount[[:space:]]+-u[[:space:]]+[[:xdigit:]-]+|cryptouuid/[[:xdigit:]-]+' "$imagen")
+    (( marcas )) || return 0
+    return 1
+}
+
+# Primer id libre, saltando los ya probados en esta ejecución.
+declare -A descartados=()
+elegir_id() {
+    local n candidato
+    for n in 1 2 3 4 5 6 7 8 9; do
+        candidato=arctiva
+        (( n > 1 )) && candidato="arctiva-${n}"
+        [[ -n "${descartados[$candidato]:-}" ]] && continue
+        if ! ocupado "$candidato"; then
+            printf '%s' "$candidato"
+            return 0
+        fi
+    done
+    return 1
+}
+
+reparar_esp() {
+    local dispositivo rc=0
+    dispositivo="$(findmnt -no SOURCE -- "$esp" 2>/dev/null || true)"
+    [[ -n "$dispositivo" ]] || return 1
+    echo "Reparando la partición EFI ${dispositivo}."
+    umount -- "$esp" || return 1
+    mkdir -p -- "${root}/var/lib/arctiva-installer"
+    respaldo="${root}/var/lib/arctiva-installer/esp-$(date +%Y%m%d-%H%M%S).img"
+    dd if="$dispositivo" of="$respaldo" bs=4M conv=fsync status=none || { respaldo=""; return 1; }
+    # 1 = había errores y se han corregido.
+    fsck.vfat -a "$dispositivo" || rc=$?
+    (( rc <= 1 )) || return 1
+    fsck.vfat -n "$dispositivo" || return 1
+    mount -o umask=0077 -- "$dispositivo" "$esp"
+}
+
+id="$(elegir_id)" || { echo "No queda ningún identificador EFI libre (arctiva a arctiva-9)." >&2; exit 1; }
+
+for intento in 1 2; do
+    echo "Instalando GRUB en EFI/${id}."
+    existia=0
+    [[ -n "$(buscar_dir "efi/${id}")" ]] && existia=1
+    # La reserva se renueva solo si era copia del GRUB que se va a sustituir.
+    viejo="$(buscar "efi/${id}/${grub_efi}")"
+    reserva="$(buscar "efi/boot/${boot_efi}")"
+    renovar_reserva=0
+    if [[ -z "$reserva" ]] || { [[ -n "$viejo" ]] && cmp -s -- "$viejo" "$reserva"; }; then
+        renovar_reserva=1
+    fi
+
+    if chroot "$root" grub-install --target="$target" --efi-directory=/boot/efi \
+        --bootloader-id="$id" --force; then
+        break
+    fi
+    (( intento == 2 )) && error_final \
+        "grub-install ha fallado otra vez después de reparar la partición EFI." \
+        "grub-install failed again after repairing the EFI partition."
+    reparar_esp || error_final \
+        "grub-install ha fallado y no se ha podido reparar la partición EFI." \
+        "grub-install failed and the EFI partition could not be repaired."
+    if (( existia )); then
+        # No se borra lo que ya estaba: se prueba con el siguiente id.
+        descartados["$id"]=1
+        id="$(elegir_id)" || error_final \
+            "grub-install ha fallado y no queda ningún identificador EFI libre." \
+            "grub-install failed and no free EFI identifier is left."
+    else
+        parcial="$(buscar_dir "efi/${id}")"
+        if [[ -n "$parcial" ]]; then rm -rf -- "$parcial"; fi
+    fi
+done
+
+nuevo="$(buscar "efi/${id}/${grub_efi}")"
+if (( renovar_reserva )) && [[ -n "$nuevo" ]]; then
+    dir_boot="$(buscar_dir "efi/boot")"
+    [[ -n "$dir_boot" ]] || { dir_boot="${esp}/EFI/Boot"; mkdir -p -- "$dir_boot"; }
+    reserva="$(buscar "efi/boot/${boot_efi}")"
+    cp -- "$nuevo" "${reserva:-${dir_boot}/${boot_efi^^}}"
+fi
+
+# update-grub (arctiva-settings) reinstala GRUB en esta carpeta al actualizar el paquete grub.
+mkdir -p -- "${root}/etc/arctiva"
+printf '%s\n' "$id" >"${root}/etc/arctiva/bootloader-id"
+chroot "$root" grub-mkconfig -o /boot/grub/grub.cfg
