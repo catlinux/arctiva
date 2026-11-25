@@ -3,7 +3,7 @@
 # Ajustes del sistema de Arctiva: zram, identidad en os-release, mirrors (reflector) y barra en varios monitores y aplicaciones
 # que se instalan al conectarse (las que no caben en la ISO).
 pkgname=arctiva-settings
-pkgver=0.7.2
+pkgver=0.7.3
 pkgrel=1
 pkgdesc='Ajustes del sistema de Arctiva (zram, os-release, reflector, GRUB)'
 arch=(any)
@@ -29,6 +29,9 @@ package() {
     install -Dm644 etc/plasmalogin.conf.d/arctiva-greeter.conf "$pkgdir/etc/plasmalogin.conf.d/arctiva-greeter.conf"
     install -Dm755 usr/lib/arctiva/update-grub-theme "$pkgdir/usr/lib/arctiva/update-grub-theme"
     install -Dm644 usr/share/libalpm/hooks/arctiva-grub-theme.hook         "$pkgdir/usr/share/libalpm/hooks/arctiva-grub-theme.hook"
+    # Aplicaciones de la sesión (15 s) y servicios del sistema (30 s): no retienen el apagado 90 s.
+    install -Dm644 usr/lib/systemd/user.conf.d/arctiva-timeouts.conf     "$pkgdir/usr/lib/systemd/user.conf.d/arctiva-timeouts.conf"
+    install -Dm644 usr/lib/systemd/system.conf.d/arctiva-timeouts.conf   "$pkgdir/usr/lib/systemd/system.conf.d/arctiva-timeouts.conf"
     install -Dm644 etc/arctiva/reflector.conf "$pkgdir/etc/arctiva/reflector.conf"
     install -Dm644 etc/pacman.d/arctiva-mirrorlist "$pkgdir/etc/pacman.d/arctiva-mirrorlist"
     # Tema global y esquema de color por defecto de los usuarios nuevos (los existentes no cambian).

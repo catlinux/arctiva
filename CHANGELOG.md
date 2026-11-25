@@ -8,6 +8,14 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 
 ## [Unreleased]
 
+## [0.8.4] - 2026-11-25
+
+### Fixed
+
+- Arctiva Center 0.10.2: the "Restart" button after an update now ends the KDE session first, like the Plasma menu, instead of restarting underneath it. Applications get the normal close request and the restart screen animates: before, it could stay still with the spinner frozen and look as if the computer had hung. If the KDE session does not answer, it restarts as before.
+- arctiva-branding 0.6.4: the spinner on the boot, shutdown and restart screen keeps turning until the end. When shutting down it stopped after a few seconds, even though the computer was still closing applications, and it looked as if it had hung.
+- arctiva-settings 0.7.3: shutting down or restarting no longer seems frozen when an application does not close (seen with a Flatpak browser after an update): session applications get 15 s instead of 90 s before being closed by force, and system services 30 s.
+
 ## [0.8.3] - 2026-11-24
 
 ### Fixed

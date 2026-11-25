@@ -17,3 +17,14 @@ ProgressBarBackgroundColor=0x1d2a4d
 ProgressBarForegroundColor=0x6fd6ff
 MessageBelowAnimation=true
 UseFirmwareBackground=true
+
+# Sin animación final: al apagar, Plymouth pide el reposo nada más mostrarse y la rueda se
+# pararía a los pocos segundos aunque el equipo siga cerrando aplicaciones (como el tema spinner).
+[boot-up]
+UseEndAnimation=false
+
+[shutdown]
+UseEndAnimation=false
+
+[reboot]
+UseEndAnimation=false

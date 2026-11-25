@@ -2,7 +2,7 @@
 # Maintainer: CatLinux
 # Arctiva Center: actualizaciones, controladores y extras (D-09). El código está en center/.
 pkgname=arctiva-center
-pkgver=0.10.1
+pkgver=0.10.2
 pkgrel=1
 pkgdesc='Centro de control de Arctiva: actualizaciones, controladores y extras'
 arch=(any)

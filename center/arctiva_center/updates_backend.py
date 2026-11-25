@@ -8,6 +8,7 @@ from datetime import datetime, timezone
 from pathlib import Path
 
 from PySide6.QtCore import Property, QDate, QLocale, QObject, QProcess, Signal, Slot
+from PySide6.QtDBus import QDBusConnection, QDBusInterface, QDBusMessage
 
 from .core import aur, errors, helper_client, pacnew, updates
 
@@ -262,4 +263,14 @@ class UpdatesBackend(QObject):
 
     @Slot()
     def reboot(self):
+        # Con «systemctl reboot» la sesión de KDE sigue viva al apagar: las aplicaciones no reciben
+        # el cierre normal (un navegador retuvo el apagado 90 s) y Plymouth no consigue la pantalla
+        # mientras KWin la tiene, así que la rueda se queda quieta. KDE cierra la sesión y reinicia.
+        bus = QDBusConnection.sessionBus()
+        if bus.isConnected():
+            reply = QDBusInterface(
+                "org.kde.Shutdown", "/Shutdown", "org.kde.Shutdown", bus
+            ).call("logoutAndReboot")
+            if reply.type() != QDBusMessage.MessageType.ErrorMessage:
+                return
         QProcess.startDetached("systemctl", ["reboot"])

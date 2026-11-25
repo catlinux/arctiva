@@ -8,6 +8,14 @@ El formato se basa en [Keep a Changelog](https://keepachangelog.com/es-ES/1.1.0/
 
 ## [Sin publicar]
 
+## [0.8.4] - 2026-11-25
+
+### Corregido
+
+- Arctiva Center 0.10.2: el botón «Reiniciar» tras una actualización cierra primero la sesión de KDE, como el menú de Plasma, en lugar de reiniciar por debajo de ella. Las aplicaciones reciben el cierre normal y la pantalla de reinicio se anima: antes podía quedarse fija con la rueda quieta y parecer que el equipo se había colgado. Si la sesión de KDE no responde, reinicia como antes.
+- arctiva-branding 0.6.4: la rueda de la pantalla de arranque, apagado y reinicio sigue girando hasta el final. Al apagar se detenía a los pocos segundos, aunque el equipo siguiera cerrando aplicaciones, y parecía colgado.
+- arctiva-settings 0.7.3: apagar o reiniciar ya no parece colgado cuando una aplicación no se cierra (visto con un navegador Flatpak tras una actualización): las aplicaciones de la sesión tienen 15 s en vez de 90 s antes de cerrarse a la fuerza, y los servicios del sistema 30 s.
+
 ## [0.8.3] - 2026-11-24
 
 ### Corregido
